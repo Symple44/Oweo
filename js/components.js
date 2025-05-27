@@ -16,7 +16,8 @@ class Navigation {
         nav.innerHTML = `
             <div class="nav-content">
                 <div class="logo" onclick="router.navigate('home')">
-                    <span class="logo-text">💻 ${OweoConfig.siteName}</span>
+                    <img src="assets/logo.png" alt="${OweoConfig.siteName}" class="logo-img">
+                    <span class="logo-text">${OweoConfig.siteName}</span>
                 </div>
                 <ul class="nav-links">
                     ${OweoConfig.navigation.map(item => `
@@ -60,7 +61,10 @@ class Footer {
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-section">
-                        <h4>Oweo</h4>
+                        <div class="footer-logo">
+                            <img src="assets/logo.png" alt="${OweoConfig.siteName}" class="footer-logo-img">
+                            <h4>${OweoConfig.siteName}</h4>
+                        </div>
                         <p>Expert en transformation numérique pour les entreprises de charpente métallique.</p>
                         <p>Accompagnement, conseil et solutions digitales adaptées à votre métier.</p>
                     </div>
@@ -86,7 +90,7 @@ class Footer {
                 
                 <div class="footer-bottom">
                     <div class="footer-copyright">
-                        © 2025 Oweo. Tous droits réservés.
+                        © 2025 ${OweoConfig.siteName}. Tous droits réservés.
                     </div>
                     <div class="footer-legal">
                         ${OweoConfig.legalPages.map(page => `

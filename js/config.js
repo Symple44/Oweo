@@ -68,10 +68,10 @@ window.OweoConfig = {
     
     // Contact
     contact: {
-        email: 'contact@oweo.fr',
+        email: 'contact@oweo-consulting.fr',
         phone: '+33 1 23 45 67 89',
         linkedin: 'https://linkedin.com/company/oweo',
-        address: 'Paris, France'
+        address: 'Nantes, France'
     },
     
     // Pages légales

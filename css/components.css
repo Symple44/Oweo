@@ -30,6 +30,17 @@
     transform: scale(1.05);
 }
 
+.logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.logo:hover .logo-img {
+    transform: rotate(5deg);
+}
+
 .logo-text {
     font-size: 1.8rem;
     font-weight: 800;
@@ -88,6 +99,19 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 3rem;
     margin-bottom: 2rem;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.footer-logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
 }
 
 .footer-section h4 {
@@ -449,6 +473,15 @@
     .hero { padding: 60px 0 40px; }
     .section { padding: 40px 0; }
     
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+    }
+    
     .footer-content {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -461,5 +494,10 @@
     
     .footer-legal {
         justify-content: center;
+    }
+    
+    .footer-logo-img {
+        width: 28px;
+        height: 28px;
     }
 }
