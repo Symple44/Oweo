@@ -464,6 +464,25 @@
     font-size: 0.8rem;
 }
 
+/* LinkedIn Icon */
+.linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.linkedin-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.linkedin-link:hover .linkedin-icon {
+    transform: scale(1.1);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .nav-links { display: none; }
@@ -500,4 +519,92 @@
         width: 28px;
         height: 28px;
     }
+}
+/* Styles personnalisés pour Calendly Badge */
+
+/* Personnalisation du badge Calendly */
+.calendly-badge-widget {
+    z-index: 9999 !important;
+    /* Le badge apparaîtra au-dessus de tout */
+}
+
+/* Animation d'entrée pour le badge */
+@keyframes calendlySlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Application de l'animation */
+.calendly-badge-widget[data-calendly-widget] {
+    animation: calendlySlideIn 0.8s ease-out 2s both;
+    /* Animation après 2 secondes de délai */
+}
+
+/* Hover effect personnalisé */
+.calendly-badge-widget:hover {
+    transform: scale(1.05) !important;
+    transition: transform 0.2s ease !important;
+}
+
+/* Responsive : masquer sur très petits écrans */
+@media (max-width: 480px) {
+    .calendly-badge-widget {
+        display: none !important;
+    }
+}
+
+/* Style pour les popups Calendly */
+.calendly-popup {
+    z-index: 10000 !important;
+}
+
+/* Overlay personnalisé */
+.calendly-overlay {
+    background: rgba(12, 20, 38, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Ajustements pour correspondre au thème Oweo */
+.calendly-popup .calendly-popup-content {
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px rgba(0, 212, 255, 0.2) !important;
+}
+
+/* Notification discrète pour encourager l'utilisation */
+.calendly-notification {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: linear-gradient(45deg, #00d4ff, #7c3aed);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+    animation: fadeInOut 4s ease-in-out;
+    z-index: 9998;
+    cursor: pointer;
+    display: none;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(20px); }
+    20%, 80% { opacity: 1; transform: translateY(0); }
+}
+
+/* Bouton pulsant pour attirer l'attention */
+.calendly-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
 }

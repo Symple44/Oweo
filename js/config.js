@@ -70,7 +70,7 @@ window.OweoConfig = {
     contact: {
         email: 'contact@oweo-consulting.fr',
         phone: '+33 1 23 45 67 89',
-        linkedin: 'https://linkedin.com/company/oweo',
+        linkedin: 'https://linkedin.com/company/oweo-consulting',
         address: 'Nantes, France'
     },
     

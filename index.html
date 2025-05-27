@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
     
+    <!-- Calendly CSS -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    
     <!-- SEO -->
     <meta property="og:title" content="Oweo - Transformation Numérique Charpente Métallique">
     <meta property="og:description" content="Guides experts, conseils et solutions pour digitaliser votre entreprise">
@@ -25,6 +28,9 @@
     <!-- Footer -->
     <footer id="footer" class="footer"></footer>
     
+    <!-- Calendly Scripts -->
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    
     <!-- Scripts - ORDRE IMPORTANT -->
     <script src="js/config.js"></script>
     <script src="js/data.js"></script>
@@ -32,6 +38,14 @@
     <script src="js/pages.js"></script>
     <script src="js/router.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- Calendly Badge Widget - DÉSACTIVÉ car intégré dans navbar -->
+    <script type="text/javascript">
+        window.onload = function() { 
+            // Badge désactivé - remplacé par bouton navbar
+            console.log('✅ Calendly chargé - Utilisation via bouton navbar');
+        }
+    </script>
     
     <!-- Initialisation après chargement complet -->
     <script>

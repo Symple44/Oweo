@@ -24,7 +24,7 @@ class Navigation {
                         <li><a id="nav-${item.id}" onclick="router.navigate('${item.id}')">${item.label}</a></li>
                     `).join('')}
                 </ul>
-                <a href="#contact" class="btn btn-primary">Contact Expert</a>
+                <a href="#contact" class="btn btn-primary" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/nicolas-dubain/30min'});">📅 Parlons de votre projet !</a>
             </div>
         `;
     }
@@ -72,9 +72,12 @@ class Footer {
                     <div class="footer-section">
                         <h4>Contact</h4>
                         <p>📧 ${OweoConfig.contact.email}</p>
-                        <p>📞 ${OweoConfig.contact.phone}</p>
+                        <!-- <p>📞 ${OweoConfig.contact.phone}</p> -->
                         <p>📍 ${OweoConfig.contact.address}</p>
-                        <p><a href="${OweoConfig.contact.linkedin}" target="_blank">LinkedIn</a></p>
+                        <p><a href="${OweoConfig.contact.linkedin}" target="_blank" class="linkedin-link">
+                            <img src="assets/linkedin.png" alt="LinkedIn" class="linkedin-icon">
+                            LinkedIn
+                        </a></p>
                     </div>
                     
                     <div class="footer-section">
