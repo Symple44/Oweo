@@ -7,6 +7,43 @@ class Navigation {
         this.init();
     }
 
+    init() {
+        this.render();
+    }
+
+    render() {
+        const nav = document.getElementById('navbar');
+        nav.innerHTML = `
+            <div class="nav-content">
+                <div class="logo" onclick="router.navigate('home')">
+                    <span class="logo-text">💻 ${OweoConfig.siteName}</span>
+                </div>
+                <ul class="nav-links">
+                    ${OweoConfig.navigation.map(item => `
+                        <li><a id="nav-${item.id}" onclick="router.navigate('${item.id}')">${item.label}</a></li>
+                    `).join('')}
+                </ul>
+                <a href="#contact" class="btn btn-primary">Contact Expert</a>
+            </div>
+        `;
+    }
+
+    setActive(pageId) {
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Add active class to current page
+        const activeLink = document.getElementById(`nav-${pageId}`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        this.currentPage = pageId;
+    }
+}
+
 // Footer Component
 class Footer {
     constructor() {
@@ -59,43 +96,6 @@ class Footer {
                 </div>
             </div>
         `;
-    }
-}
-
-    init() {
-        this.render();
-    }
-
-    render() {
-        const nav = document.getElementById('navbar');
-        nav.innerHTML = `
-            <div class="nav-content">
-                <div class="logo" onclick="router.navigate('home')">
-                    <span class="logo-text">💻 ${OweoConfig.siteName}</span>
-                </div>
-                <ul class="nav-links">
-                    ${OweoConfig.navigation.map(item => `
-                        <li><a id="nav-${item.id}" onclick="router.navigate('${item.id}')">${item.label}</a></li>
-                    `).join('')}
-                </ul>
-                <a href="#contact" class="btn btn-primary">Contact Expert</a>
-            </div>
-        `;
-    }
-
-    setActive(pageId) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        // Add active class to current page
-        const activeLink = document.getElementById(`nav-${pageId}`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-
-        this.currentPage = pageId;
     }
 }
 
