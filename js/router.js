@@ -91,12 +91,18 @@ class Router {
     }
 
     loadInitialPage() {
-        // Check URL hash for initial page
-        const hash = window.location.hash.slice(1);
-        if (hash) {
-            const [page, params] = hash.split('/');
-            this.navigate(page, params, false);
-        } else {
+        try {
+            // Check URL hash for initial page
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                const [page, params] = hash.split('/');
+                this.navigate(page, params, false);
+            } else {
+                this.navigate('home', null, false);
+            }
+        } catch (error) {
+            console.error('Error loading initial page:', error);
+            // Fallback to home
             this.navigate('home', null, false);
         }
     }

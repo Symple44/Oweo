@@ -20,16 +20,27 @@ class OweoApp {
     }
 
     startup() {
-        // Initialize components
-        this.initializeComponents();
-        
-        // Set up global event listeners
-        this.setupGlobalEvents();
-        
-        // Performance monitoring
-        this.setupPerformanceMonitoring();
-        
-        console.log('✅ Oweo App ready');
+        try {
+            // Initialize components
+            this.initializeComponents();
+            
+            // Set up global event listeners
+            this.setupGlobalEvents();
+            
+            // Performance monitoring
+            this.setupPerformanceMonitoring();
+            
+            console.log('✅ Oweo App ready');
+        } catch (error) {
+            console.error('❌ Error during startup:', error);
+            // Fallback: show basic content
+            document.getElementById('app').innerHTML = `
+                <div style="padding: 100px 20px; text-align: center; color: white;">
+                    <h1>Oweo - Expertise Digitale</h1>
+                    <p>Chargement en cours...</p>
+                </div>
+            `;
+        }
     }
 
     initializeComponents() {

@@ -71,8 +71,7 @@ class Footer {
         nav.innerHTML = `
             <div class="nav-content">
                 <div class="logo" onclick="router.navigate('home')">
-                    <img src="assets/logo.png" alt="Oweo" class="logo-image">
-                    <span class="logo-text">${OweoConfig.siteName}</span>
+                    <span class="logo-text">💻 ${OweoConfig.siteName}</span>
                 </div>
                 <ul class="nav-links">
                     ${OweoConfig.navigation.map(item => `
