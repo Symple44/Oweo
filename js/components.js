@@ -7,6 +7,61 @@ class Navigation {
         this.init();
     }
 
+// Footer Component
+class Footer {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.render();
+    }
+
+    render() {
+        const footer = document.getElementById('footer');
+        footer.innerHTML = `
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>Oweo</h4>
+                        <p>Expert en transformation numérique pour les entreprises de charpente métallique.</p>
+                        <p>Accompagnement, conseil et solutions digitales adaptées à votre métier.</p>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Contact</h4>
+                        <p>📧 ${OweoConfig.contact.email}</p>
+                        <p>📞 ${OweoConfig.contact.phone}</p>
+                        <p>📍 ${OweoConfig.contact.address}</p>
+                        <p><a href="${OweoConfig.contact.linkedin}" target="_blank">LinkedIn</a></p>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Expertise</h4>
+                        <ul class="footer-links">
+                            <li><a onclick="router.navigate('outils-gestion')">Outils de Gestion</a></li>
+                            <li><a onclick="router.navigate('developpement')">Développement</a></li>
+                            <li><a onclick="router.navigate('en1090')">Conformité EN1090</a></li>
+                            <li><a onclick="router.navigate('ia-projets')">IA & Innovation</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="footer-copyright">
+                        © 2025 Oweo. Tous droits réservés.
+                    </div>
+                    <div class="footer-legal">
+                        ${OweoConfig.legalPages.map(page => `
+                            <a onclick="router.navigate('${page.id}')">${page.label}</a>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
     init() {
         this.render();
     }
@@ -15,7 +70,10 @@ class Navigation {
         const nav = document.getElementById('navbar');
         nav.innerHTML = `
             <div class="nav-content">
-                <div class="logo" onclick="router.navigate('home')">💻 ${OweoConfig.siteName}</div>
+                <div class="logo" onclick="router.navigate('home')">
+                    <img src="assets/logo.png" alt="Oweo" class="logo-image">
+                    <span class="logo-text">${OweoConfig.siteName}</span>
+                </div>
                 <ul class="nav-links">
                     ${OweoConfig.navigation.map(item => `
                         <li><a id="nav-${item.id}" onclick="router.navigate('${item.id}')">${item.label}</a></li>
@@ -194,5 +252,6 @@ class ArticleRenderer {
 
 // Initialize components
 window.navigation = new Navigation();
+window.footer = new Footer();
 window.pageLoader = new PageLoader();
 window.ArticleRenderer = ArticleRenderer;

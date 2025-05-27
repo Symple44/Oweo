@@ -70,6 +70,16 @@ window.OweoConfig = {
     contact: {
         email: 'contact@oweo.fr',
         phone: '+33 1 23 45 67 89',
-        linkedin: 'https://linkedin.com/company/oweo'
-    }
+        linkedin: 'https://linkedin.com/company/oweo',
+        address: 'Paris, France'
+    },
+    
+    // Pages légales
+    legalPages: [
+        { id: 'mentions-legales', label: 'Mentions légales' },
+        { id: 'conditions-utilisation', label: 'Conditions d\'utilisation' },
+        { id: 'politique-confidentialite', label: 'Politique de Confidentialité & Cookies' },
+        { id: 'conditions-generales', label: 'Conditions Générales' },
+        { id: 'compliance', label: 'Compliance' }
+    ]
 };
