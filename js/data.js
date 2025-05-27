@@ -233,4 +233,14 @@ window.TipsData = {
             content: 'Mesurez : temps de cycle, taux de rebuts, utilisation machines, délais livraison.'
         },
         {
-            icon:
+            icon: '⚡',
+            title: 'Lean Digital',
+            content: 'Appliquez les principes lean avec des outils digitaux : élimination des gaspillages, flux tiré.'
+        },
+        {
+            icon: '🎯',
+            title: 'Amélioration Continue',
+            content: 'Mettez en place des cycles PDCA courts avec mesure d\'impact en temps réel.'
+        }
+    ]
+};
