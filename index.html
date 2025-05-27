@@ -25,12 +25,36 @@
     <!-- Footer -->
     <footer id="footer" class="footer"></footer>
     
-    <!-- Scripts -->
+    <!-- Scripts - ORDRE IMPORTANT -->
     <script src="js/config.js"></script>
     <script src="js/data.js"></script>
     <script src="js/components.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/router.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- Initialisation après chargement complet -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier que toutes les dépendances sont chargées
+            if (typeof OweoConfig !== 'undefined' && 
+                typeof window.ArticlesData !== 'undefined' && 
+                typeof window.pages !== 'undefined') {
+                
+                console.log('✅ Toutes les dépendances chargées');
+                
+                // Initialiser les composants après un court délai
+                setTimeout(function() {
+                    if (typeof window.router !== 'undefined') {
+                        console.log('✅ Router initialisé');
+                    } else {
+                        console.error('❌ Router non initialisé');
+                    }
+                }, 100);
+            } else {
+                console.error('❌ Dépendances manquantes');
+            }
+        });
+    </script>
 </body>
 </html>
