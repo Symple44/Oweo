@@ -7,8 +7,14 @@
     <meta name="description" content="Conseil expert en transformation numérique pour entreprises de charpente métallique">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/responsive.css">
     
     <!-- Calendly CSS -->
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
@@ -28,45 +34,72 @@
     <!-- Footer -->
     <footer id="footer" class="footer"></footer>
     
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Chargement...</div>
+    </div>
+    
+    <!-- Scripts - Core -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/api.js"></script>
+    <script src="js/core/storage.js"></script>
+    
+    <!-- Scripts - Data -->
+    <script src="js/data/articles.js"></script>
+    <script src="js/data/solutions.js"></script>
+    <script src="js/data/testimonials.js"></script>
+    <script src="js/data/tips.js"></script>
+    
+    <!-- Scripts - Components -->
+    <script src="js/components/navigation.js"></script>
+    <script src="js/components/footer.js"></script>
+    <script src="js/components/article-renderer.js"></script>
+    <script src="js/components/roi-calculator.js"></script>
+    <script src="js/components/modal.js"></script>
+    
+    <!-- Scripts - Pages -->
+    <script src="js/pages/home.js"></script>
+    <script src="js/pages/expertise.js"></script>
+    <script src="js/pages/services.js"></script>
+    <script src="js/pages/legal.js"></script>
+    
+    <!-- Scripts - Core System -->
+    <script src="js/core/router.js"></script>
+    <script src="js/core/page-loader.js"></script>
+    <script src="js/core/app.js"></script>
+    
     <!-- Calendly Scripts -->
     <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
     
-    <!-- Scripts - ORDRE IMPORTANT -->
-    <script src="js/config.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/components.js"></script>
-    <script src="js/pages.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/app.js"></script>
-    
-    <!-- Calendly Badge Widget - DÉSACTIVÉ car intégré dans navbar -->
-    <script type="text/javascript">
-        window.onload = function() { 
-            // Badge désactivé - remplacé par bouton navbar
-            console.log('✅ Calendly chargé - Utilisation via bouton navbar');
-        }
-    </script>
-    
-    <!-- Initialisation après chargement complet -->
+    <!-- Initialization -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Vérifier que toutes les dépendances sont chargées
-            if (typeof OweoConfig !== 'undefined' && 
-                typeof window.ArticlesData !== 'undefined' && 
-                typeof window.pages !== 'undefined') {
-                
-                console.log('✅ Toutes les dépendances chargées');
-                
-                // Initialiser les composants après un court délai
-                setTimeout(function() {
-                    if (typeof window.router !== 'undefined') {
-                        console.log('✅ Router initialisé');
-                    } else {
-                        console.error('❌ Router non initialisé');
-                    }
-                }, 100);
-            } else {
-                console.error('❌ Dépendances manquantes');
+            const requiredGlobals = ['OweoConfig', 'OweoData', 'OweoUtils', 'OweoRouter', 'OweoApp'];
+            const missing = requiredGlobals.filter(global => typeof window[global] === 'undefined');
+            
+            if (missing.length > 0) {
+                console.error('❌ Dépendances manquantes:', missing);
+                document.getElementById('app').innerHTML = `
+                    <div style="padding: 100px 20px; text-align: center; color: white;">
+                        <h1>Erreur de Chargement</h1>
+                        <p>Certains composants ne se sont pas chargés correctement.</p>
+                        <p>Veuillez recharger la page.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            console.log('✅ Toutes les dépendances chargées');
+            
+            // Initialiser l'application
+            try {
+                window.oweoApp = new OweoApp();
+                console.log('✅ Application Oweo initialisée');
+            } catch (error) {
+                console.error('❌ Erreur d\'initialisation:', error);
             }
         });
     </script>

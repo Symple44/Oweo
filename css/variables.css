@@ -1,0 +1,178 @@
+/* css/variables.css - Variables CSS centralisées */
+
+:root {
+    /* Couleurs principales */
+    --primary-color: #00d4ff;
+    --secondary-color: #7c3aed;
+    --accent-color: #ff6b35;
+    
+    /* Backgrounds */
+    --bg-dark: #0c1426;
+    --bg-medium: #1a1f3a;
+    --bg-light: #2d1b42;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-card-hover: rgba(255, 255, 255, 0.05);
+    
+    /* Texte */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --text-inverse: #0c1426;
+    
+    /* Bordures et ombres */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(0, 212, 255, 0.3);
+    --shadow-color: rgba(0, 212, 255, 0.15);
+    --shadow-strong: rgba(0, 212, 255, 0.3);
+    
+    /* États */
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --error-color: #f44336;
+    --info-color: var(--primary-color);
+    
+    /* Typographie */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    
+    /* Line heights */
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
+    
+    /* Espacements */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    
+    /* Rayons de bordure */
+    --radius-sm: 0.25rem;
+    --radius-base: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Z-index */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+    
+    /* Container */
+    --container-max-width: 1200px;
+    --container-padding: 20px;
+    
+    /* Grid */
+    --grid-gap: 2rem;
+    --grid-gap-sm: 1rem;
+    --grid-gap-lg: 3rem;
+    
+    /* Navbar */
+    --navbar-height: 70px;
+    --navbar-bg: rgba(12, 20, 38, 0.95);
+    
+    /* Breakpoints */
+    --bp-sm: 640px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1280px;
+    --bp-2xl: 1536px;
+}
+
+/* Thème sombre par défaut */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-dark: #f8fafc;
+        --bg-medium: #f1f5f9;
+        --bg-light: #e2e8f0;
+        --text-primary: #1e293b;
+        --text-secondary: rgba(30, 41, 59, 0.8);
+        --text-muted: rgba(30, 41, 59, 0.5);
+        --border-color: rgba(30, 41, 59, 0.1);
+        --bg-card: rgba(255, 255, 255, 0.8);
+        --navbar-bg: rgba(248, 250, 252, 0.95);
+    }
+}
+
+/* Variables pour les animations */
+:root {
+    --anim-fade-in: fadeIn 0.6s ease-out;
+    --anim-slide-in: slideIn 0.3s ease-out;
+    --anim-slide-up: slideUp 0.4s ease-out;
+    --anim-scale-in: scaleIn 0.2s ease-out;
+    --anim-bounce: bounce 0.6s ease-out;
+}
+
+/* Variables pour les gradients */
+:root {
+    --gradient-primary: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    --gradient-hero: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 50%, var(--bg-light) 100%);
+    --gradient-card: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+    --gradient-success: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+    --gradient-warning: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+    --gradient-error: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(255, 87, 34, 0.1) 100%);
+}
+
+/* Variables pour les shadows */
+:root {
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-colored: 0 15px 30px var(--shadow-color);
+    --shadow-colored-strong: 0 20px 40px var(--shadow-strong);
+}
+
+/* Variables pour les filtres */
+:root {
+    --blur-sm: blur(4px);
+    --blur-base: blur(8px);
+    --blur-md: blur(12px);
+    --blur-lg: blur(16px);
+    --blur-xl: blur(24px);
+}
+
+/* Print variables */
+@media print {
+    :root {
+        --text-primary: #000000;
+        --text-secondary: #333333;
+        --text-muted: #666666;
+        --bg-dark: #ffffff;
+        --bg-medium: #ffffff;
+        --bg-light: #ffffff;
+        --border-color: #cccccc;
+    }
+}
