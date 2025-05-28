@@ -1,4 +1,4 @@
-// js/core/router.js - Système de routage avancé
+// js/core/router.js - Routeur corrigé pour mode file://
 
 class OweoRouter {
     constructor() {
@@ -8,6 +8,7 @@ class OweoRouter {
         this.afterHooks = [];
         this.errorHandlers = [];
         this.isNavigating = false;
+        this.isFileProtocol = window.location.protocol === 'file:';
         
         this.init();
     }
@@ -16,17 +17,19 @@ class OweoRouter {
      * Initialisation du routeur
      */
     init() {
-        // Écoute des événements de navigation
-        window.addEventListener('popstate', (event) => {
-            this.handlePopState(event);
-        });
+        // Écoute des événements de navigation seulement si pas en mode file
+        if (!this.isFileProtocol) {
+            window.addEventListener('popstate', (event) => {
+                this.handlePopState(event);
+            });
+        }
 
         // Écoute des clics sur les liens internes
         document.addEventListener('click', (event) => {
             this.handleLinkClick(event);
         });
 
-        console.log('🧭 Router initialized');
+        console.log('🧭 Router initialized (File mode:', this.isFileProtocol, ')');
     }
 
     /**
@@ -94,7 +97,10 @@ class OweoRouter {
             // Recherche de la route
             const route = this.findRoute(normalizedPath);
             if (!route) {
-                throw new Error(`Route not found: ${normalizedPath}`);
+                console.warn(`Route not found: ${normalizedPath}, loading fallback`);
+                // Charger une route par défaut
+                await this.loadDefaultRoute();
+                return false;
             }
 
             // Création de l'objet route complet
@@ -104,14 +110,21 @@ class OweoRouter {
                 params: params,
                 query: this.parseQuery(),
                 meta: route.meta,
-                component: route.component
+                component: route.component,
+                title: route.title
             };
 
-            // Mise à jour de l'historique
-            if (!options.replace) {
-                history.pushState({ path: fullPath, params }, '', fullPath);
-            } else {
-                history.replaceState({ path: fullPath, params }, '', fullPath);
+            // Mise à jour de l'historique seulement si pas en mode file
+            if (!this.isFileProtocol) {
+                try {
+                    if (!options.replace) {
+                        history.pushState({ path: fullPath, params }, '', fullPath);
+                    } else {
+                        history.replaceState({ path: fullPath, params }, '', fullPath);
+                    }
+                } catch (error) {
+                    console.warn('History API not available:', error.message);
+                }
             }
 
             // Chargement de la route
@@ -123,13 +136,8 @@ class OweoRouter {
             // Mise à jour du titre
             this.updateTitle(route.title || routeObject.path);
 
-            // Analytics
-            if (OweoUtils.analytics) {
-                OweoUtils.analytics.pageView(routeObject.path);
-            }
-
             this.currentRoute = routeObject;
-            console.log(`🧭 Navigated to: ${fullPath}`);
+            console.log(`🧭 Navigated to: ${normalizedPath}`);
             
             return true;
 
@@ -143,6 +151,24 @@ class OweoRouter {
     }
 
     /**
+     * Chargement d'une route par défaut
+     */
+    async loadDefaultRoute() {
+        const defaultRoute = {
+            path: '/',
+            fullPath: '/',
+            params: {},
+            query: {},
+            meta: {},
+            component: window.pages.home,
+            title: 'Accueil'
+        };
+
+        await this.loadRoute(defaultRoute);
+        this.currentRoute = defaultRoute;
+    }
+
+    /**
      * Navigation avec remplacement
      */
     replace(path, params = {}) {
@@ -153,7 +179,7 @@ class OweoRouter {
      * Navigation arrière
      */
     back() {
-        if (history.length > 1) {
+        if (!this.isFileProtocol && history.length > 1) {
             history.back();
         } else {
             this.navigate('/');
@@ -164,7 +190,9 @@ class OweoRouter {
      * Navigation avant
      */
     forward() {
-        history.forward();
+        if (!this.isFileProtocol) {
+            history.forward();
+        }
     }
 
     /**
@@ -180,6 +208,8 @@ class OweoRouter {
      * Gestion de l'événement popstate
      */
     async handlePopState(event) {
+        if (this.isFileProtocol) return;
+        
         const state = event.state;
         if (state && state.path) {
             await this.navigate(state.path, state.params || {}, { replace: true });
@@ -212,9 +242,13 @@ class OweoRouter {
         }
 
         // Vérifier si c'est un lien interne
-        if (href.startsWith('#') || href.startsWith('/')) {
+        if (href.startsWith('#')) {
             event.preventDefault();
-            this.navigate(href.replace('#', ''));
+            const routePath = href.replace('#', '') || '/';
+            this.navigate(routePath);
+        } else if (href.startsWith('/')) {
+            event.preventDefault();
+            this.navigate(href);
         }
     }
 
@@ -222,14 +256,17 @@ class OweoRouter {
      * Recherche d'une route
      */
     findRoute(path) {
+        // Nettoyage du path
+        const cleanPath = path === '' || path === 'home' ? '/' : path;
+        
         // Recherche exacte d'abord
-        if (this.routes.has(path)) {
-            return this.routes.get(path);
+        if (this.routes.has(cleanPath)) {
+            return this.routes.get(cleanPath);
         }
 
         // Recherche avec paramètres
         for (const [routePath, route] of this.routes) {
-            if (this.matchRoute(routePath, path)) {
+            if (this.matchRoute(routePath, cleanPath)) {
                 return route;
             }
         }
@@ -293,7 +330,8 @@ class OweoRouter {
             } else if (routeObject.component && typeof routeObject.component.render === 'function') {
                 await this.renderComponent(routeObject.component, routeObject);
             } else {
-                throw new Error('Invalid component');
+                console.warn('Invalid component, loading home');
+                await this.renderComponent(window.pages.home, routeObject);
             }
 
             // Masquage du loader
@@ -301,7 +339,9 @@ class OweoRouter {
 
         } catch (error) {
             this.hideLoader();
-            throw error;
+            console.error('Route loading error:', error);
+            // Charger la page d'accueil en cas d'erreur
+            await this.renderComponent(window.pages.home, routeObject);
         }
     }
 
@@ -325,6 +365,8 @@ class OweoRouter {
         // Rendu du composant
         if (typeof component.render === 'function') {
             pageContainer.innerHTML = component.render(routeObject);
+        } else {
+            pageContainer.innerHTML = '<div>Page en cours de chargement...</div>';
         }
 
         // Ajout au DOM
@@ -332,7 +374,11 @@ class OweoRouter {
 
         // Initialisation du composant
         if (typeof component.init === 'function') {
-            await component.init(routeObject);
+            try {
+                await component.init(routeObject);
+            } catch (error) {
+                console.error('Component init error:', error);
+            }
         }
 
         // Animation d'entrée
@@ -357,9 +403,11 @@ class OweoRouter {
             }
         }
 
-        // Fallback: redirection vers 404 ou home
-        if (attemptedPath !== '/404' && attemptedPath !== '/') {
-            this.navigate('/404', {}, { replace: true });
+        // Fallback: charger la page d'accueil
+        try {
+            await this.loadDefaultRoute();
+        } catch (fallbackError) {
+            console.error('Fallback route failed:', fallbackError);
         }
     }
 
@@ -420,7 +468,7 @@ class OweoRouter {
      * Utilitaires
      */
     normalizePath(path) {
-        if (!path || path === '/') return '/';
+        if (!path || path === '/' || path === 'home') return '/';
         return path.startsWith('/') ? path : `/${path}`;
     }
 
@@ -436,6 +484,10 @@ class OweoRouter {
     }
 
     getCurrentPath() {
+        if (this.isFileProtocol) {
+            const hash = window.location.hash;
+            return hash ? hash.replace('#', '') : '/';
+        }
         return window.location.pathname + window.location.search + window.location.hash;
     }
 
@@ -450,7 +502,8 @@ class OweoRouter {
 
     updateTitle(title) {
         if (title) {
-            document.title = OweoConfig.seo.titleTemplate.replace('%s', title);
+            const siteName = OweoConfig?.siteName || 'Oweo';
+            document.title = `${title} - ${siteName}`;
         }
     }
 
@@ -489,11 +542,26 @@ class OweoRouter {
     async start(defaultRoute = '/') {
         console.log('🚀 Starting router...');
         
-        // Chargement de la route initiale
-        const initialPath = this.getCurrentPath() || defaultRoute;
-        await this.navigate(initialPath, {}, { replace: true });
-        
-        console.log('✅ Router started');
+        try {
+            // Chargement de la route initiale
+            let initialPath = defaultRoute;
+            
+            if (this.isFileProtocol) {
+                // En mode file://, utiliser le hash pour la navigation
+                const hash = window.location.hash;
+                initialPath = hash ? hash.replace('#', '') : defaultRoute;
+            } else {
+                initialPath = this.getCurrentPath() || defaultRoute;
+            }
+            
+            await this.navigate(initialPath, {}, { replace: true });
+            console.log('✅ Router started');
+            
+        } catch (error) {
+            console.error('Router start error:', error);
+            // Charger la page d'accueil en fallback
+            await this.loadDefaultRoute();
+        }
     }
 }
 
