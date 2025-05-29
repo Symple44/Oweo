@@ -1,4 +1,4 @@
-// js/components/footer.js - Composant Footer
+// js/components/footer.js - Composant Footer Simplifié
 
 class OweoFooter {
     constructor() {
@@ -31,13 +31,13 @@ class OweoFooter {
     }
 
     /**
-     * Template du footer
+     * Template du footer simplifié
      */
     getTemplate() {
         return `
             <div class="footer-container">
                 <div class="footer-content">
-                    <!-- Section principale -->
+                    <!-- Section principale simplifiée -->
                     <div class="footer-main">
                         <div class="footer-brand">
                             <div class="footer-logo">
@@ -46,22 +46,6 @@ class OweoFooter {
                             </div>
                             <p class="footer-tagline">${OweoConfig.company.tagline}</p>
                             <p class="footer-description">${OweoConfig.company.description}</p>
-                            
-                            <!-- Stats de confiance -->
-                            <div class="footer-stats">
-                                <div class="footer-stat">
-                                    <div class="stat-number">${OweoConfig.expertise.stats.projects}</div>
-                                    <div class="stat-label">Projets réalisés</div>
-                                </div>
-                                <div class="footer-stat">
-                                    <div class="stat-number">${OweoConfig.expertise.stats.successRate}</div>
-                                    <div class="stat-label">De réussite</div>
-                                </div>
-                                <div class="footer-stat">
-                                    <div class="stat-number">${OweoConfig.expertise.stats.experience}</div>
-                                    <div class="stat-label">Années d'expertise</div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Navigation rapide -->
@@ -81,30 +65,6 @@ class OweoFooter {
                             </ul>
                         </div>
 
-                        <!-- Expertise -->
-                        <div class="footer-expertise">
-                            <h4>Notre Expertise</h4>
-                            <ul class="footer-links">
-                                ${OweoConfig.sectors.map(sector => `
-                                    <li>
-                                        <a href="#" class="sector-link" data-sector="${sector.id}">
-                                            <span class="link-icon">${sector.icon}</span>
-                                            ${sector.name}
-                                        </a>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                            
-                            <div class="footer-technologies">
-                                <h5>Technologies maîtrisées</h5>
-                                <div class="tech-tags">
-                                    ${OweoConfig.technologies.erp.primary.slice(0, 4).map(tech => 
-                                        `<span class="tech-tag">${tech}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Contact -->
                         <div class="footer-contact">
                             <h4>Contact</h4>
@@ -117,22 +77,10 @@ class OweoFooter {
                                 </div>
                                 
                                 <div class="contact-item">
-                                    <span class="contact-icon">📞</span>
-                                    <a href="tel:${OweoConfig.contact.phone}" class="contact-link">
-                                        ${OweoConfig.contact.phone}
-                                    </a>
-                                </div>
-                                
-                                <div class="contact-item">
                                     <span class="contact-icon">📍</span>
                                     <span class="contact-text">
                                         ${OweoConfig.contact.address.city}, ${OweoConfig.contact.address.country}
                                     </span>
-                                </div>
-                                
-                                <div class="contact-item">
-                                    <span class="contact-icon">🕒</span>
-                                    <span class="contact-text">Lun-Ven 9h-18h</span>
                                 </div>
                             </div>
 
@@ -153,49 +101,19 @@ class OweoFooter {
                         </div>
                     </div>
 
-                    <!-- Section CTA -->
-                    <div class="footer-cta">
-                        <div class="cta-content">
-                            <h3>🎯 Prêt à transformer votre entreprise ?</h3>
-                            <p>Diagnostic gratuit personnalisé + plan d'action concret</p>
-                            <div class="cta-actions">
-                                <button class="btn btn-primary" data-calendly="true">
-                                    📅 Diagnostic gratuit (30min)
-                                </button>
-                                <a href="mailto:${OweoConfig.contact.email}" class="btn btn-secondary">
-                                    📧 Contact direct
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Garanties -->
-                        <div class="footer-guarantees">
-                            ${OweoConfig.guarantees.slice(0, 2).map(guarantee => `
-                                <div class="guarantee-item">
-                                    <span class="guarantee-icon">${guarantee.icon}</span>
-                                    <div class="guarantee-text">
-                                        <strong>${guarantee.title}</strong>
-                                        <span>${guarantee.description}</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
 
-                    <!-- Section légale -->
+                    <!-- Section légale simplifiée -->
                     <div class="footer-legal">
                         <div class="footer-bottom">
                             <div class="footer-copyright">
                                 <p>© ${new Date().getFullYear()} ${OweoConfig.company.name}. Tous droits réservés.</p>
                                 <p class="legal-info">
-                                    ${OweoConfig.company.legalName} - 
-                                    ${OweoConfig.contact.address.city} - 
-                                    Expertise depuis ${OweoConfig.company.founded}
+                                    Expert ERP & Transformation Digitale - ${OweoConfig.contact.address.city}
                                 </p>
                             </div>
                             
                             <div class="footer-legal-links">
-                                ${OweoConfig.legalPages.map(page => `
+                                ${OweoConfig.legalPages.slice(0, 3).map(page => `
                                     <a href="#${page.id}" 
                                        data-nav-item="${page.id}"
                                        class="legal-link">
@@ -203,32 +121,6 @@ class OweoFooter {
                                     </a>
                                 `).join('')}
                             </div>
-                        </div>
-
-                        <!-- Newsletter -->
-                        <div class="footer-newsletter">
-                            <h4>📬 Restez informé</h4>
-                            <p>Recevez nos guides experts et actualités du secteur</p>
-                            <form class="newsletter-form" id="newsletter-form">
-                                <div class="newsletter-input">
-                                    <input type="email" 
-                                           placeholder="Votre email professionnel" 
-                                           required
-                                           aria-label="Email pour newsletter"
-                                           id="newsletter-email">
-                                    <button type="submit" class="btn btn-primary">
-                                        S'inscrire
-                                    </button>
-                                </div>
-                                <p class="newsletter-privacy">
-                                    <small>
-                                        Pas de spam, désinscription en 1 clic. 
-                                        <a href="#politique-confidentialite" class="privacy-link">
-                                            Voir notre politique de confidentialité
-                                        </a>
-                                    </small>
-                                </p>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -245,7 +137,7 @@ class OweoFooter {
     }
 
     /**
-     * Liaison des événements
+     * Liaison des événements simplifiée
      */
     bindEvents() {
         if (!this.element) return;
@@ -255,12 +147,6 @@ class OweoFooter {
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => this.handleNavClick(e));
         });
-
-        // Newsletter form
-        const newsletterForm = this.element.querySelector('#newsletter-form');
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', (e) => this.handleNewsletterSubmit(e));
-        }
 
         // Calendly buttons
         const calendlyButtons = this.element.querySelectorAll('[data-calendly]');
@@ -275,12 +161,6 @@ class OweoFooter {
         const socialLinks = this.element.querySelectorAll('.social-link');
         socialLinks.forEach(link => {
             link.addEventListener('click', (e) => this.trackSocialClick(e));
-        });
-
-        // Sector links
-        const sectorLinks = this.element.querySelectorAll('.sector-link');
-        sectorLinks.forEach(link => {
-            link.addEventListener('click', (e) => this.handleSectorClick(e));
         });
     }
 
@@ -334,53 +214,6 @@ class OweoFooter {
     }
 
     /**
-     * Gestion de la soumission newsletter
-     */
-    async handleNewsletterSubmit(event) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const email = form.querySelector('#newsletter-email').value;
-        
-        if (!OweoUtils.validate?.email(email)) {
-            OweoUtils.notification?.show('Veuillez saisir un email valide', 'error');
-            return;
-        }
-
-        try {
-            // Désactivation du formulaire
-            form.classList.add('loading');
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Inscription...';
-            submitBtn.disabled = true;
-
-            // Simulation d'inscription (à remplacer par vraie API)
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Succès
-            OweoUtils.notification?.show('Inscription réussie ! Merci pour votre confiance.', 'success');
-            form.reset();
-            
-            // Analytics
-            OweoUtils.analytics?.track('newsletter_signup', {
-                email: email,
-                location: 'footer'
-            });
-
-        } catch (error) {
-            console.error('Newsletter signup error:', error);
-            OweoUtils.notification?.show('Erreur lors de l\'inscription. Veuillez réessayer.', 'error');
-        } finally {
-            // Réactivation du formulaire
-            form.classList.remove('loading');
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.textContent = 'S\'inscrire';
-            submitBtn.disabled = false;
-        }
-    }
-
-    /**
      * Ouverture de Calendly
      */
     openCalendly() {
@@ -411,23 +244,6 @@ class OweoFooter {
     }
 
     /**
-     * Gestion des clics secteur
-     */
-    handleSectorClick(event) {
-        event.preventDefault();
-        
-        const sector = event.currentTarget.dataset.sector;
-        
-        // Affichage d'une modal ou redirection vers une page secteur
-        OweoUtils.notification?.show(`Information sur ${sector} bientôt disponible`, 'info');
-        
-        OweoUtils.analytics?.track('sector_click', {
-            sector: sector,
-            location: 'footer'
-        });
-    }
-
-    /**
      * Configuration de l'accessibilité
      */
     setupAccessibility() {
@@ -442,8 +258,8 @@ class OweoFooter {
             }
         });
 
-        // Rôles ARIA
-        const navSections = this.element.querySelectorAll('.footer-nav, .footer-expertise');
+        // Rôles ARIA pour la navigation
+        const navSections = this.element.querySelectorAll('.footer-nav');
         navSections.forEach(section => {
             section.setAttribute('role', 'navigation');
             const list = section.querySelector('ul');
@@ -451,13 +267,6 @@ class OweoFooter {
                 list.setAttribute('role', 'list');
             }
         });
-
-        // Form accessibility
-        const form = this.element.querySelector('#newsletter-form');
-        if (form) {
-            form.setAttribute('role', 'form');
-            form.setAttribute('aria-label', 'Inscription newsletter');
-        }
     }
 
     /**
@@ -482,61 +291,6 @@ class OweoFooter {
     }
 
     /**
-     * Mise à jour des statistiques
-     */
-    updateStats(stats) {
-        if (!this.element) return;
-
-        const statNumbers = this.element.querySelectorAll('.footer-stat .stat-number');
-        const statsArray = Object.values(stats);
-        
-        statNumbers.forEach((element, index) => {
-            if (statsArray[index]) {
-                element.textContent = statsArray[index];
-            }
-        });
-
-        console.log('Footer stats updated');
-    }
-
-    /**
-     * Animation des statistiques
-     */
-    animateStats() {
-        const stats = this.element?.querySelectorAll('.footer-stat');
-        if (!stats) return;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
-                }
-            });
-        }, { threshold: 0.5 });
-
-        stats.forEach(stat => observer.observe(stat));
-    }
-
-    /**
-     * Vérification des liens morts
-     */
-    checkLinks() {
-        const links = this.element?.querySelectorAll('a[href]');
-        if (!links) return;
-
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href.startsWith('#') && href.length > 1) {
-                const targetId = href.substring(1);
-                if (!document.getElementById(targetId)) {
-                    console.warn(`Dead link found in footer: ${href}`);
-                    link.classList.add('dead-link');
-                }
-            }
-        });
-    }
-
-    /**
      * Destruction du composant
      */
     destroy() {
@@ -556,10 +310,6 @@ class OweoFooter {
     update(config = {}) {
         if (config.contact) {
             this.updateContactInfo(config.contact);
-        }
-        
-        if (config.stats) {
-            this.updateStats(config.stats);
         }
         
         console.log('🦶 Footer component updated');

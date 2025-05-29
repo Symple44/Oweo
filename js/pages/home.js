@@ -1,32 +1,33 @@
-// js/pages/home.js - Page d'accueil simplifiée et améliorée
+// js/pages/home.js - Page d'accueil améliorée
 
 window.pages = window.pages || {};
 
 window.pages.home = {
     render() {
         return `
-            <!-- Hero Section Simplifié -->
+            <!-- Hero Section Authentique -->
             <section class="hero">
                 <div class="container">
                     <div class="hero-content">
                         <h1 class="gradient-text">Expert ERP & Transformation Digitale pour la Charpente Métallique</h1>
                         <p class="hero-subtitle">
-                            Nous vous accompagnons pour <strong>gagner en productivité</strong> grâce à des solutions ERP adaptées à votre métier.<br>
-                            <span class="hero-guarantee">✅ Expérience terrain ada</span>
+                            <strong>10+ années d'expertise terrain</strong> en métallurgie, charpente et serrurerie.<br>
+                            Nous vous accompagnons dans votre transformation digitale avec des solutions adaptées à votre métier.
+                            <span class="hero-guarantee">✅ Ingénieur spécialisé Construction Métallique - Expert ERP métier</span>
                         </p>
                         
                         <div class="hero-stats">
                             <div class="stat">
-                                <div class="stat-number">15+</div>
-                                <div class="stat-label">Projets ERP réussis</div>
+                                <div class="stat-number">10+</div>
+                                <div class="stat-label">Années d'expérience</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">+20%</div>
-                                <div class="stat-label">Productivité moyenne</div>
+                                <div class="stat-number">100%</div>
+                                <div class="stat-label">Spécialisé métallurgie</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">18 mois</div>
-                                <div class="stat-label">ROI garanti</div>
+                                <div class="stat-number">360°</div>
+                                <div class="stat-label">De l'atelier au bureau</div>
                             </div>
                         </div>
                         
@@ -34,13 +35,13 @@ window.pages.home = {
                             <button class="btn btn-primary btn-large" data-calendly="true">
                                 🎯 Diagnostic Gratuit (30min)
                             </button>
-                            <a href="#expertise-simple" class="btn btn-secondary btn-large">
-                                Voir Nos Services
+                            <a href="#solutions" class="btn btn-secondary btn-large">
+                                Voir Nos Solutions
                             </a>
                         </div>
                         
                         <div class="hero-trust">
-                            <p>🏆 Spécialistes reconnus par </p>
+                            <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP métallurgie</p>
                         </div>
                     </div>
                 </div>
@@ -58,80 +59,34 @@ window.pages.home = {
                 </div>
             </section>
 
-            <!-- Calculateur ROI Simplifié 
-            <section class="section section-special-bg">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">💰 Calculez vos Gains en 30 Secondes</h2>
-                        <p class="section-subtitle">Estimation basée sur nos résultats clients réels</p>
-                    </div>
-                    
-                    <div class="roi-calculator-simple">
-                        <div class="calculator-inputs">
-                            <div class="input-group">
-                                <label>Nombre d'employés administratifs/BE :</label>
-                                <input type="number" id="employees" value="5" min="1" max="50">
-                            </div>
-                            <div class="input-group">
-                                <label>Devis par semaine :</label>
-                                <input type="number" id="quotes" value="10" min="1" max="100">
-                            </div>
-                        </div>
-                        
-                        <div class="calculator-results" id="roi-results">
-                            <div class="result-item">
-                                <div class="result-value" id="time-saved">10h</div>
-                                <div class="result-label">Temps économisé/semaine</div>
-                            </div>
-                            <div class="result-item">
-                                <div class="result-value" id="annual-savings">23 400€</div>
-                                <div class="result-label">Économies annuelles</div>
-                            </div>
-                            <div class="result-item">
-                                <div class="result-value" id="roi-period">12 mois</div>
-                                <div class="result-label">Retour sur investissement</div>
-                            </div>
-                        </div>
-                        
-                        <div class="calculator-cta">
-                            <p><strong>Ces résultats vous intéressent ?</strong></p>
-                            <button class="btn btn-primary btn-large" data-calendly="true">
-                                📅 Validons ces chiffres ensemble
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section> -->
-
-            <!-- Témoignages Simples 
+            <!-- Témoignages Authentiques -->
             <section class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2 class="section-title">Ce que disent nos Clients</h2>
-                        <p class="section-subtitle">Témoignages authentiques de dirigeants satisfaits</p>
+                        <h2 class="section-title">Retours d'Expérience</h2>
+                        <p class="section-subtitle">Témoignages de dirigeants du secteur</p>
                     </div>
                     
                     <div class="testimonials-simple" id="testimonials-simple"></div>
                 </div>
-            </section> -->
+            </section>
 
             <!-- Notre Approche en 3 Étapes -->
             <section class="section section-special-bg">
                 <div class="container">
                     <div class="section-header">
-                        <h2 class="section-title">Notre Méthode en 3 Étapes Simples</h2>
-                        <p class="section-subtitle">Processus éprouvé pour garantir votre réussite</p>
+                        <h2 class="section-title">Notre Approche en 3 Étapes</h2>
+                        <p class="section-subtitle">Méthode éprouvée pour votre réussite</p>
                     </div>
                     
                     <div class="method-simple" id="method-simple"></div>
                     
-                    <!--<div class="method-guarantee">
+                    <div class="method-guarantee">
                         <div class="guarantee-banner">
-                            <h3>🛡️ Notre Garantie</h3>
-                            <p>Si vous ne gagnez pas <strong>1h/jour/utilisateur en 3 mois</strong>, nous reprenons le projet sans frais.</p>
+                            <h3>🛡️ Notre Engagement</h3>
+                            <p>Nous vous accompagnons jusqu'à l'atteinte de vos objectifs avec <strong>un support complet inclus</strong>.</p>
                         </div>
                     </div>
-                    -->
                 </div>
             </section>
 
@@ -159,21 +114,21 @@ window.pages.home = {
                 </div>
             </section>
 
-            <!-- CTA Final Renforcé -->
+            <!-- CTA Final Authentique -->
             <section class="cta-final">
                 <div class="container">
                     <div class="cta-content">
-                        <h2>🚀 Prêt à Transformer votre Entreprise ?</h2>
+                        <h2>🚀 Parlons de votre Projet</h2>
                         <p class="cta-description">
-                            Diagnostic gratuit de 30 minutes pour identifier vos gains prioritaires.<br>
-                            <strong>Sans engagement - Résultats garantis</strong>
+                            Diagnostic gratuit de 30 minutes pour identifier vos priorités.<br>
+                            <strong>Échange sans engagement - Conseil personnalisé</strong>
                         </p>
                         
-                        <div class="cta-benefits">
+                        <div class="cta-benefits" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
                             <div class="benefit">✅ Audit personnalisé gratuit</div>
+                            <div class="benefit">✅ Conseils d'expert métier</div>
+                            <div class="benefit">✅ Estimation budgétaire</div>
                             <div class="benefit">✅ Plan d'action concret</div>
-                            <div class="benefit">✅ ROI calculé précisément</div>
-                            <div class="benefit">✅ Recommandations d'expert</div>
                         </div>
                         
                         <div class="cta-actions">
@@ -200,10 +155,9 @@ window.pages.home = {
         this.renderSimpleMethod();
         this.renderExpertise();
         this.renderEssentialFAQ();
-        this.initSimpleROICalculator();
         this.bindEvents();
         
-        console.log('🏠 Simplified home page initialized');
+        console.log('🏠 Improved home page initialized');
     },
 
     renderProblemsAndSolutions() {
@@ -212,52 +166,52 @@ window.pages.home = {
                 problem: {
                     icon: '⏰',
                     title: 'Chiffrage trop Long',
-                    description: '4-6h par devis avec des erreurs fréquentes'
+                    description: 'Plusieurs heures par devis avec risques d\'erreurs'
                 },
                 solution: {
                     icon: '⚡',
                     title: 'Chiffrage Automatisé',
-                    description: '30 minutes par devis avec bases de données intégrées',
-                    result: 'Gain : 75% de temps'
+                    description: 'Bases de données intégrées et calculs automatiques',
+                    result: 'Gain de temps significatif'
                 }
             },
             {
                 problem: {
                     icon: '❌',
-                    title: 'Pas de Visibilité sur les Marges',
-                    description: 'Impossible de connaître la rentabilité réelle'
+                    title: 'Manque de Visibilité',
+                    description: 'Difficile de connaître la rentabilité réelle par projet'
                 },
                 solution: {
                     icon: '📊',
                     title: 'Pilotage Temps Réel',
-                    description: 'Visibilité complète sur marges et performances',
-                    result: 'Gain : +3 points de marge'
+                    description: 'Tableaux de bord et suivi des marges en continu',
+                    result: 'Visibilité complète'
                 }
             },
             {
                 problem: {
                     icon: '🔄',
-                    title: 'Trop de Saisies Manuelles',
-                    description: 'Double/triple saisie des mêmes informations'
+                    title: 'Trop de Ressaisies',
+                    description: 'Double ou triple saisie des mêmes informations'
                 },
                 solution: {
                     icon: '🚀',
                     title: 'Synchronisation Automatique',
-                    description: 'CAO-ERP synchronisés, génération automatique des OF',
-                    result: 'Gain : 2h/jour/personne'
+                    description: 'Intégration CAO-ERP et génération automatique des OF',
+                    result: 'Suppression des ressaisies'
                 }
             },
             {
                 problem: {
                     icon: '⚠️',
-                    title: 'Conformité EN1090 Stressante',
-                    description: 'Documentation papier et préparation audit difficile'
+                    title: 'Conformité EN1090 Complexe',
+                    description: 'Documentation papier difficile à maintenir pour les audits'
                 },
                 solution: {
                     icon: '✅',
                     title: 'Conformité Digitalisée',
-                    description: 'Traçabilité automatique et audits sans stress',
-                    result: 'Certification garantie'
+                    description: 'Traçabilité automatique et préparation audits simplifiée',
+                    result: 'Conformité maîtrisée'
                 }
             }
         ];
@@ -286,22 +240,22 @@ window.pages.home = {
     renderTestimonials() {
         const testimonials = [
             {
-                quote: "Oweo a révolutionné notre gestion. Nous économisons 10h par semaine et nos marges ont progressé de 3 points.",
-                author: "Michel Dubois",
-                company: "Directeur Général - Charpente Bretagne (80 sal.)",
-                result: "ROI atteint en 8 mois"
+                quote: "Oweo maîtrise parfaitement notre métier de charpentier métallique. Leur approche terrain et leur connaissance technique font la différence.",
+                author: "Dirigeant",
+                company: "Entreprise de Charpente Métallique - Nouvelle-Aquitaine",
+                result: "Projet ERP réussi"
             },
             {
-                quote: "L'approche terrain d'Oweo fait la différence. Ils comprennent nos contraintes et proposent des solutions qui marchent.",
-                author: "Sophie Martin",
-                company: "Directrice - Métallerie Moderne (25 sal.)",
-                result: "+20% productivité"
+                quote: "Enfin un consultant qui comprend nos contraintes d'atelier et de bureau d'études. Les solutions proposées sont concrètes et efficaces.",
+                author: "Responsable Production",
+                company: "Serrurerie Métallerie - Pays de la Loire",
+                result: "Optimisation réussie"
             },
             {
-                quote: "Grâce à Oweo, nos audits EN1090 se passent maintenant sans stress. La traçabilité est automatique.",
-                author: "Pierre Rousseau",
-                company: "Responsable Qualité - Charpente Industrielle",
-                result: "Certification Exc.3"
+                quote: "L'expertise EN1090 d'Oweo nous a permis d'obtenir notre certification Exc.3 sereinement. Un vrai plus pour notre développement.",
+                author: "Responsable Qualité",
+                company: "Charpente Industrielle - Bretagne",
+                result: "Certification EN1090"
             }
         ];
 
@@ -334,23 +288,20 @@ window.pages.home = {
         const steps = [
             {
                 number: '1',
-                title: 'Diagnostic Gratuit',
+                title: 'Diagnostic Personnalisé',
                 description: 'Audit de votre situation actuelle et identification des priorités',
-                duration: '2-3 jours',
                 icon: '🔍'
             },
             {
                 number: '2',
                 title: 'Solution Sur-Mesure',
                 description: 'Choix et déploiement de la solution optimale pour votre entreprise',
-                duration: '3-6 mois',
                 icon: '🛠️'
             },
             {
                 number: '3',
-                title: 'Résultats Garantis',
-                description: 'Accompagnement jusqu\'à l\'atteinte de vos objectifs de performance',
-                duration: '6 mois',
+                title: 'Accompagnement Complet',
+                description: 'Formation et support jusqu\'à l\'atteinte de vos objectifs',
                 icon: '🎯'
             }
         ];
@@ -366,7 +317,6 @@ window.pages.home = {
                         <div class="step-number-large">${step.number}</div>
                         <h3>${step.title}</h3>
                         <p>${step.description}</p>
-                        <!-- <div class="step-duration">⏱️ ${step.duration}</div> -->
                     </div>
                 `).join('')}
             </div>
@@ -378,7 +328,7 @@ window.pages.home = {
             {
                 icon: '🛠️',
                 title: 'ERP & Gestion',
-                description: 'Sage X3, Eurêka, 2CM Manager - Solutions ERP adaptées à votre métier',
+                description: 'Sage X3, GesCom, 2CM Manager - Solutions ERP spécialisées métallurgie',
                 link: 'outils-gestion'
             },
             {
@@ -401,13 +351,13 @@ window.pages.home = {
             },
             {
                 icon: '⚡',
-                title: 'Optimisation',
+                title: 'Optimisation Production',
                 description: 'Amélioration continue et gains de productivité mesurables',
                 link: 'optimisation'
             },
             {
                 icon: '🤝',
-                title: 'Accompagnement',
+                title: 'Accompagnement Projet',
                 description: 'Support complet de A à Z pour garantir votre réussite',
                 link: 'accompagnement-projet'
             }
@@ -433,20 +383,24 @@ window.pages.home = {
     renderEssentialFAQ() {
         const essentialFAQ = [
             {
-                question: "Combien coûte un projet ERP complet ?",
-                answer: "Entre 25k€ et 80k€ selon la taille de votre entreprise. Nous calculons systématiquement le ROI avant de commencer pour valider la rentabilité. Diagnostic gratuit pour une estimation précise."
+                question: "Combien coûte un projet de transformation digitale ?",
+                answer: "Le budget varie selon la taille de votre entreprise et vos besoins. Nous réalisons toujours un diagnostic gratuit pour vous donner une estimation précise et évaluer la pertinence de l'investissement."
             },
             {
                 question: "Combien de temps dure un projet ?",
-                answer: "3 à 6 mois en moyenne pour un déploiement complet. Le diagnostic prend 2-3 jours, puis 4-8 semaines de déploiement avec 6 mois de support inclus."
+                answer: "Généralement 3 à 6 mois pour un déploiement complet. Le diagnostic prend 2-3 jours, puis nous définissons ensemble le planning adapté à votre activité et vos contraintes."
             },
             {
-                question: "Quels sont les gains typiques obtenus ?",
-                answer: "Nos clients gagnent en moyenne : +20% de productivité, -60% d'erreurs, +3 points de marge, 2h/jour économisées par personne. ROI moyen atteint en 18 mois."
+                question: "Quels sont les bénéfices typiques obtenus ?",
+                answer: "Les entreprises que nous accompagnons constatent une amélioration significative de leur productivité, une réduction des erreurs et une meilleure visibilité sur leurs marges. Les gains varient selon le contexte initial."
             },
             {
-                question: "Que se passe-t-il si les résultats ne sont pas au rendez-vous ?",
-                answer: "Nous garantissons des gains mesurables. Si vous ne gagnez pas 1h/jour/utilisateur en 3 mois, nous reprenons le projet sans frais supplémentaires."
+                question: "Comment l'IA peut-elle aider mon entreprise de métallurgie ?",
+                answer: "L'IA peut automatiser le contrôle qualité des soudures, optimiser vos découpes pour réduire les chutes, ou encore créer des assistants intelligents pour vos devis. Nous étudions les applications concrètes selon votre métier."
+            },
+            {
+                question: "Comment assurez-vous la réussite du projet ?",
+                answer: "Fort de 10+ années d'expérience terrain en métallurgie, nous vous accompagnons de A à Z avec une approche pragmatique. Support complet inclus pour garantir votre autonomie."
             }
         ];
 
@@ -457,7 +411,7 @@ window.pages.home = {
             <div class="faq-list-essential">
                 ${essentialFAQ.map((item, index) => `
                     <div class="faq-item-essential">
-                        <div class="faq-question-essential" onclick="this.parentElement.classList.toggle('active')" role="button" tabindex="0">
+                        <div class="faq-question-essential" role="button" tabindex="0" aria-expanded="false">
                             <h3>${item.question}</h3>
                             <span class="faq-toggle-essential">+</span>
                         </div>
@@ -470,61 +424,56 @@ window.pages.home = {
         `;
     },
 
-    initSimpleROICalculator() {
-        const calculateSimpleROI = () => {
-            const employees = parseInt(document.getElementById('employees').value) || 5;
-            const quotes = parseInt(document.getElementById('quotes').value) || 10;
-            
-            // Calculs simplifiés basés sur nos données réelles
-            const timeSavedWeekly = quotes * 2; // 2h gagnées par devis
-            const hourlyCost = 45; // Coût horaire moyen
-            const annualSavings = timeSavedWeekly * 52 * hourlyCost;
-            
-            // Coût projet estimé
-            const projectCost = Math.max(25000, Math.min(80000, employees * 6000));
-            const roiMonths = Math.round(projectCost / (annualSavings / 12));
-            
-            // Mise à jour affichage
-            document.getElementById('time-saved').textContent = `${timeSavedWeekly}h`;
-            document.getElementById('annual-savings').textContent = `${annualSavings.toLocaleString('fr-FR')}€`;
-            document.getElementById('roi-period').textContent = `${Math.min(roiMonths, 24)} mois`;
-        };
-        
-        // Event listeners
-        ['employees', 'quotes'].forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', calculateSimpleROI);
-                input.addEventListener('change', calculateSimpleROI);
-            }
-        });
-        
-        // Calcul initial
-        setTimeout(calculateSimpleROI, 100);
-    },
-
     bindEvents() {
-        // Gestion FAQ
+    bindEvents() {
+        // Gestion FAQ corrigée
         const faqItems = document.querySelectorAll('.faq-item-essential');
-        faqItems.forEach(item => {
+        faqItems.forEach((item, index) => {
             const question = item.querySelector('.faq-question-essential');
             const toggle = item.querySelector('.faq-toggle-essential');
             
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
+            if (question && toggle) {
+                const toggleFAQ = () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Fermer tous les autres items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            const otherToggle = otherItem.querySelector('.faq-toggle-essential');
+                            if (otherToggle) {
+                                otherToggle.textContent = '+';
+                            }
+                            const otherQuestion = otherItem.querySelector('.faq-question-essential');
+                            if (otherQuestion) {
+                                otherQuestion.setAttribute('aria-expanded', 'false');
+                            }
+                        }
+                    });
+                    
+                    // Toggle l'item actuel
+                    if (!isActive) {
+                        item.classList.add('active');
+                        toggle.textContent = '−';
+                        question.setAttribute('aria-expanded', 'true');
+                    } else {
+                        item.classList.remove('active');
+                        toggle.textContent = '+';
+                        question.setAttribute('aria-expanded', 'false');
+                    }
+                };
                 
-                // Fermer tous les autres
-                faqItems.forEach(otherItem => {
-                    otherItem.classList.remove('active');
-                    otherItem.querySelector('.faq-toggle-essential').textContent = '+';
+                // Événement clic
+                question.addEventListener('click', toggleFAQ);
+                
+                // Support clavier
+                question.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleFAQ();
+                    }
                 });
-                
-                // Toggle actuel
-                if (!isActive) {
-                    item.classList.add('active');
-                    toggle.textContent = '−';
-                }
-            });
+            }
         });
 
         // Calendly buttons
@@ -583,7 +532,7 @@ window.pages.home = {
             
             if (OweoUtils.analytics) {
                 OweoUtils.analytics.track('calendly_open', {
-                    location: 'home_page_simplified'
+                    location: 'home_page_improved'
                 });
             }
         } else {
@@ -593,4 +542,4 @@ window.pages.home = {
     }
 };
 
-console.log('🏠 Simplified home page loaded');
+console.log('🏠 Improved home page loaded');

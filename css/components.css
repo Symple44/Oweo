@@ -19,10 +19,10 @@
     padding: var(--space-16) 0 var(--space-6);
 }
 
-/* Section principale */
+/* Section principale simplifiée - 3 colonnes */
 .footer-main {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    grid-template-columns: 2fr 1fr 1fr;
     gap: var(--space-12);
     margin-bottom: var(--space-12);
 }
@@ -67,41 +67,8 @@
     line-height: var(--line-height-relaxed);
 }
 
-.footer-stats {
-    display: flex;
-    gap: var(--space-6);
-    flex-wrap: wrap;
-}
-
-.footer-stat {
-    text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: var(--transition-slow);
-}
-
-.footer-stat.animate {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.footer-stat .stat-number {
-    font-size: var(--font-size-2xl);
-    font-weight: 800;
-    color: var(--primary-color);
-    display: block;
-    line-height: 1;
-}
-
-.footer-stat .stat-label {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-    margin-top: var(--space-1);
-}
-
 /* Navigation sections */
 .footer-nav h4,
-.footer-expertise h4,
 .footer-contact h4 {
     color: var(--text-primary);
     font-size: var(--font-size-lg);
@@ -139,33 +106,6 @@
     font-size: var(--font-size-sm);
     width: 16px;
     text-align: center;
-}
-
-/* Technologies */
-.footer-technologies {
-    margin-top: var(--space-6);
-}
-
-.footer-technologies h5 {
-    color: var(--text-primary);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    margin-bottom: var(--space-3);
-}
-
-.tech-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-}
-
-.tech-tag {
-    background: rgba(0, 212, 255, 0.1);
-    color: var(--primary-color);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-xs);
-    font-weight: 500;
 }
 
 /* Contact */
@@ -238,78 +178,37 @@
     object-fit: contain;
 }
 
-/* Section CTA */
+/* Section CTA simplifiée */
 .footer-cta {
     background: var(--gradient-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--space-8);
     margin-bottom: var(--space-12);
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: var(--space-8);
-    align-items: center;
+    text-align: center;
 }
 
-.cta-content h3 {
+.footer-cta h3 {
     font-size: var(--font-size-2xl);
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: var(--space-3);
 }
 
-.cta-content p {
+.footer-cta p {
     color: var(--text-secondary);
     margin-bottom: var(--space-6);
     font-size: var(--font-size-base);
 }
 
-.cta-actions {
+.footer-cta .cta-actions {
     display: flex;
     gap: var(--space-4);
+    justify-content: center;
     flex-wrap: wrap;
 }
 
-.footer-guarantees {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-}
-
-.guarantee-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: rgba(0, 212, 255, 0.05);
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(0, 212, 255, 0.2);
-}
-
-.guarantee-icon {
-    font-size: var(--font-size-lg);
-    flex-shrink: 0;
-}
-
-.guarantee-text {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-}
-
-.guarantee-text strong {
-    color: var(--text-primary);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-}
-
-.guarantee-text span {
-    color: var(--text-secondary);
-    font-size: var(--font-size-xs);
-    line-height: var(--line-height-snug);
-}
-
-/* Section légale */
+/* Section légale simplifiée */
 .footer-legal {
     border-top: 1px solid var(--border-color);
     padding-top: var(--space-8);
@@ -319,7 +218,6 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-8);
     gap: var(--space-6);
 }
 
@@ -349,72 +247,6 @@
 
 .legal-link:hover {
     color: var(--primary-color);
-}
-
-/* Newsletter */
-.footer-newsletter h4 {
-    color: var(--text-primary);
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    margin-bottom: var(--space-3);
-}
-
-.footer-newsletter p {
-    color: var(--text-secondary);
-    margin-bottom: var(--space-4);
-    font-size: var(--font-size-sm);
-}
-
-.newsletter-form {
-    max-width: 400px;
-}
-
-.newsletter-input {
-    display: flex;
-    gap: var(--space-2);
-    margin-bottom: var(--space-3);
-}
-
-.newsletter-input input {
-    flex: 1;
-    padding: var(--space-3);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-card);
-    color: var(--text-primary);
-    font-size: var(--font-size-sm);
-}
-
-.newsletter-input input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
-}
-
-.newsletter-input button {
-    white-space: nowrap;
-    font-size: var(--font-size-sm);
-    padding: var(--space-3) var(--space-4);
-}
-
-.newsletter-privacy {
-    font-size: var(--font-size-xs);
-    color: var(--text-muted);
-    line-height: var(--line-height-snug);
-}
-
-.privacy-link {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.privacy-link:hover {
-    text-decoration: underline;
-}
-
-.newsletter-form.loading {
-    opacity: 0.6;
-    pointer-events: none;
 }
 
 /* Back to top */
@@ -2150,16 +1982,24 @@
     padding: var(--space-6);
     cursor: pointer;
     transition: var(--transition-base);
+    background: transparent;
 }
 
 .faq-question-essential:hover {
     background: var(--bg-card-hover);
 }
 
+.faq-question-essential:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+}
+
 .faq-question-essential h3 {
     color: var(--text-primary);
     font-size: var(--font-size-lg);
     margin: 0;
+    flex: 1;
+    text-align: left;
 }
 
 .faq-toggle-essential {
@@ -2167,6 +2007,7 @@
     color: var(--primary-color);
     font-weight: bold;
     transition: var(--transition-base);
+    margin-left: var(--space-4);
 }
 
 .faq-item-essential.active .faq-toggle-essential {
@@ -2176,11 +2017,11 @@
 .faq-answer-essential {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease-out;
 }
 
 .faq-item-essential.active .faq-answer-essential {
-    max-height: 200px;
+    max-height: 300px;
 }
 
 .faq-answer-essential p {
@@ -2215,10 +2056,9 @@
 
 .cta-benefits {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-4);
-    max-width: 800px;
-    margin: 0 auto var(--space-8);
+    margin: var(--space-6) 0;
 }
 
 .benefit {
@@ -2226,6 +2066,7 @@
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     font-weight: 600;
+    text-align: center;
 }
 
 .cta-actions {
@@ -2299,7 +2140,8 @@
     }
     
     .cta-benefits {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+        gap: var(--space-3);
     }
     
     .cta-actions {
@@ -2310,6 +2152,54 @@
     .cta-actions .btn {
         width: 100%;
         max-width: 300px;
+    }
+     .footer-main {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+    }
+    
+    .footer-cta .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .footer-cta .cta-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
+    }
+    
+    .footer-legal-links {
+        justify-content: center;
+        gap: var(--space-4);
+    }
+    
+    .back-to-top {
+        bottom: var(--space-4);
+        right: var(--space-4);
+        width: 45px;
+        height: 45px;
+    }
+    .faq-question-essential {
+        padding: var(--space-4);
+    }
+    
+    .faq-question-essential h3 {
+        font-size: var(--font-size-base);
+    }
+    
+    .faq-toggle-essential {
+        font-size: var(--font-size-lg);
+    }
+    
+    .faq-answer-essential p {
+        padding: 0 var(--space-4) var(--space-4);
+        font-size: var(--font-size-sm);
     }
 }
 
