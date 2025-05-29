@@ -11,8 +11,8 @@ window.pages.home = {
                     <div class="hero-content">
                         <h1 class="gradient-text">Expert ERP & Transformation Digitale pour la Charpente Métallique</h1>
                         <p class="hero-subtitle">
-                            Nous vous accompagnons pour <strong>gagner 20% de productivité</strong> grâce à des solutions ERP adaptées à votre métier.<br>
-                            <span class="hero-guarantee">✅ 15 projets réussis - 100% de satisfaction - ROI garanti en 18 mois</span>
+                            Nous vous accompagnons pour <strong>gagner en productivité</strong> grâce à des solutions ERP adaptées à votre métier.<br>
+                            <span class="hero-guarantee">✅ Expérience terrain ada</span>
                         </p>
                         
                         <div class="hero-stats">
@@ -34,13 +34,13 @@ window.pages.home = {
                             <button class="btn btn-primary btn-large" data-calendly="true">
                                 🎯 Diagnostic Gratuit (30min)
                             </button>
-                            <a href="#solutions" class="btn btn-secondary btn-large">
-                                Voir Nos Solutions
+                            <a href="#expertise-simple" class="btn btn-secondary btn-large">
+                                Voir Nos Services
                             </a>
                         </div>
                         
                         <div class="hero-trust">
-                            <p>🏆 Spécialistes reconnus par Sage, Tekla et 20+ entreprises satisfaites</p>
+                            <p>🏆 Spécialistes reconnus par </p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ window.pages.home = {
                 </div>
             </section>
 
-            <!-- Calculateur ROI Simplifié -->
+            <!-- Calculateur ROI Simplifié 
             <section class="section section-special-bg">
                 <div class="container">
                     <div class="section-header">
@@ -101,9 +101,9 @@ window.pages.home = {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> -->
 
-            <!-- Témoignages Simples -->
+            <!-- Témoignages Simples 
             <section class="section">
                 <div class="container">
                     <div class="section-header">
@@ -113,7 +113,7 @@ window.pages.home = {
                     
                     <div class="testimonials-simple" id="testimonials-simple"></div>
                 </div>
-            </section>
+            </section> -->
 
             <!-- Notre Approche en 3 Étapes -->
             <section class="section section-special-bg">
@@ -125,12 +125,13 @@ window.pages.home = {
                     
                     <div class="method-simple" id="method-simple"></div>
                     
-                    <div class="method-guarantee">
+                    <!--<div class="method-guarantee">
                         <div class="guarantee-banner">
                             <h3>🛡️ Notre Garantie</h3>
                             <p>Si vous ne gagnez pas <strong>1h/jour/utilisateur en 3 mois</strong>, nous reprenons le projet sans frais.</p>
                         </div>
                     </div>
+                    -->
                 </div>
             </section>
 
@@ -365,7 +366,7 @@ window.pages.home = {
                         <div class="step-number-large">${step.number}</div>
                         <h3>${step.title}</h3>
                         <p>${step.description}</p>
-                        <div class="step-duration">⏱️ ${step.duration}</div>
+                        <!-- <div class="step-duration">⏱️ ${step.duration}</div> -->
                     </div>
                 `).join('')}
             </div>
@@ -377,7 +378,7 @@ window.pages.home = {
             {
                 icon: '🛠️',
                 title: 'ERP & Gestion',
-                description: 'Sage X3, GesCom, 2CM Manager - Solutions ERP adaptées à votre métier',
+                description: 'Sage X3, Eurêka, 2CM Manager - Solutions ERP adaptées à votre métier',
                 link: 'outils-gestion'
             },
             {
