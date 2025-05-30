@@ -1,4 +1,4 @@
-// js/pages/home.js - Page d'accueil améliorée
+// js/pages/home.js - Page d'accueil corrigée et simplifiée
 
 window.pages = window.pages || {};
 
@@ -157,7 +157,7 @@ window.pages.home = {
         this.renderEssentialFAQ();
         this.bindEvents();
         
-        console.log('🏠 Improved home page initialized');
+        console.log('🏠 Home page initialized');
     },
 
     renderProblemsAndSolutions() {
@@ -265,7 +265,7 @@ window.pages.home = {
         container.innerHTML = `
             <div class="testimonials-slider">
                 ${testimonials.map((testimonial, index) => `
-                    <div class="testimonial-card ${index === 0 ? 'active' : ''}">
+                    <div class="testimonial-card ${index === 0 ? 'active' : ''}" data-testimonial="${index}">
                         <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
                         <blockquote>"${testimonial.quote}"</blockquote>
                         <div class="testimonial-author">
@@ -278,7 +278,7 @@ window.pages.home = {
             </div>
             <div class="testimonials-nav">
                 ${testimonials.map((_, index) => `
-                    <button class="nav-dot ${index === 0 ? 'active' : ''}" onclick="this.parentElement.parentElement.querySelector('.testimonials-slider').setAttribute('data-current', '${index}'); this.parentElement.querySelectorAll('.nav-dot').forEach((dot, i) => dot.classList.toggle('active', i === ${index})); this.parentElement.parentElement.querySelectorAll('.testimonial-card').forEach((card, i) => card.classList.toggle('active', i === ${index}));"></button>
+                    <button class="nav-dot ${index === 0 ? 'active' : ''}" data-testimonial-dot="${index}"></button>
                 `).join('')}
             </div>
         `;
@@ -328,7 +328,7 @@ window.pages.home = {
             {
                 icon: '🛠️',
                 title: 'ERP & Gestion',
-                description: 'Sage X3, GesCom, 2CM Manager - Solutions ERP spécialisées métallurgie',
+                description: 'Sage X3, Eurêka, 2CM Manager - Solutions ERP spécialisées métallurgie',
                 link: 'outils-gestion'
             },
             {
@@ -369,7 +369,7 @@ window.pages.home = {
         container.innerHTML = `
             <div class="expertise-grid-simple">
                 ${expertiseAreas.map(area => `
-                    <div class="expertise-card-simple" onclick="router.navigate('${area.link}')" style="cursor: pointer;">
+                    <div class="expertise-card-simple" data-page="${area.link}">
                         <div class="expertise-icon">${area.icon}</div>
                         <h3>${area.title}</h3>
                         <p>${area.description}</p>
@@ -410,7 +410,7 @@ window.pages.home = {
         container.innerHTML = `
             <div class="faq-list-essential">
                 ${essentialFAQ.map((item, index) => `
-                    <div class="faq-item-essential">
+                    <div class="faq-item-essential" data-faq-index="${index}">
                         <div class="faq-question-essential" role="button" tabindex="0" aria-expanded="false">
                             <h3>${item.question}</h3>
                             <span class="faq-toggle-essential">+</span>
@@ -425,102 +425,140 @@ window.pages.home = {
     },
 
     bindEvents() {
-    bindEvents() {
         // Gestion FAQ corrigée
-        const faqItems = document.querySelectorAll('.faq-item-essential');
-        faqItems.forEach((item, index) => {
-            const question = item.querySelector('.faq-question-essential');
-            const toggle = item.querySelector('.faq-toggle-essential');
-            
-            if (question && toggle) {
-                const toggleFAQ = () => {
-                    const isActive = item.classList.contains('active');
-                    
-                    // Fermer tous les autres items
-                    faqItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.classList.remove('active');
-                            const otherToggle = otherItem.querySelector('.faq-toggle-essential');
-                            if (otherToggle) {
-                                otherToggle.textContent = '+';
-                            }
-                            const otherQuestion = otherItem.querySelector('.faq-question-essential');
-                            if (otherQuestion) {
-                                otherQuestion.setAttribute('aria-expanded', 'false');
-                            }
-                        }
-                    });
-                    
-                    // Toggle l'item actuel
-                    if (!isActive) {
-                        item.classList.add('active');
-                        toggle.textContent = '−';
-                        question.setAttribute('aria-expanded', 'true');
-                    } else {
-                        item.classList.remove('active');
-                        toggle.textContent = '+';
-                        question.setAttribute('aria-expanded', 'false');
-                    }
-                };
-                
-                // Événement clic
-                question.addEventListener('click', toggleFAQ);
-                
-                // Support clavier
-                question.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleFAQ();
-                    }
-                });
-            }
-        });
+        this.setupFAQ();
 
         // Calendly buttons
-        const calendlyButtons = document.querySelectorAll('[data-calendly]');
-        calendlyButtons.forEach(button => {
-            button.addEventListener('click', this.openCalendly.bind(this));
-        });
+        this.setupCalendly();
 
-        // Smooth scroll
-        const scrollLinks = document.querySelectorAll('a[href^="#"]');
-        scrollLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        // Smooth scroll pour les ancres
+        this.setupSmoothScroll();
+
+        // Navigation vers les pages d'expertise
+        this.setupExpertiseNavigation();
+
+        // Témoignages - navigation manuelle
+        this.setupTestimonialsNavigation();
 
         // Rotation automatique des témoignages
         this.setupTestimonialsRotation();
     },
 
-    setupTestimonialsRotation() {
-        const testimonials = document.querySelectorAll('.testimonial-card');
-        const dots = document.querySelectorAll('.nav-dot');
+    setupFAQ() {
+        const faqItems = document.querySelectorAll('.faq-item-essential');
         
-        if (!testimonials.length) return;
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question-essential');
+            if (!question) return;
 
-        let currentIndex = 0;
+            // Fonction de toggle
+            const toggleItem = () => {
+                const isActive = item.classList.contains('active');
+                
+                // Fermer tous les autres
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                        const otherQuestion = otherItem.querySelector('.faq-question-essential');
+                        const otherToggle = otherItem.querySelector('.faq-toggle-essential');
+                        if (otherQuestion) otherQuestion.setAttribute('aria-expanded', 'false');
+                        if (otherToggle) otherToggle.textContent = '+';
+                    }
+                });
+                
+                // Toggle l'item actuel
+                item.classList.toggle('active');
+                question.setAttribute('aria-expanded', !isActive);
+                const toggle = item.querySelector('.faq-toggle-essential');
+                if (toggle) {
+                    toggle.textContent = isActive ? '+' : '−';
+                }
+            };
+
+            // Event listeners
+            question.addEventListener('click', toggleItem);
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleItem();
+                }
+            });
+        });
+    },
+
+    setupCalendly() {
+        document.querySelectorAll('[data-calendly]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openCalendly();
+            });
+        });
+    },
+
+    setupSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href');
+                if (targetId && targetId.length > 1) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    },
+
+    setupExpertiseNavigation() {
+        document.querySelectorAll('.expertise-card-simple').forEach(card => {
+            card.addEventListener('click', () => {
+                const page = card.dataset.page;
+                if (page && window.router) {
+                    window.router.navigate(page);
+                }
+            });
+        });
+    },
+
+    setupTestimonialsNavigation() {
+        const dots = document.querySelectorAll('[data-testimonial-dot]');
+        const cards = document.querySelectorAll('[data-testimonial]');
         
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.testimonialDot);
+                this.showTestimonial(index);
+            });
+        });
+    },
+
+    showTestimonial(index) {
+        const cards = document.querySelectorAll('[data-testimonial]');
+        const dots = document.querySelectorAll('[data-testimonial-dot]');
+        
+        cards.forEach(card => card.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        const targetCard = document.querySelector(`[data-testimonial="${index}"]`);
+        const targetDot = document.querySelector(`[data-testimonial-dot="${index}"]`);
+        
+        if (targetCard) targetCard.classList.add('active');
+        if (targetDot) targetDot.classList.add('active');
+    },
+
+    setupTestimonialsRotation() {
+        let currentIndex = 0;
+        const testimonials = document.querySelectorAll('[data-testimonial]');
+        
+        if (testimonials.length <= 1) return;
+
         setInterval(() => {
-            // Masquer le témoignage actuel
-            testimonials[currentIndex].classList.remove('active');
-            dots[currentIndex].classList.remove('active');
-            
-            // Passer au suivant
             currentIndex = (currentIndex + 1) % testimonials.length;
-            
-            // Afficher le nouveau témoignage
-            testimonials[currentIndex].classList.add('active');
-            dots[currentIndex].classList.add('active');
+            this.showTestimonial(currentIndex);
         }, 5000);
     },
 
@@ -532,14 +570,14 @@ window.pages.home = {
             
             if (OweoUtils.analytics) {
                 OweoUtils.analytics.track('calendly_open', {
-                    location: 'home_page_improved'
+                    location: 'home_page'
                 });
             }
         } else {
-            console.warn('Calendly not loaded');
+            console.warn('Calendly not loaded, opening in new tab');
             window.open(OweoConfig.urls.calendly, '_blank');
         }
     }
 };
 
-console.log('🏠 Improved home page loaded');
+console.log('🏠 Home page loaded');

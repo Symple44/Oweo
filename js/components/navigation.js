@@ -1,4 +1,4 @@
-// js/components/navigation.js - Composant Navigation
+// js/components/navigation.js - Navigation simplifiée
 
 class OweoNavigation {
     constructor() {
@@ -10,19 +10,13 @@ class OweoNavigation {
         this.init();
     }
 
-    /**
-     * Initialisation du composant
-     */
     init() {
         this.render();
         this.bindEvents();
         this.setupScrollBehavior();
-        console.log('🧭 Navigation component initialized');
+        console.log('🧭 Navigation initialized');
     }
 
-    /**
-     * Rendu de la navigation
-     */
     render() {
         const nav = document.getElementById('navbar');
         if (!nav) {
@@ -32,44 +26,48 @@ class OweoNavigation {
 
         nav.innerHTML = this.getTemplate();
         this.element = nav;
-        this.setupAccessibility();
     }
 
-    /**
-     * Template de la navigation
-     */
     getTemplate() {
+        // Menu principal avec les pages métier
+        const mainMenuItems = [
+            { id: 'services', label: 'Nos Services', icon: '📋' },
+            { id: 'outils-gestion', label: 'ERP Métallurgie', icon: '🛠️' },
+            { id: 'consulting-strategique', label: 'Conseil Expert', icon: '📊' }
+        ];
+
         return `
             <div class="nav-container">
                 <div class="nav-content">
                     <!-- Logo -->
-                    <div class="nav-logo" role="button" tabindex="0" aria-label="Retour à l'accueil">
-                        <img src="assets/logo.png" alt="${OweoConfig.company.name}" class="nav-logo__image">
+                    <div class="nav-logo" data-navigate="home">
                         <span class="nav-logo__text">${OweoConfig.siteName}</span>
                     </div>
 
-                    <!-- Navigation principale -->
-                    <nav class="nav-menu" role="navigation" aria-label="Navigation principale">
+                    <!-- Navigation principale (desktop) -->
+                    <nav class="nav-menu">
                         <ul class="nav-menu__list">
-                            ${this.renderMenuItems()}
+                            ${mainMenuItems.map(item => `
+                                <li class="nav-menu__item">
+                                    <a href="#${item.id}" 
+                                       class="nav-menu__link" 
+                                       data-nav-item="${item.id}">
+                                        <span class="nav-menu__icon">${item.icon}</span>
+                                        <span class="nav-menu__text">${item.label}</span>
+                                    </a>
+                                </li>
+                            `).join('')}
                         </ul>
                     </nav>
 
                     <!-- Actions -->
                     <div class="nav-actions">
-                        <button 
-                            class="btn btn-primary nav-cta" 
-                            aria-label="Réserver un diagnostic gratuit"
-                            data-calendly="true">
+                        <button class="btn btn-primary nav-cta" data-calendly="true">
                             📅 Diagnostic Gratuit
                         </button>
                         
-                        <!-- Menu hamburger mobile -->
-                        <button 
-                            class="nav-toggle" 
-                            aria-label="Ouvrir le menu"
-                            aria-expanded="false"
-                            aria-controls="nav-menu">
+                        <!-- Menu mobile toggle -->
+                        <button class="nav-toggle" aria-label="Menu">
                             <span class="nav-toggle__line"></span>
                             <span class="nav-toggle__line"></span>
                             <span class="nav-toggle__line"></span>
@@ -77,11 +75,34 @@ class OweoNavigation {
                     </div>
                 </div>
 
-                <!-- Menu mobile -->
-                <div class="nav-mobile" id="nav-mobile" aria-hidden="true">
+                <!-- Menu mobile simplifié -->
+                <div class="nav-mobile" id="nav-mobile">
                     <div class="nav-mobile__content">
                         <ul class="nav-mobile__list">
-                            ${this.renderMobileMenuItems()}
+                            <li class="nav-mobile__item">
+                                <a href="#home" class="nav-mobile__link" data-nav-item="home">
+                                    <span class="nav-mobile__icon">🏠</span>
+                                    <span class="nav-mobile__label">Accueil</span>
+                                </a>
+                            </li>
+                            <li class="nav-mobile__item">
+                                <a href="#services" class="nav-mobile__link" data-nav-item="services">
+                                    <span class="nav-mobile__icon">📋</span>
+                                    <span class="nav-mobile__label">Nos Services</span>
+                                </a>
+                            </li>
+                            <li class="nav-mobile__item">
+                                <a href="#outils-gestion" class="nav-mobile__link" data-nav-item="outils-gestion">
+                                    <span class="nav-mobile__icon">🛠️</span>
+                                    <span class="nav-mobile__label">ERP Métallurgie</span>
+                                </a>
+                            </li>
+                            <li class="nav-mobile__item">
+                                <a href="#consulting-strategique" class="nav-mobile__link" data-nav-item="consulting-strategique">
+                                    <span class="nav-mobile__icon">📊</span>
+                                    <span class="nav-mobile__label">Conseil Expert</span>
+                                </a>
+                            </li>
                         </ul>
                         
                         <div class="nav-mobile__actions">
@@ -91,10 +112,7 @@ class OweoNavigation {
                             
                             <div class="nav-mobile__contact">
                                 <a href="mailto:${OweoConfig.contact.email}" class="nav-mobile__contact-item">
-                                    📧 ${OweoConfig.contact.email}
-                                </a>
-                                <a href="tel:${OweoConfig.contact.phone}" class="nav-mobile__contact-item">
-                                    📞 ${OweoConfig.contact.phone}
+                                    📧 Email
                                 </a>
                             </div>
                         </div>
@@ -104,80 +122,31 @@ class OweoNavigation {
         `;
     }
 
-    /**
-     * Rendu des éléments de menu
-     */
-    renderMenuItems() {
-        return OweoConfig.navigation
-            .filter(item => item.id !== 'home') // Exclure l'accueil du menu
-            .map(item => `
-                <li class="nav-menu__item">
-                    <a 
-                        href="#${item.id}" 
-                        class="nav-menu__link" 
-                        data-nav-item="${item.id}"
-                        aria-label="${item.description || item.label}"
-                        title="${item.description || item.label}">
-                        <span class="nav-menu__icon">${item.icon}</span>
-                        <span class="nav-menu__text">${item.label}</span>
-                    </a>
-                </li>
-            `).join('');
-    }
-
-    /**
-     * Rendu des éléments de menu mobile
-     */
-    renderMobileMenuItems() {
-        return OweoConfig.navigation.map(item => `
-            <li class="nav-mobile__item">
-                <a 
-                    href="#${item.id}" 
-                    class="nav-mobile__link" 
-                    data-nav-item="${item.id}">
-                    <span class="nav-mobile__icon">${item.icon}</span>
-                    <div class="nav-mobile__content">
-                        <span class="nav-mobile__label">${item.label}</span>
-                        ${item.description ? `<span class="nav-mobile__description">${item.description}</span>` : ''}
-                    </div>
-                </a>
-            </li>
-        `).join('');
-    }
-
-    /**
-     * Liaison des événements
-     */
     bindEvents() {
         if (!this.element) return;
 
-        // Clic sur le logo
-        const logo = this.element.querySelector('.nav-logo');
-        if (logo) {
-            logo.addEventListener('click', () => this.navigateToHome());
-            logo.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.navigateToHome();
-                }
-            });
-        }
-
-        // Clics sur les liens de navigation
-        const navLinks = this.element.querySelectorAll('[data-nav-item]');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => this.handleNavClick(e));
+        // Logo click
+        this.element.querySelector('.nav-logo')?.addEventListener('click', () => {
+            this.navigateToPage('home');
         });
 
-        // Toggle du menu mobile
-        const toggle = this.element.querySelector('.nav-toggle');
-        if (toggle) {
-            toggle.addEventListener('click', () => this.toggleMobileMenu());
-        }
+        // Navigation links
+        this.element.querySelectorAll('[data-nav-item]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.dataset.navItem;
+                this.navigateToPage(page);
+                if (this.isMenuOpen) this.closeMobileMenu();
+            });
+        });
+
+        // Toggle menu mobile
+        this.element.querySelector('.nav-toggle')?.addEventListener('click', () => {
+            this.toggleMobileMenu();
+        });
 
         // Calendly buttons
-        const calendlyButtons = this.element.querySelectorAll('[data-calendly]');
-        calendlyButtons.forEach(button => {
+        this.element.querySelectorAll('[data-calendly]').forEach(button => {
             button.addEventListener('click', () => this.openCalendly());
         });
 
@@ -188,13 +157,6 @@ class OweoNavigation {
             }
         });
 
-        // Gestion du redimensionnement
-        window.addEventListener('resize', OweoUtils.events.debounce(() => {
-            if (window.innerWidth > 768 && this.isMenuOpen) {
-                this.closeMobileMenu();
-            }
-        }, 250));
-
         // Échap pour fermer le menu
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isMenuOpen) {
@@ -203,66 +165,33 @@ class OweoNavigation {
         });
     }
 
-    /**
-     * Comportement au scroll
-     */
     setupScrollBehavior() {
-        const scrollHandler = OweoUtils.events.throttle(() => {
-            const isScrolled = window.scrollY > 50;
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
             
-            if (isScrolled !== this.scrolled) {
-                this.scrolled = isScrolled;
-                this.element?.classList.toggle('nav--scrolled', isScrolled);
+            // Ajouter/retirer la classe scrolled
+            if (currentScroll > 50) {
+                this.element?.classList.add('nav--scrolled');
+            } else {
+                this.element?.classList.remove('nav--scrolled');
             }
-        }, 16);
-
-        window.addEventListener('scroll', scrollHandler);
-    }
-
-    /**
-     * Gestion des clics de navigation
-     */
-    handleNavClick(event) {
-        event.preventDefault();
-        
-        const navItem = event.currentTarget.dataset.navItem;
-        if (!navItem) return;
-
-        // Fermer le menu mobile si ouvert
-        if (this.isMenuOpen) {
-            this.closeMobileMenu();
-        }
-
-        // Navigation
-        if (window.router) {
-            window.router.navigate(navItem);
-        } else {
-            console.warn('Router not available');
-        }
-
-        // Analytics
-        OweoUtils.analytics?.track('navigation_click', {
-            item: navItem,
-            location: 'header'
+            
+            lastScroll = currentScroll;
         });
     }
 
-    /**
-     * Navigation vers l'accueil
-     */
-    navigateToHome() {
+    navigateToPage(page) {
         if (window.router) {
-            window.router.navigate('/');
+            const path = page === 'home' ? '/' : `/${page}`;
+            window.router.navigate(path);
         }
         
-        OweoUtils.analytics?.track('logo_click', {
-            location: 'header'
-        });
+        // Mise à jour de l'état actif
+        this.setActive(page);
     }
 
-    /**
-     * Ouverture/fermeture du menu mobile
-     */
     toggleMobileMenu() {
         if (this.isMenuOpen) {
             this.closeMobileMenu();
@@ -271,321 +200,68 @@ class OweoNavigation {
         }
     }
 
-    /**
-     * Ouverture du menu mobile
-     */
     openMobileMenu() {
         this.isMenuOpen = true;
         
         const toggle = this.element?.querySelector('.nav-toggle');
         const mobile = this.element?.querySelector('.nav-mobile');
         
-        if (toggle) {
-            toggle.classList.add('nav-toggle--active');
-            toggle.setAttribute('aria-expanded', 'true');
-            toggle.setAttribute('aria-label', 'Fermer le menu');
-        }
+        if (toggle) toggle.classList.add('nav-toggle--active');
+        if (mobile) mobile.classList.add('nav-mobile--active');
         
-        if (mobile) {
-            mobile.classList.add('nav-mobile--active');
-            mobile.setAttribute('aria-hidden', 'false');
-        }
-        
-        // Prévenir le scroll du body
         document.body.style.overflow = 'hidden';
-        
-        // Focus sur le premier élément
-        setTimeout(() => {
-            const firstLink = mobile?.querySelector('.nav-mobile__link');
-            firstLink?.focus();
-        }, 100);
-        
-        OweoUtils.analytics?.track('mobile_menu_open');
     }
 
-    /**
-     * Fermeture du menu mobile
-     */
     closeMobileMenu() {
         this.isMenuOpen = false;
         
         const toggle = this.element?.querySelector('.nav-toggle');
         const mobile = this.element?.querySelector('.nav-mobile');
         
-        if (toggle) {
-            toggle.classList.remove('nav-toggle--active');
-            toggle.setAttribute('aria-expanded', 'false');
-            toggle.setAttribute('aria-label', 'Ouvrir le menu');
-        }
+        if (toggle) toggle.classList.remove('nav-toggle--active');
+        if (mobile) mobile.classList.remove('nav-mobile--active');
         
-        if (mobile) {
-            mobile.classList.remove('nav-mobile--active');
-            mobile.setAttribute('aria-hidden', 'true');
-        }
-        
-        // Restaurer le scroll du body
         document.body.style.overflow = '';
-        
-        OweoUtils.analytics?.track('mobile_menu_close');
     }
 
-    /**
-     * Ouverture de Calendly
-     */
     openCalendly() {
         if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
             Calendly.initPopupWidget({
                 url: OweoConfig.urls.calendly
             });
-            
-            OweoUtils.analytics?.track('calendly_open', {
-                location: 'header'
-            });
         } else {
-            console.warn('Calendly not loaded');
-            // Fallback : ouvrir dans un nouvel onglet
             window.open(OweoConfig.urls.calendly, '_blank');
         }
     }
 
-    /**
-     * Mise à jour de l'état actif
-     */
     setActive(pageId) {
         if (!this.element) return;
         
-        // Suppression de l'état actif de tous les liens
-        const allLinks = this.element.querySelectorAll('[data-nav-item]');
-        allLinks.forEach(link => {
+        // Retirer toutes les classes actives
+        this.element.querySelectorAll('[data-nav-item]').forEach(link => {
             link.classList.remove('nav-menu__link--active', 'nav-mobile__link--active');
         });
 
-        // Ajout de l'état actif au lien courant
-        const activeLinks = this.element.querySelectorAll(`[data-nav-item="${pageId}"]`);
-        activeLinks.forEach(link => {
-            if (link.closest('.nav-menu')) {
+        // Ajouter la classe active au lien actuel
+        this.element.querySelectorAll(`[data-nav-item="${pageId}"]`).forEach(link => {
+            if (link.classList.contains('nav-menu__link')) {
                 link.classList.add('nav-menu__link--active');
-            } else if (link.closest('.nav-mobile')) {
+            } else if (link.classList.contains('nav-mobile__link')) {
                 link.classList.add('nav-mobile__link--active');
             }
         });
 
         this.currentPage = pageId;
-        
-        // Mise à jour de l'aria-current
-        this.updateAriaCurrent(pageId);
     }
 
-    /**
-     * Mise à jour de l'attribut aria-current
-     */
-    updateAriaCurrent(pageId) {
-        const allLinks = this.element?.querySelectorAll('[data-nav-item]');
-        allLinks?.forEach(link => {
-            if (link.dataset.navItem === pageId) {
-                link.setAttribute('aria-current', 'page');
-            } else {
-                link.removeAttribute('aria-current');
-            }
-        });
-    }
-
-    /**
-     * Configuration de l'accessibilité
-     */
-    setupAccessibility() {
-        if (!this.element) return;
-
-        // Configuration ARIA pour le menu principal
-        const mainMenu = this.element.querySelector('.nav-menu__list');
-        if (mainMenu) {
-            mainMenu.setAttribute('role', 'menubar');
-            
-            const menuItems = mainMenu.querySelectorAll('.nav-menu__item');
-            menuItems.forEach(item => {
-                item.setAttribute('role', 'none');
-                const link = item.querySelector('.nav-menu__link');
-                if (link) {
-                    link.setAttribute('role', 'menuitem');
-                }
-            });
-        }
-
-        // Configuration ARIA pour le menu mobile
-        const mobileMenu = this.element.querySelector('.nav-mobile__list');
-        if (mobileMenu) {
-            mobileMenu.setAttribute('role', 'menu');
-            
-            const mobileItems = mobileMenu.querySelectorAll('.nav-mobile__item');
-            mobileItems.forEach(item => {
-                item.setAttribute('role', 'none');
-                const link = item.querySelector('.nav-mobile__link');
-                if (link) {
-                    link.setAttribute('role', 'menuitem');
-                }
-            });
-        }
-    }
-
-    /**
-     * Mise à jour du badge de notification (optionnel)
-     */
-    updateNotificationBadge(count = 0) {
-        const badge = this.element?.querySelector('.nav-notification-badge');
-        if (badge) {
-            if (count > 0) {
-                badge.textContent = count > 99 ? '99+' : count.toString();
-                badge.style.display = 'block';
-                badge.setAttribute('aria-label', `${count} notifications non lues`);
-            } else {
-                badge.style.display = 'none';
-                badge.removeAttribute('aria-label');
-            }
-        }
-    }
-
-    /**
-     * Animation de highlight sur un élément de menu
-     */
-    highlightMenuItem(pageId, duration = 2000) {
-        const links = this.element?.querySelectorAll(`[data-nav-item="${pageId}"]`);
-        links?.forEach(link => {
-            link.classList.add('nav-menu__link--highlight');
-            setTimeout(() => {
-                link.classList.remove('nav-menu__link--highlight');
-            }, duration);
-        });
-    }
-
-    /**
-     * Ajout d'un indicateur de chargement
-     */
-    showLoading(pageId) {
-        const links = this.element?.querySelectorAll(`[data-nav-item="${pageId}"]`);
-        links?.forEach(link => {
-            link.classList.add('nav-menu__link--loading');
-        });
-    }
-
-    /**
-     * Suppression de l'indicateur de chargement
-     */
-    hideLoading(pageId) {
-        const links = this.element?.querySelectorAll(`[data-nav-item="${pageId}"]`);
-        links?.forEach(link => {
-            link.classList.remove('nav-menu__link--loading');
-        });
-    }
-
-    /**
-     * Mise à jour de la navigation basée sur les permissions
-     */
-    updatePermissions(permissions = {}) {
-        if (!this.element) return;
-
-        OweoConfig.navigation.forEach(item => {
-            const permission = permissions[item.id];
-            const links = this.element.querySelectorAll(`[data-nav-item="${item.id}"]`);
-            
-            links.forEach(link => {
-                if (permission === false) {
-                    link.style.display = 'none';
-                    link.setAttribute('aria-hidden', 'true');
-                } else if (permission === 'disabled') {
-                    link.classList.add('nav-menu__link--disabled');
-                    link.setAttribute('aria-disabled', 'true');
-                } else {
-                    link.style.display = '';
-                    link.classList.remove('nav-menu__link--disabled');
-                    link.removeAttribute('aria-hidden');
-                    link.removeAttribute('aria-disabled');
-                }
-            });
-        });
-    }
-
-    /**
-     * Gestion des raccourcis clavier
-     */
-    setupKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            // Alt + numéro pour navigation rapide
-            if (e.altKey && e.key >= '1' && e.key <= '9') {
-                e.preventDefault();
-                const index = parseInt(e.key) - 1;
-                const navigationItem = OweoConfig.navigation[index];
-                
-                if (navigationItem && window.router) {
-                    window.router.navigate(navigationItem.id);
-                    
-                    OweoUtils.analytics?.track('keyboard_navigation', {
-                        key: e.key,
-                        item: navigationItem.id
-                    });
-                }
-            }
-            
-            // Ctrl/Cmd + K pour ouvrir la recherche (si implémentée)
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                // TODO: Implémenter la recherche
-                console.log('Search shortcut triggered');
-            }
-        });
-    }
-
-    /**
-     * Récupération de l'état actuel
-     */
     getCurrentPage() {
         return this.currentPage;
     }
 
-    /**
-     * Vérification si le menu mobile est ouvert
-     */
     isMobileMenuOpen() {
         return this.isMenuOpen;
     }
-
-    /**
-     * Destruction du composant
-     */
-    destroy() {
-        // Suppression des event listeners
-        // (Dans une vraie application, il faudrait stocker les références pour les supprimer)
-        
-        // Restauration du body
-        document.body.style.overflow = '';
-        
-        // Nettoyage du DOM
-        if (this.element) {
-            this.element.innerHTML = '';
-        }
-        
-        console.log('🧭 Navigation component destroyed');
-    }
-
-    /**
-     * Mise à jour complète du composant
-     */
-    update(config = {}) {
-        // Mise à jour de la configuration si fournie
-        if (config.navigation) {
-            OweoConfig.navigation = config.navigation;
-        }
-        
-        // Re-rendu
-        this.render();
-        
-        // Maintien de l'état actuel
-        if (this.currentPage) {
-            this.setActive(this.currentPage);
-        }
-        
-        console.log('🧭 Navigation component updated');
-    }
 }
 
-// Export et initialisation
+// Export
 window.OweoNavigation = OweoNavigation;

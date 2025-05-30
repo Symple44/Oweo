@@ -131,8 +131,8 @@ window.OweoConfig = {
     // Stack technologique
     technologies: {
         erp: {
-            primary: ['Sage X3', 'GesCom', '2CM Manager'],
-            secondary: ['Sylob', 'Eurêka', 'Divalto'],
+            primary: ['Sage X3', 'Eurêka', '2CM Manager'],
+            secondary: ['Sylob', 'Herakles', 'Divalto'],
             expertise: 'Expert'
         },
         cao: {
@@ -228,92 +228,53 @@ window.OweoConfig = {
             description: 'Page d\'accueil'
         },
         { 
+            id: 'services', 
+            label: 'Nos Services', 
+            icon: '📋',
+            description: 'Offres de service pour la métallurgie',
+            category: 'business'
+        },
+        { 
             id: 'outils-gestion', 
-            label: 'ERP & Outils', 
+            label: 'ERP Métallurgie', 
             icon: '🛠️',
-            description: 'Choix et déploiement d\'ERP spécialisés',
+            description: 'Solutions ERP spécialisées métallurgie',
             category: 'expertise'
         },
         { 
             id: 'consulting-strategique', 
-            label: 'Conseil Stratégique', 
-            icon: '🎯',
-            description: 'Diagnostic et stratégie digitale',
+            label: 'Conseil Expert', 
+            icon: '📊',
+            description: 'Conseil stratégique et transformation digitale',
             category: 'expertise'
-        },
-        { 
-            id: 'accompagnement-projet', 
-            label: 'Accompagnement', 
-            icon: '🤝',
-            description: 'Gestion de projet transformation',
-            category: 'expertise'
-        },
-        { 
-            id: 'ia-projets', 
-            label: 'IA & Innovation', 
-            icon: '🤖',
-            description: 'Intelligence artificielle métier',
-            category: 'expertise'
-        },
-        { 
-            id: 'optimisation', 
-            label: 'Optimisation', 
-            icon: '⚡',
-            description: 'Amélioration des processus',
-            category: 'expertise'
-        },
-        {
-            id: 'services',
-            label: 'Services',
-            icon: '📋',
-            description: 'Nos offres de service',
-            category: 'business'
         }
     ],
-    
-    // Configuration des pages
+
+    // Pages configuration mise à jour
     pages: {
         home: {
-            title: 'Expert ERP & Transformation Digitale',
-            subtitle: 'Accompagnement sur-mesure pour entreprises de charpente métallique',
-            metaDescription: 'Conseil expert en ERP et transformation digitale pour entreprises de charpente métallique. 15+ projets réussis, +20% productivité garantie.',
-            keywords: 'ERP charpente métallique, transformation digitale, consultant ERP'
-        },
-        'outils-gestion': {
-            title: 'ERP & Outils de Gestion',
-            subtitle: '15+ déploiements ERP réussis - Méthodologie éprouvée',
-            metaDescription: 'Solutions ERP spécialisées pour charpente métallique. Sage X3, GesCom, 2CM Manager. Diagnostic gratuit.',
-            keywords: 'ERP métallurgie, Sage X3, GesCom, 2CM Manager'
-        },
-        'consulting-strategique': {
-            title: 'Conseil Stratégique',
-            subtitle: 'Diagnostic et stratégie de transformation digitale',
-            metaDescription: 'Audit digital et stratégie de transformation pour entreprises de métallurgie. Business Intelligence, KPI métier.',
-            keywords: 'audit digital, stratégie transformation, business intelligence'
-        },
-        'accompagnement-projet': {
-            title: 'Accompagnement de Projet',
-            subtitle: 'Méthodologie garantissant 100% de succès',
-            metaDescription: 'Gestion de projet ERP avec 100% de réussite. Méthodologie éprouvée, formation complète, support 6 mois.',
-            keywords: 'gestion projet ERP, accompagnement transformation, formation ERP'
-        },
-        'ia-projets': {
-            title: 'IA & Innovation',
-            subtitle: 'Intelligence artificielle appliquée à votre métier',
-            metaDescription: 'Solutions IA pour contrôle qualité, automatisation et optimisation. Vision par ordinateur, prédictif, chatbots.',
-            keywords: 'IA métallurgie, contrôle qualité automatique, prédictif'
-        },
-        'optimisation': {
-            title: 'Optimisation Production',
-            subtitle: 'Méthodes d\'audit et gains mesurables',
-            metaDescription: 'Optimisation des processus de production avec Lean Digital. +20% productivité, -60% erreurs, KPI temps réel.',
-            keywords: 'optimisation production, lean digital, performance industrielle'
+            title: 'Expert ERP Métallurgie - Transformation Digitale',
+            subtitle: 'Spécialiste charpente métallique, serrurerie et chaudronnerie',
+            metaDescription: 'Expert ERP et transformation digitale pour entreprises de métallurgie. Diagnostic gratuit, 15+ projets réussis, ROI garanti.',
+            keywords: 'ERP métallurgie, charpente métallique, serrurerie, chaudronnerie, transformation digitale'
         },
         'services': {
-            title: 'Nos Services',
-            subtitle: 'Solutions complètes pour votre transformation digitale',
-            metaDescription: 'Diagnostic gratuit, conseil stratégique, accompagnement complet. Services sur-mesure pour votre transformation.',
-            keywords: 'services transformation digitale, diagnostic gratuit, conseil ERP'
+            title: 'Services Transformation Digitale Métallurgie',
+            subtitle: 'Du diagnostic gratuit à l\'accompagnement complet',
+            metaDescription: 'Services de transformation digitale pour métallurgie. Diagnostic gratuit, accompagnement stratégique, déploiement clé en main.',
+            keywords: 'services transformation digitale, accompagnement ERP, conseil métallurgie'
+        },
+        'outils-gestion': {
+            title: 'ERP Spécialisés Métallurgie',
+            subtitle: 'Solutions ERP adaptées : 2CM Manager, Sage X3, GesCom',
+            metaDescription: 'Comparatif ERP pour charpente métallique et serrurerie. Guide de sélection, ROI garantis, 15+ déploiements réussis.',
+            keywords: 'ERP métallurgie, 2CM Manager, Sage X3, GesCom, logiciel charpente métallique'
+        },
+        'consulting-strategique': {
+            title: 'Conseil Expert Transformation Digitale',
+            subtitle: 'Audit, stratégie et accompagnement sur-mesure',
+            metaDescription: 'Conseil stratégique spécialisé métallurgie. Audit gratuit, diagnostic maturité digitale, accompagnement transformation.',
+            keywords: 'conseil transformation digitale, audit métallurgie, stratégie digitale, consultant ERP'
         }
     },
     
@@ -504,9 +465,9 @@ window.OweoConfig = {
     seo: {
         defaultTitle: 'Oweo - Expert ERP Charpente Métallique | Transformation Digitale',
         titleTemplate: '%s - Oweo',
-        defaultDescription: 'Conseil expert en ERP et transformation digitale pour entreprises de charpente métallique. 15+ projets réussis, +20% productivité garantie. Diagnostic gratuit.',
-        keywords: 'ERP charpente métallique, transformation digitale, consultant ERP, Sage X3, Tekla Structure, optimisation production, automatisation, Nantes',
-        author: 'Nicolas Dubain - Oweo Consulting',
+        defaultDescription: 'Conseil expert en ERP et transformation digitale pour entreprises de charpente métallique. ',
+        keywords: 'ERP charpente métallique, transformation digitale, consultant ERP, Sage X3, 2CM Manager,  Tekla Structure, Dolibarr, GPAO construction métallique, MES construction métallique optimisation production, automatisation, Pays de Loire, Nantes',
+        author: 'Nicolas Dubain - Oweo',
         robots: 'index, follow',
         canonical: 'https://oweo-consulting.fr',
         ogImage: '/assets/og-image.jpg',
