@@ -412,17 +412,12 @@ window.pages['consulting-strategique'] = {
     },
 
     bindEvents() {
+        // Back button
+        setupBackButton();
+        
         // Calendly
         document.querySelectorAll('[data-calendly]').forEach(button => {
             button.addEventListener('click', this.openCalendly.bind(this));
-        });
-
-        // Back button
-        document.querySelector('.btn-back')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (window.router) {
-                window.router.navigate('/');
-            }
         });
     },
 

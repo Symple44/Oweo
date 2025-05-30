@@ -487,20 +487,15 @@ window.pages.services = {
     },
 
     bindEvents() {
+        // Back button
+        setupBackButton();
+
         // Calendly avec tracking service
         document.querySelectorAll('[data-calendly]').forEach(button => {
             button.addEventListener('click', (e) => {
                 const service = button.dataset.service || 'general';
                 this.openCalendly(service);
             });
-        });
-
-        // Back button
-        document.querySelector('.btn-back')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (window.router) {
-                window.router.navigate('/');
-            }
         });
     },
 

@@ -123,18 +123,37 @@ class OweoNavigation {
     }
 
     bindEvents() {
-        if (!this.element) return;
+    if (!this.element) return;
 
-        // Logo click
-        this.element.querySelector('.nav-logo')?.addEventListener('click', () => {
-            this.navigateToPage('home');
-        });
+        // Logo click - CORRECTION ICI
+        const logoElement = this.element.querySelector('.nav-logo');
+        if (logoElement) {
+            logoElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Logo clicked, navigating to home');
+                this.navigateToPage('home');
+            });
+            
+            // Assurer que le logo est focusable
+            logoElement.setAttribute('tabindex', '0');
+            logoElement.setAttribute('role', 'button');
+            logoElement.setAttribute('aria-label', 'Retour à l\'accueil');
+            
+            // Support clavier
+            logoElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.navigateToPage('home');
+                }
+            });
+        }
 
         // Navigation links
         this.element.querySelectorAll('[data-nav-item]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = link.dataset.navItem;
+                console.log('Nav link clicked:', page);
                 this.navigateToPage(page);
                 if (this.isMenuOpen) this.closeMobileMenu();
             });

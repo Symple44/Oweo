@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages-specialized.css">
     <link rel="stylesheet" href="css/main.css">
   
     
@@ -448,6 +449,41 @@
             console.error('Unhandled promise rejection:', event.reason);
             event.preventDefault(); // Empêcher l'affichage de l'erreur dans la console
         });
+        window.setupBackButton = function() {
+            const backButton = document.querySelector('.btn-back');
+            if (backButton) {
+                // Retirer onclick inline si présent
+                backButton.removeAttribute('onclick');
+                
+                // Retirer les event listeners existants
+                const newButton = backButton.cloneNode(true);
+                backButton.parentNode.replaceChild(newButton, backButton);
+                
+                // Ajouter le bon event listener
+                newButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Back button clicked');
+                    
+                    if (window.router) {
+                        window.router.navigate('/');
+                    } else if (window.history && window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.hash = '';
+                    }
+                });
+                
+                // Support clavier
+                newButton.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        newButton.click();
+                    }
+                });
+                
+                console.log('Back button setup completed');
+            }
+        };
     </script>
 </body>
 </html>
