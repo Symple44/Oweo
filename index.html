@@ -241,142 +241,9 @@
     <!-- Scripts - Data -->
     <script src="js/data/articles.js"></script>
     
-    <!-- Scripts - Utils (NOUVEAU - pour les boutons retour) -->
-    <script>
-        // Utilitaire boutons retour intégré
-        window.setupBackButton = function() {
-            console.log('🔙 Setting up back buttons...');
-            
-            const backButtons = document.querySelectorAll('.btn-back');
-            
-            if (backButtons.length === 0) {
-                console.log('No back buttons found');
-                return;
-            }
-            
-            backButtons.forEach((button, index) => {
-                console.log(`Setting up back button ${index + 1}/${backButtons.length}`);
-                
-                // Nettoyer les attributs onclick existants
-                button.removeAttribute('onclick');
-                
-                // Cloner le bouton pour supprimer tous les event listeners existants
-                const newButton = button.cloneNode(true);
-                button.parentNode.replaceChild(newButton, button);
-                
-                // Ajouter le nouvel event listener
-                newButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('Back button clicked');
-                    handleBackNavigation();
-                });
-                
-                // Support clavier
-                newButton.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Back button activated via keyboard');
-                        handleBackNavigation();
-                    }
-                });
-                
-                // Assurer l'accessibilité
-                if (!newButton.getAttribute('role')) {
-                    newButton.setAttribute('role', 'button');
-                }
-                if (!newButton.getAttribute('aria-label')) {
-                    newButton.setAttribute('aria-label', 'Retourner à la page précédente');
-                }
-                
-                console.log('✅ Back button configured successfully');
-            });
-        };
-
-        function handleBackNavigation() {
-            console.log('Handling back navigation...');
-            
-            try {
-                // Option 1 : Router global
-                if (window.router && typeof window.router.navigate === 'function') {
-                    console.log('Using global router for back navigation');
-                    window.router.navigate('/');
-                    return;
-                }
-                
-                // Option 2 : Router de l'app
-                if (window.oweoApp && window.oweoApp.router && typeof window.oweoApp.router.navigate === 'function') {
-                    console.log('Using app router for back navigation');
-                    window.oweoApp.router.navigate('/');
-                    return;
-                }
-                
-                // Option 3 : Navigation système via navigation
-                if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
-                    console.log('Using navigation component');
-                    window.navigation.navigateToPage('home');
-                    return;
-                }
-                
-                // Option 4 : Historique du navigateur (si on n'est pas sur la première page)
-                if (window.history && window.history.length > 1) {
-                    console.log('Using browser history back');
-                    window.history.back();
-                    return;
-                }
-                
-                // Option 5 : Redirection directe vers l'accueil (hash)
-                console.log('Using hash-based navigation fallback');
-                window.location.hash = '';
-                
-                // Déclencher manuellement un changement de page si nécessaire
-                setTimeout(() => {
-                    if (window.location.hash === '' || window.location.hash === '#') {
-                        loadHomePage();
-                    }
-                }, 100);
-                
-            } catch (error) {
-                console.error('Error during back navigation:', error);
-                
-                // Dernier fallback : redirection complète
-                console.log('Using complete page reload fallback');
-                const baseUrl = window.location.origin + window.location.pathname;
-                window.location.href = baseUrl;
-            }
-        }
-
-        function loadHomePage() {
-            console.log('Loading home page manually...');
-            
-            const appContainer = document.getElementById('app');
-            if (!appContainer) return;
-            
-            if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
-                try {
-                    appContainer.innerHTML = window.pages.home.render();
-                    
-                    if (typeof window.pages.home.init === 'function') {
-                        window.pages.home.init();
-                    }
-                    
-                    if (window.navigation && typeof window.navigation.setActive === 'function') {
-                        window.navigation.setActive('home');
-                    }
-                    
-                    console.log('✅ Home page loaded manually');
-                } catch (error) {
-                    console.error('Error loading home page manually:', error);
-                }
-            } else {
-                console.warn('Home page component not available');
-            }
-        }
-
-        console.log('🔙 Back button utility loaded inline');
-    </script>
+    <!-- Scripts - Utils -->
+    <script src="js/utils/back-button.js"></script>
+    <script src="js/utils/legal-helpers.js"></script>
     
     <!-- Scripts - Components -->
     <script src="js/components/navigation.js"></script>
@@ -456,6 +323,183 @@
         console.log('📦 Stub files loaded');
     </script>
     
+    <!-- Fallback inline scripts -->
+    <script>
+        // Fallback pour setupBackButton si le fichier externe n'est pas chargé
+        if (typeof window.setupBackButton === 'undefined') {
+            console.log('🔙 Loading fallback setupBackButton...');
+            
+            window.setupBackButton = function() {
+                console.log('🔙 Setting up back buttons (fallback)...');
+                
+                const backButtons = document.querySelectorAll('.btn-back');
+                
+                if (backButtons.length === 0) {
+                    console.log('No back buttons found');
+                    return;
+                }
+                
+                backButtons.forEach((button, index) => {
+                    console.log(`Setting up back button ${index + 1}/${backButtons.length}`);
+                    
+                    // Nettoyer les attributs onclick existants
+                    button.removeAttribute('onclick');
+                    
+                    // Cloner le bouton pour supprimer tous les event listeners existants
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                    
+                    // Ajouter le nouvel event listener
+                    newButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        console.log('Back button clicked (fallback)');
+                        handleBackNavigation();
+                    });
+                    
+                    // Support clavier
+                    newButton.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Back button activated via keyboard (fallback)');
+                            handleBackNavigation();
+                        }
+                    });
+                    
+                    // Assurer l'accessibilité
+                    if (!newButton.getAttribute('role')) {
+                        newButton.setAttribute('role', 'button');
+                    }
+                    if (!newButton.getAttribute('aria-label')) {
+                        newButton.setAttribute('aria-label', 'Retourner à la page précédente');
+                    }
+                    
+                    console.log('✅ Back button configured successfully (fallback)');
+                });
+            };
+
+            function handleBackNavigation() {
+                console.log('Handling back navigation (fallback)...');
+                
+                try {
+                    // Option 1 : Router global
+                    if (window.router && typeof window.router.navigate === 'function') {
+                        console.log('Using global router for back navigation');
+                        window.router.navigate('/');
+                        return;
+                    }
+                    
+                    // Option 2 : Router de l'app
+                    if (window.oweoApp && window.oweoApp.router && typeof window.oweoApp.router.navigate === 'function') {
+                        console.log('Using app router for back navigation');
+                        window.oweoApp.router.navigate('/');
+                        return;
+                    }
+                    
+                    // Option 3 : Navigation système via navigation
+                    if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
+                        console.log('Using navigation component');
+                        window.navigation.navigateToPage('home');
+                        return;
+                    }
+                    
+                    // Option 4 : Historique du navigateur (si on n'est pas sur la première page)
+                    if (window.history && window.history.length > 1) {
+                        console.log('Using browser history back');
+                        window.history.back();
+                        return;
+                    }
+                    
+                    // Option 5 : Redirection directe vers l'accueil (hash)
+                    console.log('Using hash-based navigation fallback');
+                    window.location.hash = '';
+                    
+                    // Déclencher manuellement un changement de page si nécessaire
+                    setTimeout(() => {
+                        if (window.location.hash === '' || window.location.hash === '#') {
+                            loadHomePage();
+                        }
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('Error during back navigation:', error);
+                    
+                    // Dernier fallback : redirection complète
+                    console.log('Using complete page reload fallback');
+                    const baseUrl = window.location.origin + window.location.pathname;
+                    window.location.href = baseUrl;
+                }
+            }
+
+            function loadHomePage() {
+                console.log('Loading home page manually...');
+                
+                const appContainer = document.getElementById('app');
+                if (!appContainer) return;
+                
+                if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
+                    try {
+                        appContainer.innerHTML = window.pages.home.render();
+                        
+                        if (typeof window.pages.home.init === 'function') {
+                            window.pages.home.init();
+                        }
+                        
+                        if (window.navigation && typeof window.navigation.setActive === 'function') {
+                            window.navigation.setActive('home');
+                        }
+                        
+                        console.log('✅ Home page loaded manually');
+                    } catch (error) {
+                        console.error('Error loading home page manually:', error);
+                    }
+                } else {
+                    console.warn('Home page component not available');
+                }
+            }
+
+            console.log('🔙 Back button fallback utility loaded');
+        }
+
+        // Fallback pour OweoLegalHelpers si le fichier externe n'est pas chargé
+        if (typeof window.OweoLegalHelpers === 'undefined') {
+            console.log('⚖️ Loading fallback OweoLegalHelpers...');
+            
+            window.OweoLegalHelpers = {
+                init() {
+                    console.log('⚖️ Legal helpers initialized (fallback)');
+                },
+                
+                showCookieManager() {
+                    alert('Gestionnaire de cookies\n\nFonctionnalité disponible avec le fichier legal-helpers.js complet.');
+                },
+                
+                revokeCookieConsent() {
+                    if (confirm('Révoquer le consentement des cookies ?')) {
+                        localStorage.removeItem('oweo_cookie_consent');
+                        window.location.reload();
+                    }
+                },
+                
+                getComplianceStatus() {
+                    return {
+                        score: 50,
+                        message: 'Utilisez le fichier legal-helpers.js complet pour un audit détaillé'
+                    };
+                }
+            };
+            
+            // API publique simplifiée
+            window.showCookieManager = () => window.OweoLegalHelpers.showCookieManager();
+            window.revokeCookieConsent = () => window.OweoLegalHelpers.revokeCookieConsent();
+            window.getComplianceStatus = () => window.OweoLegalHelpers.getComplianceStatus();
+            
+            console.log('⚖️ Legal helpers fallback loaded');
+        }
+    </script>
+    
     <!-- Initialization -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -509,6 +553,11 @@
                     
                     if (typeof OweoFooter !== 'undefined') {
                         window.footer = new OweoFooter();
+                    }
+                    
+                    // Initialiser les utilitaires légaux
+                    if (typeof OweoLegalHelpers !== 'undefined' && OweoLegalHelpers.init) {
+                        OweoLegalHelpers.init();
                     }
                     
                     // Initialiser le router

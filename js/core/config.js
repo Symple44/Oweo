@@ -17,12 +17,25 @@ window.OweoConfig = {
     // Configuration des fonctionnalités
     features: {
         analytics: true,
+        cookieConsent: true,
         chatbot: false,
         notifications: true,
         darkMode: true,
         multiLanguage: false,
         blog: true,
         ecommerce: false
+    },
+    
+    // Configuration cookies
+    cookies: {
+        enabled: true,
+        autoShow: true, // Afficher automatiquement la bannière
+        expiryDays: 365,
+        categories: {
+            necessary: { required: true, default: true },
+            analytics: { required: false, default: false },
+            marketing: { required: false, default: false }
+        }
     },
     
     // Paramètres de performance
