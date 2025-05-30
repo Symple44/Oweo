@@ -454,11 +454,61 @@ window.OweoConfig = {
     
     // Pages légales
     legalPages: [
-        { id: 'mentions-legales', label: 'Mentions légales', required: true },
-        { id: 'conditions-utilisation', label: 'Conditions d\'utilisation', required: true },
-        { id: 'politique-confidentialite', label: 'Politique de Confidentialité & Cookies', required: true },
-        { id: 'conditions-generales', label: 'Conditions Générales', required: false },
-        { id: 'compliance', label: 'Compliance', required: false }
+        { 
+            id: 'mentions-legales', 
+            label: 'Mentions légales', 
+            required: true,
+            description: 'Informations légales obligatoires sur l\'entreprise',
+            seo: {
+                title: 'Mentions Légales - Oweo',
+                metaDescription: 'Mentions légales d\'Oweo - Informations sur l\'entreprise, hébergement, propriété intellectuelle et responsabilité.',
+                keywords: 'mentions légales, oweo, SASU, siret, hébergement'
+            }
+        },
+        { 
+            id: 'conditions-utilisation', 
+            label: 'Conditions d\'utilisation', 
+            required: true,
+            description: 'Conditions générales d\'utilisation du site web',
+            seo: {
+                title: 'Conditions d\'Utilisation - Oweo',
+                metaDescription: 'Conditions générales d\'utilisation du site Oweo. Droits et obligations des utilisateurs.',
+                keywords: 'conditions utilisation, CGU, droits, obligations'
+            }
+        },
+        { 
+            id: 'politique-confidentialite', 
+            label: 'Politique de Confidentialité & Cookies', 
+            required: true,
+            description: 'Protection des données personnelles et gestion des cookies',
+            seo: {
+                title: 'Politique de Confidentialité & Cookies - Oweo',
+                metaDescription: 'Politique de confidentialité conforme RGPD. Gestion des données personnelles et cookies sur le site Oweo.',
+                keywords: 'confidentialité, RGPD, cookies, données personnelles, protection'
+            }
+        },
+        { 
+            id: 'conditions-generales', 
+            label: 'Conditions Générales de Vente', 
+            required: false,
+            description: 'Conditions applicables aux prestations de conseil',
+            seo: {
+                title: 'Conditions Générales de Vente - Oweo',
+                metaDescription: 'Conditions générales de vente pour les prestations de conseil en transformation digitale d\'Oweo.',
+                keywords: 'CGV, conditions vente, prestations conseil, tarifs'
+            }
+        },
+        { 
+            id: 'compliance', 
+            label: 'Compliance & Certifications', 
+            required: false,
+            description: 'Nos engagements qualité et conformité',
+            seo: {
+                title: 'Compliance & Certifications - Oweo',
+                metaDescription: 'Certifications, engagements qualité et conformité d\'Oweo. Sécurité, déontologie et responsabilité sociétale.',
+                keywords: 'compliance, certifications, qualité, sécurité, déontologie'
+            }
+        }
     ],
     
     // SEO et méta-données

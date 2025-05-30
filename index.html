@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/pages-specialized.css">
+    <link rel="stylesheet" href="css/legal-pages.css">
     <link rel="stylesheet" href="css/main.css">
   
     
@@ -240,6 +241,143 @@
     <!-- Scripts - Data -->
     <script src="js/data/articles.js"></script>
     
+    <!-- Scripts - Utils (NOUVEAU - pour les boutons retour) -->
+    <script>
+        // Utilitaire boutons retour intégré
+        window.setupBackButton = function() {
+            console.log('🔙 Setting up back buttons...');
+            
+            const backButtons = document.querySelectorAll('.btn-back');
+            
+            if (backButtons.length === 0) {
+                console.log('No back buttons found');
+                return;
+            }
+            
+            backButtons.forEach((button, index) => {
+                console.log(`Setting up back button ${index + 1}/${backButtons.length}`);
+                
+                // Nettoyer les attributs onclick existants
+                button.removeAttribute('onclick');
+                
+                // Cloner le bouton pour supprimer tous les event listeners existants
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+                
+                // Ajouter le nouvel event listener
+                newButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Back button clicked');
+                    handleBackNavigation();
+                });
+                
+                // Support clavier
+                newButton.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Back button activated via keyboard');
+                        handleBackNavigation();
+                    }
+                });
+                
+                // Assurer l'accessibilité
+                if (!newButton.getAttribute('role')) {
+                    newButton.setAttribute('role', 'button');
+                }
+                if (!newButton.getAttribute('aria-label')) {
+                    newButton.setAttribute('aria-label', 'Retourner à la page précédente');
+                }
+                
+                console.log('✅ Back button configured successfully');
+            });
+        };
+
+        function handleBackNavigation() {
+            console.log('Handling back navigation...');
+            
+            try {
+                // Option 1 : Router global
+                if (window.router && typeof window.router.navigate === 'function') {
+                    console.log('Using global router for back navigation');
+                    window.router.navigate('/');
+                    return;
+                }
+                
+                // Option 2 : Router de l'app
+                if (window.oweoApp && window.oweoApp.router && typeof window.oweoApp.router.navigate === 'function') {
+                    console.log('Using app router for back navigation');
+                    window.oweoApp.router.navigate('/');
+                    return;
+                }
+                
+                // Option 3 : Navigation système via navigation
+                if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
+                    console.log('Using navigation component');
+                    window.navigation.navigateToPage('home');
+                    return;
+                }
+                
+                // Option 4 : Historique du navigateur (si on n'est pas sur la première page)
+                if (window.history && window.history.length > 1) {
+                    console.log('Using browser history back');
+                    window.history.back();
+                    return;
+                }
+                
+                // Option 5 : Redirection directe vers l'accueil (hash)
+                console.log('Using hash-based navigation fallback');
+                window.location.hash = '';
+                
+                // Déclencher manuellement un changement de page si nécessaire
+                setTimeout(() => {
+                    if (window.location.hash === '' || window.location.hash === '#') {
+                        loadHomePage();
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error during back navigation:', error);
+                
+                // Dernier fallback : redirection complète
+                console.log('Using complete page reload fallback');
+                const baseUrl = window.location.origin + window.location.pathname;
+                window.location.href = baseUrl;
+            }
+        }
+
+        function loadHomePage() {
+            console.log('Loading home page manually...');
+            
+            const appContainer = document.getElementById('app');
+            if (!appContainer) return;
+            
+            if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
+                try {
+                    appContainer.innerHTML = window.pages.home.render();
+                    
+                    if (typeof window.pages.home.init === 'function') {
+                        window.pages.home.init();
+                    }
+                    
+                    if (window.navigation && typeof window.navigation.setActive === 'function') {
+                        window.navigation.setActive('home');
+                    }
+                    
+                    console.log('✅ Home page loaded manually');
+                } catch (error) {
+                    console.error('Error loading home page manually:', error);
+                }
+            } else {
+                console.warn('Home page component not available');
+            }
+        }
+
+        console.log('🔙 Back button utility loaded inline');
+    </script>
+    
     <!-- Scripts - Components -->
     <script src="js/components/navigation.js"></script>
     <script src="js/components/footer.js"></script>
@@ -250,6 +388,7 @@
     <script src="js/pages/services.js"></script>
     <script src="js/pages/consulting-strategique.js"></script>
     <script src="js/pages/outils-gestion.js"></script>
+    <script src="js/pages/legal.js"></script>
     
     <!-- Scripts - Core System -->
     <script src="js/core/router.js"></script>
@@ -449,41 +588,15 @@
             console.error('Unhandled promise rejection:', event.reason);
             event.preventDefault(); // Empêcher l'affichage de l'erreur dans la console
         });
-        window.setupBackButton = function() {
-            const backButton = document.querySelector('.btn-back');
-            if (backButton) {
-                // Retirer onclick inline si présent
-                backButton.removeAttribute('onclick');
-                
-                // Retirer les event listeners existants
-                const newButton = backButton.cloneNode(true);
-                backButton.parentNode.replaceChild(newButton, backButton);
-                
-                // Ajouter le bon event listener
-                newButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Back button clicked');
-                    
-                    if (window.router) {
-                        window.router.navigate('/');
-                    } else if (window.history && window.history.length > 1) {
-                        window.history.back();
-                    } else {
-                        window.location.hash = '';
-                    }
-                });
-                
-                // Support clavier
-                newButton.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        newButton.click();
-                    }
-                });
-                
-                console.log('Back button setup completed');
-            }
-        };
+        
+        // Setup automatique des boutons retour quand une nouvelle page est chargée
+        window.addEventListener('pagechange', function() {
+            setTimeout(() => {
+                if (typeof window.setupBackButton === 'function') {
+                    window.setupBackButton();
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>

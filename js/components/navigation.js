@@ -1,4 +1,4 @@
-// js/components/navigation.js - Navigation simplifiée
+// js/components/navigation.js - Navigation corrigée
 
 class OweoNavigation {
     constructor() {
@@ -39,8 +39,8 @@ class OweoNavigation {
         return `
             <div class="nav-container">
                 <div class="nav-content">
-                    <!-- Logo -->
-                    <div class="nav-logo" data-navigate="home">
+                    <!-- Logo - CORRECTION : Utilisation d'un event listener au lieu d'un data-navigate -->
+                    <div class="nav-logo" id="nav-logo-home" role="button" tabindex="0" aria-label="Retour à l'accueil">
                         <span class="nav-logo__text">${OweoConfig.siteName}</span>
                     </div>
 
@@ -123,10 +123,10 @@ class OweoNavigation {
     }
 
     bindEvents() {
-    if (!this.element) return;
+        if (!this.element) return;
 
-        // Logo click - CORRECTION ICI
-        const logoElement = this.element.querySelector('.nav-logo');
+        // Logo click - CORRECTION MAJEURE
+        const logoElement = document.getElementById('nav-logo-home');
         if (logoElement) {
             logoElement.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -134,18 +134,16 @@ class OweoNavigation {
                 this.navigateToPage('home');
             });
             
-            // Assurer que le logo est focusable
-            logoElement.setAttribute('tabindex', '0');
-            logoElement.setAttribute('role', 'button');
-            logoElement.setAttribute('aria-label', 'Retour à l\'accueil');
-            
-            // Support clavier
+            // Support clavier pour le logo
             logoElement.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
+                    console.log('Logo activated via keyboard');
                     this.navigateToPage('home');
                 }
             });
+        } else {
+            console.warn('Logo element not found');
         }
 
         // Navigation links
@@ -160,9 +158,12 @@ class OweoNavigation {
         });
 
         // Toggle menu mobile
-        this.element.querySelector('.nav-toggle')?.addEventListener('click', () => {
-            this.toggleMobileMenu();
-        });
+        const toggleButton = this.element.querySelector('.nav-toggle');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                this.toggleMobileMenu();
+            });
+        }
 
         // Calendly buttons
         this.element.querySelectorAll('[data-calendly]').forEach(button => {
@@ -201,14 +202,52 @@ class OweoNavigation {
         });
     }
 
+    // CORRECTION : Fonction de navigation robuste
     navigateToPage(page) {
-        if (window.router) {
-            const path = page === 'home' ? '/' : `/${page}`;
-            window.router.navigate(path);
-        }
+        console.log('Attempting to navigate to:', page);
         
-        // Mise à jour de l'état actif
-        this.setActive(page);
+        try {
+            // Vérifier si le router global existe
+            if (window.router && typeof window.router.navigate === 'function') {
+                const path = page === 'home' ? '/' : `/${page}`;
+                console.log('Using router to navigate to:', path);
+                window.router.navigate(path);
+            } 
+            // Fallback : utiliser l'instance router de l'app
+            else if (window.oweoApp && window.oweoApp.router && typeof window.oweoApp.router.navigate === 'function') {
+                const path = page === 'home' ? '/' : `/${page}`;
+                console.log('Using app router to navigate to:', path);
+                window.oweoApp.router.navigate(path);
+            }
+            // Fallback : manipulation directe du hash
+            else {
+                console.log('Using hash fallback to navigate to:', page);
+                if (page === 'home') {
+                    window.location.hash = '';
+                } else {
+                    window.location.hash = page;
+                }
+                
+                // Déclencher un événement de changement de page
+                const event = new CustomEvent('pagechange', { 
+                    detail: { page: page } 
+                });
+                window.dispatchEvent(event);
+            }
+            
+            // Mise à jour de l'état actif
+            this.setActive(page);
+            
+        } catch (error) {
+            console.error('Navigation error:', error);
+            
+            // Dernier fallback : rechargement de la page
+            if (page === 'home') {
+                window.location.href = window.location.origin + window.location.pathname;
+            } else {
+                window.location.hash = page;
+            }
+        }
     }
 
     toggleMobileMenu() {

@@ -1,4 +1,4 @@
-// js/pages/services.js - Page Services Métallurgie
+// js/pages/services.js - Page Services Métallurgie CORRIGÉE
 
 window.pages = window.pages || {};
 
@@ -7,7 +7,8 @@ window.pages.services = {
         return `
             <section class="section">
                 <div class="container">
-                    <button class="btn-back" onclick="router.navigate('/')">← Retour</button>
+                    <!-- CORRECTION : Bouton retour sans onclick inline -->
+                    <button class="btn-back" type="button" aria-label="Retourner à l'accueil">← Retour</button>
                     
                     <div class="section-header">
                         <h1 class="section-title gradient-text">Nos Services pour la Métallurgie</h1>
@@ -94,6 +95,12 @@ window.pages.services = {
     },
 
     init() {
+        console.log('📋 Initializing Services page...');
+        
+        // CORRECTION : Setup du bouton retour en premier
+        this.setupBackButton();
+        
+        // Ensuite le reste du contenu
         this.renderServicesOffers();
         this.renderSectorExpertise();
         this.renderProjectMethodology();
@@ -102,6 +109,71 @@ window.pages.services = {
         this.bindEvents();
         
         console.log('📋 Services page initialized');
+    },
+
+    // CORRECTION : Méthode dédiée pour le bouton retour
+    setupBackButton() {
+        console.log('Setting up back button for services page');
+        
+        // Utiliser la fonction globale si disponible
+        if (typeof window.setupBackButton === 'function') {
+            window.setupBackButton();
+        } else {
+            // Fallback manuel
+            const backButton = document.querySelector('.btn-back');
+            if (backButton) {
+                // Nettoyer les onclick existants
+                backButton.removeAttribute('onclick');
+                
+                // Ajouter le bon event listener
+                backButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Services back button clicked');
+                    this.navigateHome();
+                });
+                
+                // Support clavier
+                backButton.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.navigateHome();
+                    }
+                });
+            }
+        }
+    },
+
+    // CORRECTION : Méthode de navigation robuste
+    navigateHome() {
+        console.log('Navigating to home from services page');
+        
+        try {
+            // Option 1 : Router global
+            if (window.router && typeof window.router.navigate === 'function') {
+                window.router.navigate('/');
+                return;
+            }
+            
+            // Option 2 : Router de l'app
+            if (window.oweoApp && window.oweoApp.router) {
+                window.oweoApp.router.navigate('/');
+                return;
+            }
+            
+            // Option 3 : Navigation component
+            if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
+                window.navigation.navigateToPage('home');
+                return;
+            }
+            
+            // Option 4 : Hash fallback
+            window.location.hash = '';
+            
+        } catch (error) {
+            console.error('Navigation error from services:', error);
+            // Dernier fallback
+            window.location.href = window.location.origin + window.location.pathname;
+        }
     },
 
     renderServicesOffers() {
@@ -487,9 +559,6 @@ window.pages.services = {
     },
 
     bindEvents() {
-        // Back button
-        setupBackButton();
-
         // Calendly avec tracking service
         document.querySelectorAll('[data-calendly]').forEach(button => {
             button.addEventListener('click', (e) => {

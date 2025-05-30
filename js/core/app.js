@@ -238,10 +238,11 @@ class OweoApp {
         // Routes légales
         OweoConfig.legalPages.forEach(page => {
             this.router.addRoute(`/${page.id}`, {
-                component: this.createLegalPage,
-                title: page.label,
+                component: window.pages[page.id] || this.createLegalFallbackPage(page.id),
+                title: page.seo?.title || page.label,
                 meta: {
-                    description: `${page.label} - ${OweoConfig.siteName}`
+                    description: page.seo?.metaDescription || page.description,
+                    keywords: page.seo?.keywords
                 }
             });
         });
@@ -413,6 +414,39 @@ class OweoApp {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * Création d'une page légale de fallback
+     */
+    createLegalFallbackPage(pageId) {
+        return {
+            render: () => `
+                <div class="section">
+                    <div class="container">
+                        <button class="btn-back" type="button" aria-label="Retourner à l'accueil">← Retour</button>
+                        
+                        <div class="section-header">
+                            <h1 class="section-title">${pageId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</h1>
+                            <p class="section-subtitle">Page en cours de développement</p>
+                        </div>
+                        
+                        <div class="legal-content">
+                            <div class="legal-section">
+                                <p>Cette page légale sera bientôt disponible.</p>
+                                <p>Pour toute question, contactez-nous à ${OweoConfig.contact.email}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            init: () => {
+                if (typeof window.setupBackButton === 'function') {
+                    window.setupBackButton();
+                }
+                console.log(`Legal fallback page loaded: ${pageId}`);
+            }
+        };
     }
 
     /**
