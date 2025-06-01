@@ -1,11 +1,11 @@
-// js/pages/home.js - Page d'accueil corrigée et simplifiée
+// js/pages/home.js - Page d'accueil adaptée pour les CSS intégrés
 
 window.pages = window.pages || {};
 
 window.pages.home = {
     render() {
         return `
-            <!-- Hero Section Authentique -->
+            <!-- Hero Section Optimisée -->
             <section class="hero">
                 <div class="container">
                     <div class="hero-content">
@@ -13,7 +13,6 @@ window.pages.home = {
                         <p class="hero-subtitle">
                             <strong>10+ années d'expertise terrain</strong> en métallurgie, charpente et serrurerie.<br>
                             Nous vous accompagnons dans votre transformation digitale avec des solutions adaptées à votre métier.
-                            <span class="hero-guarantee">✅ Ingénieur spécialisé Construction Métallique - Expert ERP métier</span>
                         </p>
                         
                         <div class="hero-stats">
@@ -32,10 +31,10 @@ window.pages.home = {
                         </div>
                         
                         <div class="hero-actions">
-                            <button class="btn btn-primary btn-large" data-calendly="true">
+                            <button class="btn btn-primary btn-large animate-scale-in" data-calendly="true">
                                 🎯 Diagnostic Gratuit (30min)
                             </button>
-                            <a href="#solutions" class="btn btn-secondary btn-large">
+                            <a href="#solutions" class="btn btn-secondary btn-large animate-scale-in delay-100">
                                 Voir Nos Solutions
                             </a>
                         </div>
@@ -67,7 +66,7 @@ window.pages.home = {
                         <p class="section-subtitle">Témoignages de dirigeants du secteur</p>
                     </div>
                     
-                    <div class="testimonials-simple" id="testimonials-simple"></div>
+                    <div class="testimonials-simple animate-fade-in" id="testimonials-simple"></div>
                 </div>
             </section>
 
@@ -124,7 +123,7 @@ window.pages.home = {
                             <strong>Échange sans engagement - Conseil personnalisé</strong>
                         </p>
                         
-                        <div class="cta-benefits" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                        <div class="cta-benefits">
                             <div class="benefit">✅ Audit personnalisé gratuit</div>
                             <div class="benefit">✅ Conseils d'expert métier</div>
                             <div class="benefit">✅ Estimation budgétaire</div>
@@ -132,10 +131,10 @@ window.pages.home = {
                         </div>
                         
                         <div class="cta-actions">
-                            <button class="btn btn-primary btn-large" data-calendly="true">
+                            <button class="btn btn-primary btn-large hover-lift" data-calendly="true">
                                 📅 Réserver mon Diagnostic Gratuit
                             </button>
-                            <a href="mailto:${OweoConfig.contact.email}" class="btn btn-secondary btn-large">
+                            <a href="mailto:${OweoConfig.contact.email}" class="btn btn-secondary btn-large hover-lift">
                                 📧 Contact Direct
                             </a>
                         </div>
@@ -156,8 +155,9 @@ window.pages.home = {
         this.renderExpertise();
         this.renderEssentialFAQ();
         this.bindEvents();
+        this.setupScrollAnimations();
         
-        console.log('🏠 Home page initialized');
+        console.log('🏠 Home page initialized with enhanced CSS');
     },
 
     renderProblemsAndSolutions() {
@@ -219,8 +219,8 @@ window.pages.home = {
         const container = document.getElementById('problems-solutions');
         if (!container) return;
 
-        container.innerHTML = problemsAndSolutions.map(item => `
-            <div class="problem-solution-card">
+        container.innerHTML = problemsAndSolutions.map((item, index) => `
+            <div class="problem-solution-card animate-slide-up delay-${index * 100}">
                 <div class="problem-side">
                     <div class="problem-icon">${item.problem.icon}</div>
                     <h3>${item.problem.title}</h3>
@@ -278,7 +278,7 @@ window.pages.home = {
             </div>
             <div class="testimonials-nav">
                 ${testimonials.map((_, index) => `
-                    <button class="nav-dot ${index === 0 ? 'active' : ''}" data-testimonial-dot="${index}"></button>
+                    <button class="nav-dot ${index === 0 ? 'active' : ''}" data-testimonial-dot="${index}" aria-label="Voir témoignage ${index + 1}"></button>
                 `).join('')}
             </div>
         `;
@@ -311,8 +311,8 @@ window.pages.home = {
 
         container.innerHTML = `
             <div class="method-steps-simple">
-                ${steps.map(step => `
-                    <div class="method-step-simple">
+                ${steps.map((step, index) => `
+                    <div class="method-step-simple animate-slide-up delay-${200 * index}">
                         <div class="step-icon-large">${step.icon}</div>
                         <div class="step-number-large">${step.number}</div>
                         <h3>${step.title}</h3>
@@ -368,8 +368,8 @@ window.pages.home = {
 
         container.innerHTML = `
             <div class="expertise-grid-simple">
-                ${expertiseAreas.map(area => `
-                    <div class="expertise-card-simple" data-page="${area.link}">
+                ${expertiseAreas.map((area, index) => `
+                    <div class="expertise-card-simple hover-lift animate-fade-in delay-${100 * index}" data-page="${area.link}">
                         <div class="expertise-icon">${area.icon}</div>
                         <h3>${area.title}</h3>
                         <p>${area.description}</p>
@@ -410,11 +410,11 @@ window.pages.home = {
         container.innerHTML = `
             <div class="faq-list-essential">
                 ${essentialFAQ.map((item, index) => `
-                    <div class="faq-item-essential" data-faq-index="${index}">
-                        <div class="faq-question-essential" role="button" tabindex="0" aria-expanded="false">
+                    <div class="faq-item-essential animate-fade-in delay-${50 * index}" data-faq-index="${index}">
+                        <button class="faq-question-essential" role="button" tabindex="0" aria-expanded="false">
                             <h3>${item.question}</h3>
                             <span class="faq-toggle-essential">+</span>
-                        </div>
+                        </button>
                         <div class="faq-answer-essential">
                             <p>${item.answer}</p>
                         </div>
@@ -425,7 +425,7 @@ window.pages.home = {
     },
 
     bindEvents() {
-        // Gestion FAQ corrigée
+        // Gestion FAQ améliorée
         this.setupFAQ();
 
         // Calendly buttons
@@ -442,6 +442,9 @@ window.pages.home = {
 
         // Rotation automatique des témoignages
         this.setupTestimonialsRotation();
+
+        // Setup scroll to top on page change
+        this.scrollToTop();
     },
 
     setupFAQ() {
@@ -451,133 +454,5 @@ window.pages.home = {
             const question = item.querySelector('.faq-question-essential');
             if (!question) return;
 
-            // Fonction de toggle
-            const toggleItem = () => {
-                const isActive = item.classList.contains('active');
-                
-                // Fermer tous les autres
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove('active');
-                        const otherQuestion = otherItem.querySelector('.faq-question-essential');
-                        const otherToggle = otherItem.querySelector('.faq-toggle-essential');
-                        if (otherQuestion) otherQuestion.setAttribute('aria-expanded', 'false');
-                        if (otherToggle) otherToggle.textContent = '+';
-                    }
-                });
-                
-                // Toggle l'item actuel
-                item.classList.toggle('active');
-                question.setAttribute('aria-expanded', !isActive);
-                const toggle = item.querySelector('.faq-toggle-essential');
-                if (toggle) {
-                    toggle.textContent = isActive ? '+' : '−';
-                }
-            };
-
-            // Event listeners
-            question.addEventListener('click', toggleItem);
-            question.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleItem();
-                }
-            });
-        });
-    },
-
-    setupCalendly() {
-        document.querySelectorAll('[data-calendly]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.openCalendly();
-            });
-        });
-    },
-
-    setupSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const targetId = link.getAttribute('href');
-                if (targetId && targetId.length > 1) {
-                    e.preventDefault();
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }
-            });
-        });
-    },
-
-    setupExpertiseNavigation() {
-        document.querySelectorAll('.expertise-card-simple').forEach(card => {
-            card.addEventListener('click', () => {
-                const page = card.dataset.page;
-                if (page && window.router) {
-                    window.router.navigate(page);
-                }
-            });
-        });
-    },
-
-    setupTestimonialsNavigation() {
-        const dots = document.querySelectorAll('[data-testimonial-dot]');
-        const cards = document.querySelectorAll('[data-testimonial]');
-        
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.dataset.testimonialDot);
-                this.showTestimonial(index);
-            });
-        });
-    },
-
-    showTestimonial(index) {
-        const cards = document.querySelectorAll('[data-testimonial]');
-        const dots = document.querySelectorAll('[data-testimonial-dot]');
-        
-        cards.forEach(card => card.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        
-        const targetCard = document.querySelector(`[data-testimonial="${index}"]`);
-        const targetDot = document.querySelector(`[data-testimonial-dot="${index}"]`);
-        
-        if (targetCard) targetCard.classList.add('active');
-        if (targetDot) targetDot.classList.add('active');
-    },
-
-    setupTestimonialsRotation() {
-        let currentIndex = 0;
-        const testimonials = document.querySelectorAll('[data-testimonial]');
-        
-        if (testimonials.length <= 1) return;
-
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % testimonials.length;
-            this.showTestimonial(currentIndex);
-        }, 5000);
-    },
-
-    openCalendly() {
-        if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
-            Calendly.initPopupWidget({
-                url: OweoConfig.urls.calendly
-            });
-            
-            if (OweoUtils.analytics) {
-                OweoUtils.analytics.track('calendly_open', {
-                    location: 'home_page'
-                });
-            }
-        } else {
-            console.warn('Calendly not loaded, opening in new tab');
-            window.open(OweoConfig.urls.calendly, '_blank');
-        }
-    }
-};
-
-console.log('🏠 Home page loaded');
+            // Fonction de toggle avec animation améliorée
+            const
