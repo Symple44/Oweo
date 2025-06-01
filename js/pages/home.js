@@ -1,9 +1,10 @@
-// js/pages/home.js - Page d'accueil adaptée pour les CSS intégrés
+// js/pages/home.js - Version corrigée avec vérifications
 
 window.pages = window.pages || {};
 
 window.pages.home = {
     render() {
+        console.log('🏠 Home render() called');
         return `
             <!-- Hero Section Optimisée -->
             <section class="hero">
@@ -54,7 +55,9 @@ window.pages.home = {
                         <p class="section-subtitle">Des solutions concrètes pour vos problématiques métier</p>
                     </div>
                     
-                    <div class="problems-solutions" id="problems-solutions"></div>
+                    <div class="problems-solutions" id="problems-solutions">
+                        <p style="text-align: center; color: var(--text-muted);">Chargement des solutions...</p>
+                    </div>
                 </div>
             </section>
 
@@ -66,7 +69,9 @@ window.pages.home = {
                         <p class="section-subtitle">Témoignages de dirigeants du secteur</p>
                     </div>
                     
-                    <div class="testimonials-simple animate-fade-in" id="testimonials-simple"></div>
+                    <div class="testimonials-simple animate-fade-in" id="testimonials-simple">
+                        <p style="text-align: center; color: var(--text-muted);">Chargement des témoignages...</p>
+                    </div>
                 </div>
             </section>
 
@@ -78,7 +83,9 @@ window.pages.home = {
                         <p class="section-subtitle">Méthode éprouvée pour votre réussite</p>
                     </div>
                     
-                    <div class="method-simple" id="method-simple"></div>
+                    <div class="method-simple" id="method-simple">
+                        <p style="text-align: center; color: var(--text-muted);">Chargement de la méthode...</p>
+                    </div>
                     
                     <div class="method-guarantee">
                         <div class="guarantee-banner">
@@ -97,7 +104,9 @@ window.pages.home = {
                         <p class="section-subtitle">Solutions complètes pour votre transformation digitale</p>
                     </div>
                     
-                    <div class="expertise-simple" id="expertise-simple"></div>
+                    <div class="expertise-simple" id="expertise-simple">
+                        <p style="text-align: center; color: var(--text-muted);">Chargement de l'expertise...</p>
+                    </div>
                 </div>
             </section>
 
@@ -109,7 +118,9 @@ window.pages.home = {
                         <p class="section-subtitle">Réponses aux questions les plus posées</p>
                     </div>
                     
-                    <div class="faq-essential" id="faq-essential"></div>
+                    <div class="faq-essential" id="faq-essential">
+                        <p style="text-align: center; color: var(--text-muted);">Chargement de la FAQ...</p>
+                    </div>
                 </div>
             </section>
 
@@ -134,7 +145,7 @@ window.pages.home = {
                             <button class="btn btn-primary btn-large hover-lift" data-calendly="true">
                                 📅 Réserver mon Diagnostic Gratuit
                             </button>
-                            <a href="mailto:${OweoConfig.contact.email}" class="btn btn-secondary btn-large hover-lift">
+                            <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large hover-lift">
                                 📧 Contact Direct
                             </a>
                         </div>
@@ -149,15 +160,89 @@ window.pages.home = {
     },
 
     init() {
-        this.renderProblemsAndSolutions();
-        this.renderTestimonials();
-        this.renderSimpleMethod();
-        this.renderExpertise();
-        this.renderEssentialFAQ();
-        this.bindEvents();
-        this.setupScrollAnimations();
+        console.log('🏠 Home init() called');
         
-        console.log('🏠 Home page initialized with enhanced CSS');
+        // CORRECTION: Vérifier que le DOM est prêt et attendre si nécessaire
+        this.waitForDOM().then(() => {
+            console.log('✅ DOM ready, starting initialization');
+            
+            // Initialiser le contenu avec des délais pour éviter les conflits
+            this.initializeContent();
+            this.bindEvents();
+            this.setupScrollAnimations();
+            this.scrollToTop();
+            
+            console.log('🏠 Home page initialized with enhanced CSS');
+        }).catch(error => {
+            console.error('❌ Home initialization failed:', error);
+        });
+    },
+
+    // NOUVEAU: Méthode pour attendre que le DOM soit prêt
+    waitForDOM() {
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            const checkDOM = () => {
+                const requiredElements = [
+                    'problems-solutions',
+                    'testimonials-simple', 
+                    'method-simple',
+                    'expertise-simple',
+                    'faq-essential'
+                ];
+                
+                const allElementsExist = requiredElements.every(id => 
+                    document.getElementById(id) !== null
+                );
+                
+                if (allElementsExist) {
+                    resolve();
+                } else {
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                        reject(new Error('Required DOM elements not found after max attempts'));
+                    } else {
+                        console.log(`⏳ Waiting for DOM... attempt ${attempts}/${maxAttempts}`);
+                        setTimeout(checkDOM, 100);
+                    }
+                }
+            };
+            
+            checkDOM();
+        });
+    },
+
+    // NOUVEAU: Initialisation du contenu avec gestion d'erreurs
+    initializeContent() {
+        try {
+            console.log('📝 Initializing content sections...');
+            
+            // Initialiser chaque section avec gestion d'erreur individuelle
+            setTimeout(() => this.safeRender('renderProblemsAndSolutions'), 100);
+            setTimeout(() => this.safeRender('renderTestimonials'), 200);
+            setTimeout(() => this.safeRender('renderSimpleMethod'), 300);
+            setTimeout(() => this.safeRender('renderExpertise'), 400);
+            setTimeout(() => this.safeRender('renderEssentialFAQ'), 500);
+            
+        } catch (error) {
+            console.error('❌ Content initialization error:', error);
+        }
+    },
+
+    // NOUVEAU: Wrapper sécurisé pour le rendu
+    safeRender(methodName) {
+        try {
+            if (typeof this[methodName] === 'function') {
+                this[methodName]();
+                console.log(`✅ ${methodName} completed`);
+            } else {
+                console.warn(`⚠️ Method ${methodName} not found`);
+            }
+        } catch (error) {
+            console.error(`❌ Error in ${methodName}:`, error);
+        }
     },
 
     renderProblemsAndSolutions() {
@@ -217,7 +302,10 @@ window.pages.home = {
         ];
 
         const container = document.getElementById('problems-solutions');
-        if (!container) return;
+        if (!container) {
+            console.warn('⚠️ problems-solutions container not found');
+            return;
+        }
 
         container.innerHTML = problemsAndSolutions.map((item, index) => `
             <div class="problem-solution-card animate-slide-up delay-${index * 100}">
@@ -260,7 +348,10 @@ window.pages.home = {
         ];
 
         const container = document.getElementById('testimonials-simple');
-        if (!container) return;
+        if (!container) {
+            console.warn('⚠️ testimonials-simple container not found');
+            return;
+        }
 
         container.innerHTML = `
             <div class="testimonials-slider">
@@ -307,7 +398,10 @@ window.pages.home = {
         ];
 
         const container = document.getElementById('method-simple');
-        if (!container) return;
+        if (!container) {
+            console.warn('⚠️ method-simple container not found');
+            return;
+        }
 
         container.innerHTML = `
             <div class="method-steps-simple">
@@ -364,7 +458,10 @@ window.pages.home = {
         ];
 
         const container = document.getElementById('expertise-simple');
-        if (!container) return;
+        if (!container) {
+            console.warn('⚠️ expertise-simple container not found');
+            return;
+        }
 
         container.innerHTML = `
             <div class="expertise-grid-simple">
@@ -405,7 +502,10 @@ window.pages.home = {
         ];
 
         const container = document.getElementById('faq-essential');
-        if (!container) return;
+        if (!container) {
+            console.warn('⚠️ faq-essential container not found');
+            return;
+        }
 
         container.innerHTML = `
             <div class="faq-list-essential">
@@ -425,26 +525,17 @@ window.pages.home = {
     },
 
     bindEvents() {
-        // Gestion FAQ améliorée
-        this.setupFAQ();
-
-        // Calendly buttons
-        this.setupCalendly();
-
-        // Smooth scroll pour les ancres
-        this.setupSmoothScroll();
-
-        // Navigation vers les pages d'expertise
-        this.setupExpertiseNavigation();
-
-        // Témoignages - navigation manuelle
-        this.setupTestimonialsNavigation();
-
-        // Rotation automatique des témoignages
-        this.setupTestimonialsRotation();
-
-        // Setup scroll to top on page change
-        this.scrollToTop();
+        try {
+            this.setupFAQ();
+            this.setupCalendly();
+            this.setupSmoothScroll();
+            this.setupExpertiseNavigation();
+            this.setupTestimonialsNavigation();
+            this.setupTestimonialsRotation();
+            console.log('✅ Events bound successfully');
+        } catch (error) {
+            console.error('❌ Error binding events:', error);
+        }
     },
 
     setupFAQ() {
@@ -454,11 +545,9 @@ window.pages.home = {
             const question = item.querySelector('.faq-question-essential');
             if (!question) return;
 
-            // Fonction de toggle avec animation améliorée
             const toggleItem = () => {
                 const isActive = item.classList.contains('active');
                 
-                // Fermer tous les autres avec animation
                 faqItems.forEach(otherItem => {
                     if (otherItem !== item && otherItem.classList.contains('active')) {
                         otherItem.classList.remove('active');
@@ -469,7 +558,6 @@ window.pages.home = {
                     }
                 });
                 
-                // Toggle l'item actuel avec animation
                 item.classList.toggle('active');
                 question.setAttribute('aria-expanded', !isActive);
                 const toggle = item.querySelector('.faq-toggle-essential');
@@ -477,7 +565,6 @@ window.pages.home = {
                     toggle.textContent = isActive ? '+' : '−';
                 }
 
-                // Petit effet visuel
                 if (!isActive) {
                     item.style.transform = 'scale(1.01)';
                     setTimeout(() => {
@@ -486,7 +573,6 @@ window.pages.home = {
                 }
             };
 
-            // Event listeners
             question.addEventListener('click', toggleItem);
             question.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -501,13 +587,10 @@ window.pages.home = {
         document.querySelectorAll('[data-calendly]').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                
-                // Effet visuel immédiat
                 button.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     button.style.transform = '';
                 }, 150);
-                
                 this.openCalendly();
             });
         });
@@ -525,8 +608,6 @@ window.pages.home = {
                             behavior: 'smooth',
                             block: 'start'
                         });
-                        
-                        // Effet visuel sur la section cible
                         targetElement.style.transform = 'scale(1.01)';
                         setTimeout(() => {
                             targetElement.style.transform = '';
@@ -542,7 +623,6 @@ window.pages.home = {
             card.addEventListener('click', () => {
                 const page = card.dataset.page;
                 if (page && window.router) {
-                    // Effet de transition
                     card.style.transform = 'scale(0.95)';
                     setTimeout(() => {
                         window.router.navigate(page);
@@ -554,7 +634,6 @@ window.pages.home = {
 
     setupTestimonialsNavigation() {
         const dots = document.querySelectorAll('[data-testimonial-dot]');
-        
         dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const index = parseInt(dot.dataset.testimonialDot);
@@ -567,14 +646,12 @@ window.pages.home = {
         const cards = document.querySelectorAll('[data-testimonial]');
         const dots = document.querySelectorAll('[data-testimonial-dot]');
         
-        // Animation de sortie pour la carte active
         const activeCard = document.querySelector('[data-testimonial].active');
         if (activeCard) {
             activeCard.style.transform = 'translateY(-20px)';
             activeCard.style.opacity = '0';
         }
         
-        // Mise à jour des classes après animation
         setTimeout(() => {
             cards.forEach(card => card.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
@@ -584,7 +661,6 @@ window.pages.home = {
             
             if (targetCard) {
                 targetCard.classList.add('active');
-                // Animation d'entrée
                 targetCard.style.transform = 'translateY(20px)';
                 targetCard.style.opacity = '0';
                 setTimeout(() => {
@@ -602,7 +678,6 @@ window.pages.home = {
         
         if (testimonials.length <= 1) return;
 
-        // Rotation automatique toutes les 5 secondes
         setInterval(() => {
             currentIndex = (currentIndex + 1) % testimonials.length;
             this.showTestimonial(currentIndex);
@@ -610,7 +685,6 @@ window.pages.home = {
     },
 
     setupScrollAnimations() {
-        // Intersection Observer pour les animations au scroll
         if ('IntersectionObserver' in window) {
             const observerOptions = {
                 threshold: 0.1,
@@ -621,8 +695,6 @@ window.pages.home = {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
-                        
-                        // Effet de pulsation pour les éléments importants
                         if (entry.target.classList.contains('stat')) {
                             entry.target.style.animation = 'pulse 0.6s ease-out';
                         }
@@ -630,7 +702,6 @@ window.pages.home = {
                 });
             }, observerOptions);
 
-            // Observer tous les éléments avec des animations
             document.querySelectorAll('.animate-fade-in, .animate-slide-up, .stat, .testimonial-card').forEach(el => {
                 observer.observe(el);
             });
@@ -646,19 +717,17 @@ window.pages.home = {
 
     openCalendly() {
         if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
-            Calendly.initPopupWidget({
-                url: OweoConfig.urls.calendly
-            });
-            
-            if (OweoUtils.analytics) {
-                OweoUtils.analytics.track('calendly_open', {
-                    location: 'home_page',
-                    timestamp: Date.now()
+            try {
+                Calendly.initPopupWidget({
+                    url: 'https://calendly.com/oweo' // URL par défaut
                 });
+            } catch (error) {
+                console.error('Calendly error:', error);
+                window.open('https://calendly.com/oweo', '_blank');
             }
         } else {
             console.warn('Calendly not loaded, opening in new tab');
-            window.open(OweoConfig.urls.calendly, '_blank');
+            window.open('https://calendly.com/oweo', '_blank');
         }
     }
 };
