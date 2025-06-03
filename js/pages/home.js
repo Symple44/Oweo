@@ -1,188 +1,306 @@
-// js/pages/home.js - Version corrigée avec vérifications
+// js/pages/home.js - Version corrigée avec initialisation robuste et gestion d'erreurs
 
 window.pages = window.pages || {};
 
 window.pages.home = {
+    // Variables d'état pour éviter les réinitialisations multiples
+    isInitialized: false,
+    isRendering: false,
+    initTimeout: null,
+    
     render() {
         console.log('🏠 Home render() called');
-        return `
-            <!-- Hero Section Optimisée -->
-            <section class="hero">
-                <div class="container">
-                    <div class="hero-content">
-                        <h1 class="gradient-text">Expert ERP & Transformation Digitale pour la Charpente Métallique</h1>
-                        <p class="hero-subtitle">
-                            <strong>10+ années d'expertise terrain</strong> en métallurgie, charpente et serrurerie.<br>
-                            Nous vous accompagnons dans votre transformation digitale avec des solutions adaptées à votre métier.
-                        </p>
-                        
-                        <div class="hero-stats">
-                            <div class="stat">
-                                <div class="stat-number">10+</div>
-                                <div class="stat-label">Années d'expérience</div>
+        
+        if (this.isRendering) {
+            console.warn('⚠️ Home render already in progress, skipping');
+            return this.getBasicFallback();
+        }
+        
+        this.isRendering = true;
+        
+        try {
+            const content = `
+                <!-- Hero Section Optimisée -->
+                <section class="hero">
+                    <div class="container">
+                        <div class="hero-content">
+                            <h1 class="gradient-text">Expert ERP & Transformation Digitale pour la Charpente Métallique</h1>
+                            <p class="hero-subtitle">
+                                <strong>10+ années d'expertise terrain</strong> en métallurgie, charpente et serrurerie.<br>
+                                Nous vous accompagnons dans votre transformation digitale avec des solutions adaptées à votre métier.
+                            </p>
+                            
+                            <div class="hero-stats">
+                                <div class="stat">
+                                    <div class="stat-number">10+</div>
+                                    <div class="stat-label">Années d'expérience</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">100%</div>
+                                    <div class="stat-label">Spécialisé métallurgie</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">360°</div>
+                                    <div class="stat-label">De l'atelier au bureau</div>
+                                </div>
                             </div>
-                            <div class="stat">
-                                <div class="stat-number">100%</div>
-                                <div class="stat-label">Spécialisé métallurgie</div>
+                            
+                            <div class="hero-actions">
+                                <button class="btn btn-primary btn-large animate-scale-in" data-calendly="true">
+                                    🎯 Diagnostic Gratuit (30min)
+                                </button>
+                                <a href="#solutions" class="btn btn-secondary btn-large animate-scale-in delay-100">
+                                    Voir Nos Solutions
+                                </a>
                             </div>
-                            <div class="stat">
-                                <div class="stat-number">360°</div>
-                                <div class="stat-label">De l'atelier au bureau</div>
+                            
+                            <div class="hero-trust">
+                                <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP métallurgie</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Problèmes/Solutions -->
+                <section id="solutions" class="section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 class="section-title">Nous Résolvons vos Défis Quotidiens</h2>
+                            <p class="section-subtitle">Des solutions concrètes pour vos problématiques métier</p>
+                        </div>
+                        
+                        <div class="problems-solutions" id="problems-solutions">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: var(--text-muted);">Chargement des solutions...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Témoignages Authentiques -->
+                <section class="section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 class="section-title">Retours d'Expérience</h2>
+                            <p class="section-subtitle">Témoignages de dirigeants du secteur</p>
+                        </div>
+                        
+                        <div class="testimonials-simple animate-fade-in" id="testimonials-simple">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: var(--text-muted);">Chargement des témoignages...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notre Approche en 3 Étapes -->
+                <section class="section section-special-bg">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 class="section-title">Notre Approche en 3 Étapes</h2>
+                            <p class="section-subtitle">Méthode éprouvée pour votre réussite</p>
+                        </div>
+                        
+                        <div class="method-simple" id="method-simple">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: var(--text-muted);">Chargement de la méthode...</p>
                             </div>
                         </div>
                         
-                        <div class="hero-actions">
-                            <button class="btn btn-primary btn-large animate-scale-in" data-calendly="true">
-                                🎯 Diagnostic Gratuit (30min)
-                            </button>
-                            <a href="#solutions" class="btn btn-secondary btn-large animate-scale-in delay-100">
-                                Voir Nos Solutions
-                            </a>
+                        <div class="method-guarantee">
+                            <div class="guarantee-banner">
+                                <h3>🛡️ Notre Engagement</h3>
+                                <p>Nous vous accompagnons jusqu'à l'atteinte de vos objectifs avec <strong>un support complet inclus</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Nos Domaines d'Expertise -->
+                <section class="section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 class="section-title">Nos Domaines d'Expertise</h2>
+                            <p class="section-subtitle">Solutions complètes pour votre transformation digitale</p>
                         </div>
                         
-                        <div class="hero-trust">
-                            <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP métallurgie</p>
+                        <div class="expertise-simple" id="expertise-simple">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: var(--text-muted);">Chargement de l'expertise...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Section Problèmes/Solutions -->
-            <section id="solutions" class="section">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">Nous Résolvons vos Défis Quotidiens</h2>
-                        <p class="section-subtitle">Des solutions concrètes pour vos problématiques métier</p>
-                    </div>
-                    
-                    <div class="problems-solutions" id="problems-solutions">
-                        <p style="text-align: center; color: var(--text-muted);">Chargement des solutions...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Témoignages Authentiques -->
-            <section class="section">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">Retours d'Expérience</h2>
-                        <p class="section-subtitle">Témoignages de dirigeants du secteur</p>
-                    </div>
-                    
-                    <div class="testimonials-simple animate-fade-in" id="testimonials-simple">
-                        <p style="text-align: center; color: var(--text-muted);">Chargement des témoignages...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Notre Approche en 3 Étapes -->
-            <section class="section section-special-bg">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">Notre Approche en 3 Étapes</h2>
-                        <p class="section-subtitle">Méthode éprouvée pour votre réussite</p>
-                    </div>
-                    
-                    <div class="method-simple" id="method-simple">
-                        <p style="text-align: center; color: var(--text-muted);">Chargement de la méthode...</p>
-                    </div>
-                    
-                    <div class="method-guarantee">
-                        <div class="guarantee-banner">
-                            <h3>🛡️ Notre Engagement</h3>
-                            <p>Nous vous accompagnons jusqu'à l'atteinte de vos objectifs avec <strong>un support complet inclus</strong>.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Nos Domaines d'Expertise -->
-            <section class="section">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">Nos Domaines d'Expertise</h2>
-                        <p class="section-subtitle">Solutions complètes pour votre transformation digitale</p>
-                    </div>
-                    
-                    <div class="expertise-simple" id="expertise-simple">
-                        <p style="text-align: center; color: var(--text-muted);">Chargement de l'expertise...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FAQ Essentielles -->
-            <section class="section">
-                <div class="container">
-                    <div class="section-header">
-                        <h2 class="section-title">Questions Fréquentes</h2>
-                        <p class="section-subtitle">Réponses aux questions les plus posées</p>
-                    </div>
-                    
-                    <div class="faq-essential" id="faq-essential">
-                        <p style="text-align: center; color: var(--text-muted);">Chargement de la FAQ...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CTA Final Authentique -->
-            <section class="cta-final">
-                <div class="container">
-                    <div class="cta-content">
-                        <h2>🚀 Parlons de votre Projet</h2>
-                        <p class="cta-description">
-                            Diagnostic gratuit de 30 minutes pour identifier vos priorités.<br>
-                            <strong>Échange sans engagement - Conseil personnalisé</strong>
-                        </p>
-                        
-                        <div class="cta-benefits">
-                            <div class="benefit">✅ Audit personnalisé gratuit</div>
-                            <div class="benefit">✅ Conseils d'expert métier</div>
-                            <div class="benefit">✅ Estimation budgétaire</div>
-                            <div class="benefit">✅ Plan d'action concret</div>
+                <!-- FAQ Essentielles -->
+                <section class="section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 class="section-title">Questions Fréquentes</h2>
+                            <p class="section-subtitle">Réponses aux questions les plus posées</p>
                         </div>
                         
-                        <div class="cta-actions">
-                            <button class="btn btn-primary btn-large hover-lift" data-calendly="true">
-                                📅 Réserver mon Diagnostic Gratuit
-                            </button>
-                            <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large hover-lift">
-                                📧 Contact Direct
-                            </a>
-                        </div>
-                        
-                        <div class="cta-urgency">
-                            <p>⚡ <strong>Réponse garantie sous 24h</strong> pour toute demande reçue en semaine</p>
+                        <div class="faq-essential" id="faq-essential">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: var(--text-muted);">Chargement de la FAQ...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        `;
+                </section>
+
+                <!-- CTA Final Authentique -->
+                <section class="cta-final">
+                    <div class="container">
+                        <div class="cta-content">
+                            <h2>🚀 Parlons de votre Projet</h2>
+                            <p class="cta-description">
+                                Diagnostic gratuit de 30 minutes pour identifier vos priorités.<br>
+                                <strong>Échange sans engagement - Conseil personnalisé</strong>
+                            </p>
+                            
+                            <div class="cta-benefits">
+                                <div class="benefit">✅ Audit personnalisé gratuit</div>
+                                <div class="benefit">✅ Conseils d'expert métier</div>
+                                <div class="benefit">✅ Estimation budgétaire</div>
+                                <div class="benefit">✅ Plan d'action concret</div>
+                            </div>
+                            
+                            <div class="cta-actions">
+                                <button class="btn btn-primary btn-large hover-lift" data-calendly="true">
+                                    📅 Réserver mon Diagnostic Gratuit
+                                </button>
+                                <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large hover-lift">
+                                    📧 Contact Direct
+                                </a>
+                            </div>
+                            
+                            <div class="cta-urgency">
+                                <p>⚡ <strong>Réponse garantie sous 24h</strong> pour toute demande reçue en semaine</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            this.isRendering = false;
+            return content;
+            
+        } catch (error) {
+            console.error('❌ Home render error:', error);
+            this.isRendering = false;
+            return this.getBasicFallback();
+        }
     },
 
     init() {
         console.log('🏠 Home init() called');
         
-        // CORRECTION: Vérifier que le DOM est prêt et attendre si nécessaire
-        this.waitForDOM().then(() => {
-            console.log('✅ DOM ready, starting initialization');
-            
-            // Initialiser le contenu avec des délais pour éviter les conflits
-            this.initializeContent();
-            this.bindEvents();
-            this.setupScrollAnimations();
-            this.scrollToTop();
-            
-            console.log('🏠 Home page initialized with enhanced CSS');
-        }).catch(error => {
-            console.error('❌ Home initialization failed:', error);
+        // Éviter les initialisations multiples
+        if (this.isInitialized) {
+            console.log('🏠 Home already initialized, skipping');
+            return Promise.resolve();
+        }
+        
+        // Nettoyer un timeout précédent si il existe
+        if (this.initTimeout) {
+            clearTimeout(this.initTimeout);
+        }
+        
+        return new Promise((resolve, reject) => {
+            try {
+                // Timeout de sécurité pour éviter les blocages
+                this.initTimeout = setTimeout(() => {
+                    console.warn('⚠️ Home initialization timeout, proceeding with fallback');
+                    this.isInitialized = true;
+                    this.bindBasicEvents();
+                    this.scrollToTop();
+                    resolve();
+                }, 5000);
+                
+                // Vérifier que le DOM est prêt et attendre si nécessaire
+                this.waitForDOM()
+                    .then(() => {
+                        clearTimeout(this.initTimeout);
+                        console.log('✅ DOM ready, starting home initialization');
+                        
+                        // Initialiser le contenu avec des délais pour éviter les conflits
+                        this.initializeContent();
+                        this.bindEvents();
+                        this.setupScrollAnimations();
+                        this.scrollToTop();
+                        
+                        this.isInitialized = true;
+                        console.log('🏠 Home page initialized successfully');
+                        resolve();
+                    })
+                    .catch(error => {
+                        clearTimeout(this.initTimeout);
+                        console.error('❌ Home DOM wait failed:', error);
+                        // Continuer avec une initialisation minimale
+                        this.isInitialized = true;
+                        this.bindBasicEvents();
+                        this.scrollToTop();
+                        resolve(); // On résout quand même pour ne pas bloquer
+                    });
+                
+            } catch (error) {
+                clearTimeout(this.initTimeout);
+                console.error('❌ Home initialization failed:', error);
+                this.isInitialized = true; // Marquer comme initialisé pour éviter les boucles
+                reject(error);
+            }
         });
     },
 
-    // NOUVEAU: Méthode pour attendre que le DOM soit prêt
+    // Fallback basique si le rendu complet échoue
+    getBasicFallback() {
+        return `
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="gradient-text">Expert ERP & Transformation Digitale</h1>
+                        <p class="hero-subtitle">
+                            <strong>10+ années d'expertise terrain</strong> en charpente métallique et serrurerie.<br>
+                            Nous vous accompagnons dans votre transformation digitale.
+                        </p>
+                        
+                        <div class="hero-actions">
+                            <button class="btn btn-primary btn-large" onclick="openCalendlyFallback()">
+                                🎯 Diagnostic Gratuit (30min)
+                            </button>
+                            <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                📧 Contact Direct
+                            </a>
+                        </div>
+                        
+                        <div class="hero-trust">
+                            <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Site en cours de chargement</h2>
+                        <p class="section-subtitle">Certaines fonctionnalités sont temporairement limitées</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    // Méthode pour attendre que le DOM soit prêt avec timeouts plus courts
     waitForDOM() {
         return new Promise((resolve, reject) => {
             let attempts = 0;
-            const maxAttempts = 10;
+            const maxAttempts = 20; // Augmenté pour plus de chances
+            const checkInterval = 150; // Intervalle réduit
             
             const checkDOM = () => {
                 const requiredElements = [
@@ -193,55 +311,120 @@ window.pages.home = {
                     'faq-essential'
                 ];
                 
-                const allElementsExist = requiredElements.every(id => 
-                    document.getElementById(id) !== null
-                );
+                const allElementsExist = requiredElements.every(id => {
+                    const element = document.getElementById(id);
+                    return element !== null;
+                });
                 
                 if (allElementsExist) {
+                    console.log(`✅ All DOM elements found after ${attempts + 1} attempts`);
                     resolve();
                 } else {
                     attempts++;
                     if (attempts >= maxAttempts) {
-                        reject(new Error('Required DOM elements not found after max attempts'));
+                        const missingElements = requiredElements.filter(id => !document.getElementById(id));
+                        console.warn(`⚠️ Missing DOM elements after ${maxAttempts} attempts:`, missingElements);
+                        // Créer les éléments manquants
+                        this.createMissingElements(missingElements);
+                        resolve(); // Résoudre quand même
                     } else {
                         console.log(`⏳ Waiting for DOM... attempt ${attempts}/${maxAttempts}`);
-                        setTimeout(checkDOM, 100);
+                        setTimeout(checkDOM, checkInterval);
                     }
                 }
             };
             
+            // Démarrer la vérification immédiatement
             checkDOM();
         });
     },
 
-    // NOUVEAU: Initialisation du contenu avec gestion d'erreurs
+    // Créer les éléments DOM manquants
+    createMissingElements(missingIds) {
+        console.log('🔧 Creating missing DOM elements:', missingIds);
+        
+        missingIds.forEach(id => {
+            // Chercher un parent probable
+            const possibleParents = [
+                document.querySelector('.section'),
+                document.querySelector('.container'),
+                document.getElementById('app'),
+                document.body
+            ].filter(Boolean);
+            
+            if (possibleParents.length > 0) {
+                const parent = possibleParents[0];
+                const element = document.createElement('div');
+                element.id = id;
+                element.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Section ${id} en cours de chargement...</p>`;
+                parent.appendChild(element);
+                console.log(`✅ Created missing element: ${id}`);
+            }
+        });
+    },
+
+    // Initialisation du contenu avec gestion d'erreurs améliorée
     initializeContent() {
         try {
             console.log('📝 Initializing content sections...');
             
-            // Initialiser chaque section avec gestion d'erreur individuelle
-            setTimeout(() => this.safeRender('renderProblemsAndSolutions'), 100);
-            setTimeout(() => this.safeRender('renderTestimonials'), 200);
-            setTimeout(() => this.safeRender('renderSimpleMethod'), 300);
-            setTimeout(() => this.safeRender('renderExpertise'), 400);
-            setTimeout(() => this.safeRender('renderEssentialFAQ'), 500);
+            // Initialiser chaque section avec gestion d'erreur individuelle et délais échelonnés
+            const sections = [
+                { method: 'renderProblemsAndSolutions', delay: 100 },
+                { method: 'renderTestimonials', delay: 300 },
+                { method: 'renderSimpleMethod', delay: 500 },
+                { method: 'renderExpertise', delay: 700 },
+                { method: 'renderEssentialFAQ', delay: 900 }
+            ];
+            
+            sections.forEach(section => {
+                setTimeout(() => {
+                    this.safeRender(section.method);
+                }, section.delay);
+            });
             
         } catch (error) {
             console.error('❌ Content initialization error:', error);
         }
     },
 
-    // NOUVEAU: Wrapper sécurisé pour le rendu
+    // Wrapper sécurisé pour le rendu avec fallbacks
     safeRender(methodName) {
         try {
             if (typeof this[methodName] === 'function') {
                 this[methodName]();
                 console.log(`✅ ${methodName} completed`);
             } else {
-                console.warn(`⚠️ Method ${methodName} not found`);
+                console.warn(`⚠️ Method ${methodName} not found, using fallback`);
+                this.renderFallbackContent(methodName);
             }
         } catch (error) {
             console.error(`❌ Error in ${methodName}:`, error);
+            this.renderFallbackContent(methodName);
+        }
+    },
+
+    // Rendu de contenu de fallback pour les sections qui échouent
+    renderFallbackContent(methodName) {
+        const containerMap = {
+            'renderProblemsAndSolutions': 'problems-solutions',
+            'renderTestimonials': 'testimonials-simple',
+            'renderSimpleMethod': 'method-simple',
+            'renderExpertise': 'expertise-simple',
+            'renderEssentialFAQ': 'faq-essential'
+        };
+        
+        const containerId = containerMap[methodName];
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">Section temporairement indisponible</p>
+                        <button onclick="location.reload()" class="btn btn-secondary">🔄 Recharger la page</button>
+                    </div>
+                `;
+            }
         }
     },
 
@@ -535,6 +718,45 @@ window.pages.home = {
             console.log('✅ Events bound successfully');
         } catch (error) {
             console.error('❌ Error binding events:', error);
+            // Bind au moins les événements de base
+            this.bindBasicEvents();
+        }
+    },
+
+    // Version simplifiée des événements pour les cas de fallback
+    bindBasicEvents() {
+        try {
+            // Calendly de base
+            document.querySelectorAll('[data-calendly], [onclick*="openCalendly"]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (typeof window.openCalendlyFallback === 'function') {
+                        window.openCalendlyFallback();
+                    } else if (typeof openCalendlyFallback === 'function') {
+                        openCalendlyFallback();
+                    } else {
+                        window.open('https://calendly.com/oweo', '_blank');
+                    }
+                });
+            });
+            
+            // Scroll fluide basique
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const targetId = link.getAttribute('href');
+                    if (targetId && targetId.length > 1) {
+                        e.preventDefault();
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+            
+            console.log('✅ Basic events bound');
+        } catch (error) {
+            console.error('❌ Error binding basic events:', error);
         }
     },
 
@@ -548,6 +770,7 @@ window.pages.home = {
             const toggleItem = () => {
                 const isActive = item.classList.contains('active');
                 
+                // Fermer les autres FAQ
                 faqItems.forEach(otherItem => {
                     if (otherItem !== item && otherItem.classList.contains('active')) {
                         otherItem.classList.remove('active');
@@ -558,6 +781,7 @@ window.pages.home = {
                     }
                 });
                 
+                // Toggle l'item courant
                 item.classList.toggle('active');
                 question.setAttribute('aria-expanded', !isActive);
                 const toggle = item.querySelector('.faq-toggle-essential');
@@ -565,6 +789,7 @@ window.pages.home = {
                     toggle.textContent = isActive ? '+' : '−';
                 }
 
+                // Animation subtile
                 if (!isActive) {
                     item.style.transform = 'scale(1.01)';
                     setTimeout(() => {
@@ -608,6 +833,7 @@ window.pages.home = {
                             behavior: 'smooth',
                             block: 'start'
                         });
+                        // Animation visuelle
                         targetElement.style.transform = 'scale(1.01)';
                         setTimeout(() => {
                             targetElement.style.transform = '';
@@ -622,10 +848,15 @@ window.pages.home = {
         document.querySelectorAll('.expertise-card-simple').forEach(card => {
             card.addEventListener('click', () => {
                 const page = card.dataset.page;
-                if (page && window.router) {
+                if (page) {
                     card.style.transform = 'scale(0.95)';
                     setTimeout(() => {
-                        window.router.navigate(page);
+                        if (window.router && typeof window.router.navigate === 'function') {
+                            window.router.navigate(page);
+                        } else {
+                            // Fallback navigation
+                            window.location.hash = page;
+                        }
                     }, 150);
                 }
             });
@@ -646,6 +877,7 @@ window.pages.home = {
         const cards = document.querySelectorAll('[data-testimonial]');
         const dots = document.querySelectorAll('[data-testimonial-dot]');
         
+        // Animation de sortie
         const activeCard = document.querySelector('[data-testimonial].active');
         if (activeCard) {
             activeCard.style.transform = 'translateY(-20px)';
@@ -653,14 +885,17 @@ window.pages.home = {
         }
         
         setTimeout(() => {
+            // Nettoyer les classes actives
             cards.forEach(card => card.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
             
+            // Activer les nouveaux éléments
             const targetCard = document.querySelector(`[data-testimonial="${index}"]`);
             const targetDot = document.querySelector(`[data-testimonial-dot="${index}"]`);
             
             if (targetCard) {
                 targetCard.classList.add('active');
+                // Animation d'entrée
                 targetCard.style.transform = 'translateY(20px)';
                 targetCard.style.opacity = '0';
                 setTimeout(() => {
@@ -678,10 +913,19 @@ window.pages.home = {
         
         if (testimonials.length <= 1) return;
 
-        setInterval(() => {
+        const interval = setInterval(() => {
+            // Vérifier si les éléments existent toujours
+            if (!document.querySelector('[data-testimonial]')) {
+                clearInterval(interval);
+                return;
+            }
+            
             currentIndex = (currentIndex + 1) % testimonials.length;
             this.showTestimonial(currentIndex);
         }, 5000);
+        
+        // Sauvegarder l'interval pour pouvoir le nettoyer
+        this.testimonialsInterval = interval;
     },
 
     setupScrollAnimations() {
@@ -702,34 +946,83 @@ window.pages.home = {
                 });
             }, observerOptions);
 
-            document.querySelectorAll('.animate-fade-in, .animate-slide-up, .stat, .testimonial-card').forEach(el => {
-                observer.observe(el);
+            // Observer les éléments avec vérification d'existence
+            const elementsToObserve = document.querySelectorAll('.animate-fade-in, .animate-slide-up, .stat, .testimonial-card');
+            elementsToObserve.forEach(el => {
+                if (el) observer.observe(el);
             });
+            
+            // Sauvegarder l'observer pour pouvoir le nettoyer
+            this.scrollObserver = observer;
         }
     },
 
     scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        try {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        } catch (error) {
+            // Fallback pour navigateurs anciens
+            window.scrollTo(0, 0);
+        }
     },
 
     openCalendly() {
         if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
             try {
-                Calendly.initPopupWidget({
-                    url: 'https://calendly.com/oweo' // URL par défaut
-                });
+                const calendlyUrl = (window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo';
+                Calendly.initPopupWidget({ url: calendlyUrl });
             } catch (error) {
                 console.error('Calendly error:', error);
-                window.open('https://calendly.com/oweo', '_blank');
+                this.fallbackCalendly();
             }
         } else {
-            console.warn('Calendly not loaded, opening in new tab');
-            window.open('https://calendly.com/oweo', '_blank');
+            console.warn('Calendly not loaded, using fallback');
+            this.fallbackCalendly();
+        }
+    },
+
+    fallbackCalendly() {
+        const calendlyUrl = (window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo';
+        window.open(calendlyUrl, '_blank');
+    },
+
+    // Méthode de nettoyage pour éviter les fuites mémoire
+    destroy() {
+        try {
+            // Nettoyer les intervals
+            if (this.testimonialsInterval) {
+                clearInterval(this.testimonialsInterval);
+            }
+            
+            if (this.initTimeout) {
+                clearTimeout(this.initTimeout);
+            }
+            
+            // Nettoyer les observers
+            if (this.scrollObserver) {
+                this.scrollObserver.disconnect();
+            }
+            
+            // Reset des variables d'état
+            this.isInitialized = false;
+            this.isRendering = false;
+            
+            console.log('🏠 Home page destroyed and cleaned up');
+        } catch (error) {
+            console.error('❌ Error during home page cleanup:', error);
         }
     }
 };
 
-console.log('🏠 Enhanced Home page loaded with CSS integration');
+// Auto-vérification : s'assurer que home existe au chargement du script
+if (!window.pages) window.pages = {};
+if (!window.pages.home) {
+    console.log('🏠 Home page script loaded and registered');
+} else {
+    console.log('🏠 Home page script reloaded, preserving existing instance');
+}
+
+console.log('🏠 Enhanced Home page loaded with robust error handling and fallbacks');
