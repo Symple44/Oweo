@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/footer.css">
-    <!-- CORRECTION: Nom du fichier corrigé -->
     <link rel="stylesheet" href="css/modals-notifications.css">
     <link rel="stylesheet" href="css/pages-specialized.css">
     <link rel="stylesheet" href="css/legal-pages.css">
@@ -156,6 +155,136 @@
             padding-top: var(--navbar-height);
         }
         
+        /* Hero styles critiques */
+        .hero {
+            padding: var(--space-24) 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: var(--space-6);
+            line-height: var(--line-height-tight);
+        }
+        
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-8) 0;
+            padding: var(--space-6);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: var(--space-8) 0;
+        }
+        
+        .hero-trust {
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .hero-trust p {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* Section styles critiques */
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+        
+        .section-title {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-4);
+            color: var(--text-primary);
+        }
+        
+        .section-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Expertise grid styles */
+        .expertise-grid-simple {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+        }
+        
+        .expertise-card-simple {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-align: center;
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+        
+        .expertise-card-simple:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        
+        .expertise-icon {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-4);
+        }
+        
+        .expertise-card-simple h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-3);
+            color: var(--text-primary);
+        }
+        
+        .expertise-card-simple p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        
         /* Loading styles critiques */
         .loading-overlay {
             position: fixed;
@@ -285,6 +414,15 @@
                 padding: var(--space-8) 0;
             }
             
+            .hero {
+                padding: var(--space-16) 0;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
             .error-actions {
                 flex-direction: column;
                 align-items: center;
@@ -292,6 +430,18 @@
             
             .btn {
                 min-height: 48px;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
+            }
+            
+            .expertise-grid-simple {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
             }
         }
     </style>
@@ -328,7 +478,7 @@
         <div class="loading-text">Chargement...</div>
     </div>
     
-    <!-- Scripts - Core (ordre critique) -->
+    <!-- Scripts - Gestion d'erreurs préalable -->
     <script>
         // Vérification préalable et gestion d'erreurs
         window.addEventListener('error', function(event) {
@@ -342,6 +492,19 @@
             console.warn('Promise rejection:', event.reason);
             event.preventDefault();
         });
+        
+        // Variables globales pour le debug
+        window.debugMode = true;
+        window.loadingSteps = [];
+        
+        function logStep(step) {
+            if (window.debugMode) {
+                window.loadingSteps.push(`${new Date().toISOString()}: ${step}`);
+                console.log(`📋 ${step}`);
+            }
+        }
+        
+        logStep('Script initialization started');
     </script>
     
     <!-- Scripts Core essentiels -->
@@ -376,6 +539,8 @@
     
     <!-- Stubs améliorés pour fichiers manquants -->
     <script>
+        logStep('Setting up stubs and fallbacks');
+        
         // Configuration des stubs
         window.OweoAPI = window.OweoAPI || {
             get: () => Promise.resolve({}),
@@ -423,8 +588,152 @@
             }
         });
         
-        // Créer les pages manquantes
+        // Fonction pour créer un fallback avancé pour home
+        const createEnhancedHomeFallback = () => {
+            return {
+                render: () => `
+                    <div class="hero">
+                        <div class="container">
+                            <div class="hero-content">
+                                <h1 class="gradient-text">Expert ERP & Transformation Digitale</h1>
+                                <p class="hero-subtitle">
+                                    <strong>10+ années d'expertise terrain</strong> en charpente métallique et serrurerie.<br>
+                                    Nous vous accompagnons dans votre transformation digitale.
+                                </p>
+                                
+                                <div class="hero-stats">
+                                    <div class="stat">
+                                        <div class="stat-number">10+</div>
+                                        <div class="stat-label">Années d'expérience</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-number">100%</div>
+                                        <div class="stat-label">Métallurgie</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-number">360°</div>
+                                        <div class="stat-label">Atelier & Bureau</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="hero-actions">
+                                    <button class="btn btn-primary btn-large" onclick="openCalendlyFallback()">
+                                        🎯 Diagnostic Gratuit (30min)
+                                    </button>
+                                    <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                        📧 Contact Direct
+                                    </a>
+                                </div>
+                                
+                                <div class="hero-trust">
+                                    <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="container">
+                            <div class="section-header">
+                                <h2 class="section-title">Nos Solutions</h2>
+                                <p class="section-subtitle">Expertise complète pour votre métier</p>
+                            </div>
+                            
+                            <div class="expertise-grid-simple">
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🛠️</div>
+                                    <h3>ERP Métallurgie</h3>
+                                    <p>Solutions ERP spécialisées : Sage X3, Eurêka, 2CM Manager</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">📊</div>
+                                    <h3>Business Intelligence</h3>
+                                    <p>Tableaux de bord temps réel pour piloter votre performance</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">✅</div>
+                                    <h3>Conformité EN1090</h3>
+                                    <p>Digitalisation complète de votre système qualité</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🤖</div>
+                                    <h3>Intelligence Artificielle</h3>
+                                    <p>IA de contrôle qualité et optimisation des processus</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">⚡</div>
+                                    <h3>Optimisation Production</h3>
+                                    <p>Amélioration continue et gains de productivité mesurables</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🤝</div>
+                                    <h3>Accompagnement Projet</h3>
+                                    <p>Support complet de A à Z pour garantir votre réussite</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="container">
+                            <div class="section-header">
+                                <h2 class="section-title">🚀 Parlons de votre Projet</h2>
+                                <p class="section-subtitle">
+                                    Diagnostic gratuit de 30 minutes pour identifier vos priorités.<br>
+                                    <strong>Échange sans engagement - Conseil personnalisé</strong>
+                                </p>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0;">
+                                    <div style="color: var(--success-color);">✅ Audit personnalisé gratuit</div>
+                                    <div style="color: var(--success-color);">✅ Conseils d'expert métier</div>
+                                    <div style="color: var(--success-color);">✅ Estimation budgétaire</div>
+                                    <div style="color: var(--success-color);">✅ Plan d'action concret</div>
+                                </div>
+                                
+                                <div class="hero-actions">
+                                    <button class="btn btn-primary btn-large" onclick="openCalendlyFallback()">
+                                        📅 Réserver mon Diagnostic Gratuit
+                                    </button>
+                                    <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                        📧 Contact Direct
+                                    </a>
+                                </div>
+                                
+                                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+                                    ⚡ <strong>Réponse garantie sous 24h</strong> pour toute demande reçue en semaine
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                init: () => {
+                    console.log('🏠 Enhanced fallback home initialized');
+                    
+                    // Bind events basiques
+                    try {
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        logStep('Enhanced home fallback initialized successfully');
+                        
+                    } catch (error) {
+                        console.warn('⚠️ Fallback home events binding failed:', error);
+                    }
+                }
+            };
+        };
+        
+        // Créer les pages manquantes AVEC home prioritaire
         const missingPages = [
+            // PRIORITÉ : Fallback pour home
+            { 
+                id: 'home', 
+                title: 'Expert ERP Métallurgie', 
+                content: '', // Sera remplacé par createEnhancedHomeFallback
+                enhanced: true
+            },
             { id: 'services', title: 'Nos Services', content: '<p>Page des services en cours de développement.</p>' },
             { id: 'outils-gestion', title: 'ERP Métallurgie', content: '<p>Page ERP en cours de développement.</p>' },
             { id: 'consulting-strategique', title: 'Conseil Expert', content: '<p>Page conseil en cours de développement.</p>' },
@@ -435,7 +744,13 @@
         
         missingPages.forEach(page => {
             if (!window.pages[page.id]) {
-                window.pages[page.id] = createFallbackPage(page.id, page.title, page.content);
+                if (page.id === 'home' && page.enhanced) {
+                    window.pages[page.id] = createEnhancedHomeFallback();
+                    logStep(`Enhanced fallback created for ${page.id}`);
+                } else {
+                    window.pages[page.id] = createFallbackPage(page.id, page.title, page.content);
+                    logStep(`Fallback created for ${page.id}`);
+                }
             }
         });
         
@@ -502,7 +817,25 @@
             }
         }
         
-        console.log('📦 Enhanced stubs loaded');
+        // Fonction Calendly globale
+        window.openCalendlyFallback = () => {
+            if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
+                try {
+                    Calendly.initPopupWidget({
+                        url: (window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo'
+                    });
+                } catch (error) {
+                    console.error('Calendly popup error:', error);
+                    window.open((window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo', '_blank');
+                }
+            } else {
+                console.warn('Calendly not loaded, opening in new tab');
+                window.open((window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo', '_blank');
+            }
+        };
+        
+        logStep('Stubs and fallbacks configured');
+        console.log('📦 Enhanced stubs loaded with priority home fallback');
     </script>
     
     <!-- Fallback pour setupBackButton -->
@@ -555,15 +888,94 @@
         }
     </script>
     
-    <!-- Initialization améliorée -->
+    <!-- Fonction de diagnostic pour debug -->
+    <script>
+        // Fonction de diagnostic à appeler depuis la console
+        window.diagnoseHomeLoading = () => {
+            console.log('🔍 DIAGNOSTIC DU CHARGEMENT HOME');
+            console.log('=====================================');
+            
+            // Vérifier les dépendances
+            console.log('📋 Dépendances:');
+            console.log('- OweoConfig:', typeof OweoConfig !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoUtils:', typeof OweoUtils !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoRouter:', typeof OweoRouter !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoApp:', typeof OweoApp !== 'undefined' ? '✅' : '❌');
+            
+            // Vérifier les pages
+            console.log('\n📄 Pages disponibles:');
+            if (window.pages) {
+                Object.keys(window.pages).forEach(page => {
+                    const hasRender = window.pages[page] && typeof window.pages[page].render === 'function';
+                    const hasInit = window.pages[page] && typeof window.pages[page].init === 'function';
+                    console.log(`- ${page}: render ${hasRender ? '✅' : '❌'}, init ${hasInit ? '✅' : '❌'}`);
+                });
+            } else {
+                console.log('- window.pages: ❌ non défini');
+            }
+            
+            // Vérifier l'état du DOM
+            console.log('\n🌐 État DOM:');
+            console.log('- #app container:', document.getElementById('app') ? '✅' : '❌');
+            console.log('- #navbar:', document.getElementById('navbar') ? '✅' : '❌');
+            console.log('- #footer:', document.getElementById('footer') ? '✅' : '❌');
+            
+            // Vérifier les instances
+            console.log('\n🎛️ Instances:');
+            console.log('- window.router:', window.router ? '✅' : '❌');
+            console.log('- window.oweoApp:', window.oweoApp ? '✅' : '❌');
+            console.log('- window.navigation:', window.navigation ? '✅' : '❌');
+            
+            // Afficher les étapes de chargement
+            console.log('\n📝 Étapes de chargement:');
+            if (window.loadingSteps && window.loadingSteps.length > 0) {
+                window.loadingSteps.forEach(step => console.log(`  ${step}`));
+            } else {
+                console.log('- Aucune étape enregistrée');
+            }
+            
+            console.log('\n✅ Diagnostic terminé');
+            
+            return {
+                dependencies: {
+                    OweoConfig: typeof OweoConfig !== 'undefined',
+                    OweoUtils: typeof OweoUtils !== 'undefined',
+                    OweoRouter: typeof OweoRouter !== 'undefined',
+                    OweoApp: typeof OweoApp !== 'undefined'
+                },
+                pages: window.pages ? Object.keys(window.pages) : [],
+                instances: {
+                    router: !!window.router,
+                    oweoApp: !!window.oweoApp,
+                    navigation: !!window.navigation
+                },
+                loadingSteps: window.loadingSteps || []
+            };
+        };
+        
+        console.log('🔧 Diagnostic function ready. Use diagnoseHomeLoading() for debugging.');
+    </script>
+    
+    <!-- Initialization améliorée et robuste -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM Content Loaded - Starting initialization');
+            logStep('DOM Content Loaded - Starting initialization');
             
             try {
-                // Vérification et initialisation progressive
+                // Fonction d'initialisation progressive
                 const initApp = () => {
-                    // 1. Vérifier les dépendances critiques
+                    logStep('Starting app initialization');
+                    
+                    // Vérifier les dépendances critiques avec délai pour laisser les scripts se charger
+                    setTimeout(() => {
+                        checkAndInitialize();
+                    }, 300); // Délai augmenté pour permettre aux scripts de se charger
+                };
+                
+                const checkAndInitialize = () => {
+                    logStep('Checking dependencies and initializing');
+                    
+                    // 1. Vérifier OweoConfig
                     if (typeof OweoConfig === 'undefined') {
                         console.warn('⚠️ OweoConfig not loaded, using defaults');
                         window.OweoConfig = {
@@ -573,113 +985,233 @@
                             navigation: [
                                 { id: 'home', label: 'Accueil', icon: '🏠' },
                                 { id: 'services', label: 'Services', icon: '📋' }
-                            ]
+                            ],
+                            pages: {
+                                home: {
+                                    title: 'Expert ERP Métallurgie',
+                                    metaDescription: 'Expert ERP et transformation digitale pour métallurgie'
+                                }
+                            }
                         };
-                    }
-                    
-                    // 2. Initialiser les utilitaires
-                    if (typeof OweoUtils !== 'undefined' && OweoUtils.init) {
-                        OweoUtils.init();
-                    }
-                    
-                    // 3. Initialiser les composants UI
-                    if (typeof OweoNavigation !== 'undefined') {
-                        window.navigation = new OweoNavigation();
-                        console.log('✅ Navigation initialized');
-                    }
-                    
-                    if (typeof OweoFooter !== 'undefined') {
-                        window.footer = new OweoFooter();
-                        console.log('✅ Footer initialized');
-                    }
-                    
-                    // 4. Initialiser les utilitaires légaux
-                    if (OweoLegalHelpers && OweoLegalHelpers.init) {
-                        OweoLegalHelpers.init();
-                    }
-                    
-                    // 5. Initialiser le router ou l'app principale
-                    if (typeof OweoApp !== 'undefined') {
-                        window.oweoApp = new OweoApp();
-                        console.log('✅ OweoApp initialized');
-                    } else if (typeof OweoRouter !== 'undefined') {
-                        window.router = new OweoRouter();
-                        
-                        // Ajouter les routes essentielles
-                        window.router.addRoute('/', {
-                            component: window.pages.home || {
-                                render: () => '<div class="section"><div class="container"><h1>Accueil</h1></div></div>',
-                                init: () => {}
-                            },
-                            title: 'Accueil'
-                        });
-                        
-                        // Ajouter les autres routes disponibles
-                        Object.keys(window.pages).forEach(pageKey => {
-                            if (pageKey !== 'home') {
-                                window.router.addRoute(`/${pageKey}`, {
-                                    component: window.pages[pageKey],
-                                    title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1).replace('-', ' ')
-                                });
-                            }
-                        });
-                        
-                        window.router.start().then(() => {
-                            console.log('✅ Router started');
-                        }).catch(error => {
-                            console.error('❌ Router start error:', error);
-                            loadFallbackHome();
-                        });
+                        logStep('OweoConfig fallback created');
                     } else {
-                        console.warn('⚠️ No router available, loading fallback');
-                        loadFallbackHome();
+                        logStep('OweoConfig loaded successfully');
                     }
-                };
-                
-                const loadFallbackHome = () => {
-                    const appContainer = document.getElementById('app');
-                    if (appContainer && window.pages && window.pages.home) {
-                        try {
-                            appContainer.innerHTML = window.pages.home.render();
-                            if (window.pages.home.init) {
-                                window.pages.home.init();
-                            }
-                            console.log('✅ Fallback home loaded');
-                        } catch (error) {
-                            console.error('❌ Fallback home error:', error);
-                            appContainer.innerHTML = `
-                                <div class="section">
-                                    <div class="container">
-                                        <div style="text-align: center; padding: 4rem 0;">
-                                            <h1>Oweo - Expert ERP Charpente Métallique</h1>
-                                            <p>Site en cours de chargement...</p>
-                                            <button onclick="window.location.reload()" class="btn btn-primary">Recharger</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                    
+                    // 2. Vérifier la disponibilité de window.pages.home
+                    const homePageAvailable = window.pages && window.pages.home && 
+                                            typeof window.pages.home.render === 'function';
+                    
+                    logStep(`Home page available: ${homePageAvailable}`);
+                    
+                    if (!homePageAvailable) {
+                        console.warn('⚠️ Home page not available, ensuring enhanced fallback');
+                        // Le fallback a déjà été créé plus haut, mais on s'assure qu'il existe
+                        if (!window.pages.home) {
+                            window.pages.home = createEnhancedHomeFallback();
+                            logStep('Emergency home fallback created');
                         }
                     }
+                    
+                    // 3. Initialiser les utilitaires
+                    if (typeof OweoUtils !== 'undefined' && OweoUtils.init) {
+                        OweoUtils.init();
+                        logStep('OweoUtils initialized');
+                    }
+                    
+                    // 4. Initialiser les composants UI
+                    try {
+                        if (typeof OweoNavigation !== 'undefined') {
+                            window.navigation = new OweoNavigation();
+                            logStep('Navigation initialized');
+                        }
+                        
+                        if (typeof OweoFooter !== 'undefined') {
+                            window.footer = new OweoFooter();
+                            logStep('Footer initialized');
+                        }
+                    } catch (error) {
+                        console.warn('⚠️ UI components initialization failed:', error);
+                        logStep('UI components initialization failed');
+                    }
+                    
+                    // 5. Initialiser les utilitaires légaux
+                    if (window.OweoLegalHelpers && OweoLegalHelpers.init) {
+                        OweoLegalHelpers.init();
+                        logStep('Legal helpers initialized');
+                    }
+                    
+                    // 6. Initialiser l'application principale
+                    if (typeof OweoApp !== 'undefined') {
+                        try {
+                            window.oweoApp = new OweoApp();
+                            logStep('OweoApp initialized successfully');
+                        } catch (error) {
+                            console.error('❌ OweoApp initialization failed:', error);
+                            logStep('OweoApp failed, falling back to router');
+                            fallbackToRouter();
+                        }
+                    } else {
+                        console.warn('⚠️ OweoApp not available, falling back to router');
+                        logStep('OweoApp not available, falling back to router');
+                        fallbackToRouter();
+                    }
                 };
                 
-                // Démarrer l'initialisation avec délai pour laisser les scripts se charger
-                setTimeout(initApp, 100);
+                // Fonction de fallback vers le routeur simple
+                const fallbackToRouter = () => {
+                    if (typeof OweoRouter !== 'undefined') {
+                        try {
+                            window.router = new OweoRouter();
+                            
+                            // Ajouter la route d'accueil avec vérification améliorée
+                            const homeComponent = window.pages && window.pages.home ? 
+                                window.pages.home : createEnhancedHomeFallback();
+                            
+                            window.router.addRoute('/', {
+                                component: homeComponent,
+                                title: 'Accueil'
+                            });
+                            
+                            // Ajouter les autres routes disponibles
+                            if (window.pages) {
+                                Object.keys(window.pages).forEach(pageKey => {
+                                    if (pageKey !== 'home') {
+                                        window.router.addRoute(`/${pageKey}`, {
+                                            component: window.pages[pageKey],
+                                            title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1).replace('-', ' ')
+                                        });
+                                    }
+                                });
+                            }
+                            
+                            // Démarrer le routeur
+                            window.router.start().then(() => {
+                                logStep('Router started successfully');
+                            }).catch(error => {
+                                console.error('❌ Router start error:', error);
+                                logStep('Router start failed, loading direct home page');
+                                loadDirectHomePage();
+                            });
+                            
+                        } catch (error) {
+                            console.error('❌ Router initialization failed:', error);
+                            logStep('Router initialization failed, loading direct home page');
+                            loadDirectHomePage();
+                        }
+                    } else {
+                        console.warn('⚠️ No router available, loading direct home page');
+                        logStep('No router available, loading direct home page');
+                        loadDirectHomePage();
+                    }
+                };
+                
+                // Fonction pour charger directement la page d'accueil
+                const loadDirectHomePage = () => {
+                    logStep('Loading direct home page');
+                    const appContainer = document.getElementById('app');
+                    
+                    if (!appContainer) {
+                        console.error('❌ App container not found');
+                        logStep('App container not found - CRITICAL ERROR');
+                        return;
+                    }
+                    
+                    try {
+                        // Essayer d'abord window.pages.home
+                        if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
+                            logStep('Using window.pages.home');
+                            appContainer.innerHTML = window.pages.home.render();
+                            
+                            if (typeof window.pages.home.init === 'function') {
+                                window.pages.home.init();
+                            }
+                        } else {
+                            // Utiliser le fallback avancé
+                            logStep('Using enhanced fallback home');
+                            const fallbackHome = createEnhancedHomeFallback();
+                            appContainer.innerHTML = fallbackHome.render();
+                            
+                            if (typeof fallbackHome.init === 'function') {
+                                fallbackHome.init();
+                            }
+                        }
+                        
+                        logStep('Home page loaded successfully');
+                        
+                    } catch (error) {
+                        console.error('❌ Home page loading failed:', error);
+                        logStep('Home page loading failed, using static fallback');
+                        // Dernier recours : HTML statique
+                        appContainer.innerHTML = `
+                            <div class="section">
+                                <div class="container">
+                                    <div style="text-align: center; padding: 4rem 0;">
+                                        <h1 class="gradient-text">Oweo - Expert ERP Métallurgie</h1>
+                                        <p style="font-size: 1.25rem; color: var(--text-secondary); margin: 2rem 0;">
+                                            Transformation digitale pour entreprises de charpente métallique
+                                        </p>
+                                        <div class="hero-actions">
+                                            <button onclick="openCalendlyFallback()" class="btn btn-primary btn-large">
+                                                🎯 Diagnostic Gratuit
+                                            </button>
+                                            <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                                📧 Contact Direct
+                                            </a>
+                                        </div>
+                                        <p style="color: var(--text-muted); margin-top: 2rem; font-size: 0.875rem;">
+                                            Site en cours de chargement - Fonctionnalités limitées
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        logStep('Static fallback loaded');
+                    }
+                };
+                
+                // Démarrer l'initialisation avec délai approprié
+                initApp();
                 
             } catch (error) {
                 console.error('❌ Critical initialization error:', error);
-                document.getElementById('app').innerHTML = `
-                    <div class="error-page">
-                        <div class="error-content">
-                            <h1>Erreur de Chargement</h1>
-                            <p>Une erreur critique s'est produite.</p>
-                            <div class="error-actions">
-                                <button onclick="window.location.reload()" class="btn btn-primary">Recharger</button>
+                logStep('Critical initialization error');
+                
+                // Dernier recours : affichage d'erreur et reload
+                const appContainer = document.getElementById('app');
+                if (appContainer) {
+                    appContainer.innerHTML = `
+                        <div class="error-page">
+                            <div class="container">
+                                <div class="error-content">
+                                    <h1>🔧 Chargement en cours</h1>
+                                    <p>Le site se charge, veuillez patienter...</p>
+                                    <div class="error-actions">
+                                        <button onclick="window.location.reload()" class="btn btn-primary">
+                                            🔄 Recharger la page
+                                        </button>
+                                        <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary">
+                                            📧 Contact Direct
+                                        </a>
+                                    </div>
+                                    <details style="margin-top: 2rem; text-align: left;">
+                                        <summary style="cursor: pointer; color: var(--text-muted);">Informations techniques</summary>
+                                        <pre style="margin-top: 1rem; padding: 1rem; background: var(--bg-card); border-radius: var(--radius-md); font-size: 0.75rem; overflow: auto;">Error: ${error.message}
+
+Étapes de chargement:
+${window.loadingSteps ? window.loadingSteps.join('\n') : 'Aucune étape enregistrée'}
+
+Pour diagnostic complet, ouvrir la console et taper: diagnoseHomeLoading()</pre>
+                                    </details>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
         });
+        
+        logStep('Initialization script loaded');
     </script>
 </body>
 </html>
