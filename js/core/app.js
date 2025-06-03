@@ -1,4 +1,4 @@
-// js/core/app.js - Application principale Oweo
+// js/core/app.js - Application principale Oweo - VERSION CORRIGÉE
 
 class OweoApp {
     constructor() {
@@ -57,15 +57,16 @@ class OweoApp {
     }
 
     /**
-     * Vérification des dépendances requises
+     * Vérification des dépendances requises - CORRIGÉE pour être comme avant
      */
     checkDependencies() {
+        // 🔧 CORRECTION: Retour aux dépendances critiques seulement
         const required = [
             'OweoConfig',
             'OweoUtils',
-            'OweoData',
-            'OweoRouter',
-            'OweoNavigation'
+            'OweoData', // Remis comme avant
+            'OweoRouter'
+            // OweoNavigation retiré des dépendances obligatoires
         ];
 
         const missing = required.filter(dep => typeof window[dep] === 'undefined');
@@ -98,33 +99,43 @@ class OweoApp {
     }
 
     /**
-     * Initialisation des composants UI
+     * Initialisation des composants UI - CORRIGÉE comme avant
      */
     async initializeComponents() {
         console.log('🎨 Initializing UI components...');
         
         try {
-            // Navigation
-            this.navigation = new OweoNavigation();
-            this.components.set('navigation', this.navigation);
+            // 🔧 CORRECTION: Navigation optionnelle comme avant
+            if (typeof OweoNavigation !== 'undefined') {
+                this.navigation = new OweoNavigation();
+                this.components.set('navigation', this.navigation);
+                console.log('✅ Navigation component initialized');
+            } else {
+                console.warn('⚠️ OweoNavigation not available - continuing without it');
+            }
             
             // Footer (si disponible)
             if (typeof OweoFooter !== 'undefined') {
                 this.footer = new OweoFooter();
                 this.components.set('footer', this.footer);
+                console.log('✅ Footer component initialized');
+            } else {
+                console.warn('⚠️ OweoFooter not available - continuing without it');
             }
             
             // ROI Calculator (si disponible)
             if (typeof OweoROICalculator !== 'undefined') {
                 const roiCalculator = new OweoROICalculator();
                 this.components.set('roiCalculator', roiCalculator);
+                console.log('✅ ROI Calculator initialized');
             }
             
             console.log('✅ UI components initialized');
             
         } catch (error) {
             console.error('❌ UI components initialization failed:', error);
-            throw error;
+            // 🔧 CORRECTION: Ne pas throw, continuer comme avant
+            console.warn('⚠️ Continuing with available components');
         }
     }
 
@@ -144,8 +155,8 @@ class OweoApp {
                 // Affichage du loading
                 this.showGlobalLoading();
                 
-                // Mise à jour de la navigation
-                if (this.navigation) {
+                // 🔧 CORRECTION: Mise à jour de la navigation seulement si elle existe
+                if (this.navigation && typeof this.navigation.setActive === 'function') {
                     this.navigation.setActive(to.replace('/', '') || 'home');
                 }
                 
@@ -176,10 +187,12 @@ class OweoApp {
                 this.hideGlobalLoading();
                 
                 // Notification d'erreur
-                OweoUtils.notification?.show(
-                    'Erreur de navigation. Redirection vers l\'accueil...',
-                    'error'
-                );
+                if (OweoUtils.notification) {
+                    OweoUtils.notification.show(
+                        'Erreur de navigation. Redirection vers l\'accueil...',
+                        'error'
+                    );
+                }
                 
                 // Redirection vers l'accueil après délai
                 setTimeout(() => {
@@ -309,11 +322,13 @@ class OweoApp {
             // Notification de bienvenue (optionnelle)
             if (OweoConfig.environment === 'development') {
                 setTimeout(() => {
-                    OweoUtils.notification?.show(
-                        `Oweo v${this.version} démarré en mode ${this.environment}`,
-                        'info',
-                        3000
-                    );
+                    if (OweoUtils.notification) {
+                        OweoUtils.notification.show(
+                            `Oweo v${this.version} démarré en mode ${this.environment}`,
+                            'info',
+                            3000
+                        );
+                    }
                 }, 1000);
             }
             
@@ -514,7 +529,9 @@ class OweoApp {
      */
     setupStorage() {
         // Nettoyage du storage au démarrage
-        OweoUtils.storage?.cleanup();
+        if (OweoUtils.storage) {
+            OweoUtils.storage.cleanup();
+        }
     }
 
     setupErrorHandling() {
@@ -536,15 +553,19 @@ class OweoApp {
 
     setupDarkMode() {
         // Configuration du mode sombre
-        const savedTheme = OweoUtils.storage?.get('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
+        if (OweoUtils.storage) {
+            const savedTheme = OweoUtils.storage.get('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
         }
     }
 
     setupLazyLoading() {
         // Configuration du lazy loading
-        OweoUtils.performance?.lazyLoadImages();
+        if (OweoUtils.performance) {
+            OweoUtils.performance.lazyLoadImages();
+        }
     }
 
     setupPrefetching() {
