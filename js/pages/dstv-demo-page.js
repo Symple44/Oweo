@@ -1,225 +1,305 @@
-// js/pages/import-dstv-demo.js - Démonstration Import DSTV et Assignation Machines
+// js/pages/dstv-demo-page.js - Version complète corrigée
+// Page de démonstration Import DSTV avec assignation automatique
 
 window.pages = window.pages || {};
-
 window.pages['import-dstv-demo'] = {
+    
+    // État de la page
+    currentPieces: [],
+    currentStep: 1,
+    machinesData: null,
+    selectedMachine: null,
+    currentPieceId: null,
+    currentModal: null,
+    
+    // Données d'exemple pour la démo
+    exampleDSTVData: {
+        profils: [
+            {
+                id: 'P001',
+                nom: 'IPE200_Principal',
+                type: 'Profile',
+                materiau: 'S275',
+                epaisseur: 7,
+                longueur: 6000,
+                largeur: 200,
+                surface: 1.2,
+                perimetreCoupe: 800,
+                nbPerçages: 12,
+                complexite: 2
+            },
+            {
+                id: 'P002',
+                nom: 'HEA160_Traverse',
+                type: 'Profile',
+                materiau: 'S235',
+                epaisseur: 8,
+                longueur: 4000,
+                largeur: 160,
+                surface: 0.64,
+                perimetreCoupe: 640,
+                nbPerçages: 8,
+                complexite: 1
+            },
+            {
+                id: 'P003',
+                nom: 'UPN140_Sabliere',
+                type: 'Profile',
+                materiau: 'S275',
+                epaisseur: 6,
+                longueur: 3500,
+                largeur: 140,
+                surface: 0.49,
+                perimetreCoupe: 560,
+                nbPerçages: 6,
+                complexite: 1
+            }
+        ],
+        plaques: [
+            {
+                id: 'PL001',
+                nom: 'Gousset_Assemblage',
+                type: 'Plaque',
+                materiau: 'S275',
+                epaisseur: 15,
+                longueur: 300,
+                largeur: 200,
+                surface: 0.06,
+                perimetreCoupe: 1000,
+                nbPerçages: 6,
+                complexite: 3
+            },
+            {
+                id: 'PL002',
+                nom: 'Platine_Ancrage',
+                type: 'Plaque',
+                materiau: 'S355',
+                epaisseur: 20,
+                longueur: 400,
+                largeur: 400,
+                surface: 0.16,
+                perimetreCoupe: 1600,
+                nbPerçages: 8,
+                complexite: 2
+            }
+        ]
+    },
+    
+    /**
+     * Générer le rendu HTML de la page
+     */
     render() {
         return `
-            <!-- Header de la page -->
             <section class="section">
                 <div class="container">
-                    <button class="btn-back">← Retour</button>
-                    
-                    <div class="section-header">
-                        <h1 class="section-title">🔄 Import DSTV & Assignation Automatique aux Machines</h1>
-                        <p class="section-subtitle">
-                            Démonstration d'import de fichiers DSTV avec assignation intelligente des pièces aux machines de production
-                        </p>
+                    <!-- En-tête avec bouton retour -->
+                    <div class="page-header">
+                        <button class="btn btn-back">
+                            ← Retour
+                        </button>
+                        <div class="header-content">
+                            <h1 class="gradient-text">🔄 Import DSTV & Assignation</h1>
+                            <p class="page-subtitle">
+                                Démonstration d'import automatique de fichiers DSTV avec assignation intelligente aux machines de production
+                            </p>
+                        </div>
                     </div>
-                    
-                    <!-- Barre d'état du processus -->
-                    <div class="process-steps">
+
+                    <!-- Étapes du processus -->
+                    <div class="process-steps" id="process-steps">
                         <div class="step active" data-step="1">
                             <div class="step-number">1</div>
                             <div class="step-label">Import DSTV</div>
                         </div>
                         <div class="step" data-step="2">
                             <div class="step-number">2</div>
-                            <div class="step-label">Analyse Pièces</div>
+                            <div class="step-label">Analyse</div>
                         </div>
                         <div class="step" data-step="3">
                             <div class="step-number">3</div>
-                            <div class="step-label">Assignation Auto</div>
+                            <div class="step-label">Assignation</div>
                         </div>
                         <div class="step" data-step="4">
                             <div class="step-number">4</div>
-                            <div class="step-label">Révision</div>
-                        </div>
-                        <div class="step" data-step="5">
-                            <div class="step-number">5</div>
-                            <div class="step-label">Export ERP</div>
+                            <div class="step-label">Export</div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Interface principale -->
-            <section class="dstv-interface">
-                <div class="container">
-                    
-                    <!-- Zone d'import -->
-                    <div class="import-zone" id="import-zone">
-                        <div class="import-header">
-                            <h3>📁 Import de Fichiers DSTV</h3>
-                            <div class="import-info">
-                                <span class="info-badge">✅ Profils</span>
-                                <span class="info-badge">✅ Plaques</span>
-                                <span class="info-badge">✅ Multi-fichiers</span>
-                            </div>
-                        </div>
+                    <!-- Interface DSTV -->
+                    <div class="dstv-interface" id="dstv-interface">
                         
-                        <div class="file-drop-zone" id="file-drop-zone">
-                            <div class="drop-content">
-                                <div class="drop-icon">📄</div>
-                                <h4>Glissez vos fichiers DSTV ici</h4>
-                                <p>Ou cliquez pour sélectionner des fichiers</p>
-                                <input type="file" id="file-input" multiple accept=".nc1,.nc2,.dstv,.xml" style="display: none;">
-                                <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-                                    📁 Sélectionner Fichiers
-                                </button>
+                        <!-- Étape 1: Import -->
+                        <div class="import-zone" id="import-step" style="display: block;">
+                            <div class="import-header">
+                                <h3>📁 Import de Fichiers DSTV</h3>
+                                <div class="import-info">
+                                    <span class="info-badge">✅ Profils</span>
+                                    <span class="info-badge">✅ Plaques</span>
+                                    <span class="info-badge">✅ Multi-fichiers</span>
+                                </div>
                             </div>
                             
-                            <div class="demo-files">
-                                <h5>📋 Ou utilisez nos exemples :</h5>
-                                <div class="demo-buttons">
-                                    <button class="btn btn-outline btn-sm" data-demo="profils">
-                                        🏗️ Profils Portique (15 pièces)
+                            <div class="file-drop-zone" id="file-drop-zone">
+                                <div class="drop-content">
+                                    <div class="drop-icon">📄</div>
+                                    <h4>Glissez vos fichiers DSTV ici</h4>
+                                    <p>Ou cliquez pour sélectionner des fichiers</p>
+                                    <input type="file" id="file-input" multiple accept=".nc1,.nc2,.dstv,.xml" style="display: none;">
+                                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                                        📁 Sélectionner Fichiers
                                     </button>
-                                    <button class="btn btn-outline btn-sm" data-demo="plaques">
-                                        🔲 Plaques Assemblage (8 pièces)
-                                    </button>
-                                    <button class="btn btn-outline btn-sm" data-demo="mixte">
-                                        🔧 Projet Complet (32 pièces)
-                                    </button>
+                                </div>
+                                
+                                <div class="demo-files">
+                                    <h5>📋 Ou utilisez nos exemples :</h5>
+                                    <div class="demo-buttons">
+                                        <button class="btn btn-outline btn-sm" data-demo="profils">
+                                            🏗️ Profils Portique (3 pièces)
+                                        </button>
+                                        <button class="btn btn-outline btn-sm" data-demo="plaques">
+                                            🔲 Plaques Assemblage (2 pièces)
+                                        </button>
+                                        <button class="btn btn-outline btn-sm" data-demo="mixte">
+                                            🔧 Projet Complet (5 pièces)
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Configuration des machines -->
-                    <div class="machines-config" id="machines-config" style="display: none;">
-                        <div class="config-header">
-                            <h3>⚙️ Configuration des Machines</h3>
-                            <button class="btn btn-secondary btn-sm" id="edit-machines">✏️ Modifier</button>
-                        </div>
-                        
-                        <div class="machines-grid" id="machines-grid">
-                            <!-- Généré dynamiquement -->
-                        </div>
-                    </div>
-
-                    <!-- Tableau d'analyse des pièces -->
-                    <div class="pieces-analysis" id="pieces-analysis" style="display: none;">
-                        <div class="analysis-header">
-                            <h3>🔍 Analyse des Pièces Importées</h3>
-                            <div class="analysis-controls">
-                                <button class="btn btn-secondary btn-sm" id="run-auto-assign">🤖 Assignation Auto</button>
-                                <button class="btn btn-primary btn-sm" id="validate-assignments">✅ Valider Tout</button>
-                            </div>
-                        </div>
-                        
-                        <div class="pieces-table-container">
-                            <table class="pieces-table" id="pieces-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pièce</th>
-                                        <th>Type</th>
-                                        <th>Dimensions</th>
-                                        <th>Matériau</th>
-                                        <th>Complexité</th>
-                                        <th>Machine Assignée</th>
-                                        <th>Temps Estimé</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Généré dynamiquement -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Récapitulatif par machine -->
-                    <div class="machines-summary" id="machines-summary" style="display: none;">
-                        <h3>📊 Récapitulatif par Machine</h3>
-                        <div class="summary-grid" id="summary-grid">
-                            <!-- Généré dynamiquement -->
-                        </div>
-                    </div>
-
-                    <!-- Zone d'export -->
-                    <div class="export-zone" id="export-zone" style="display: none;">
-                        <div class="export-header">
-                            <h3>📤 Export vers ERP</h3>
-                            <p>Générer les ordres de fabrication et planifier la production</p>
-                        </div>
-                        
-                        <div class="export-options">
-                            <div class="export-item">
-                                <h4>📋 Ordres de Fabrication</h4>
-                                <p>Création automatique des OF par machine avec temps et matières</p>
-                                <button class="btn btn-primary">Générer les OF</button>
+                        <!-- Étape 2: Analyse des pièces -->
+                        <div class="analysis-zone" id="analysis-step" style="display: none;">
+                            <div class="analysis-header">
+                                <h3>🔍 Analyse des Pièces Importées</h3>
+                                <div class="analysis-summary" id="analysis-summary">
+                                    <!-- Résumé généré dynamiquement -->
+                                </div>
                             </div>
                             
-                            <div class="export-item">
-                                <h4>📅 Planning Production</h4>
-                                <p>Intégration au planning avec gestion des disponibilités</p>
-                                <button class="btn btn-primary">Planifier Production</button>
+                            <div class="pieces-grid" id="pieces-grid">
+                                <!-- Grille des pièces générée dynamiquement -->
                             </div>
                             
-                            <div class="export-item">
-                                <h4>📊 Chiffrage Automatique</h4>
-                                <p>Mise à jour des temps et coûts dans le devis</p>
-                                <button class="btn btn-primary">Mettre à Jour Devis</button>
+                            <div class="analysis-actions">
+                                <button class="btn btn-primary" id="auto-assign">
+                                    🤖 Assignation Automatique
+                                </button>
+                                <button class="btn btn-secondary" id="manual-assign" style="display: none;">
+                                    ✋ Assignation Manuelle
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Étape 3: Configuration des machines -->
+                        <div class="machines-config" id="machines-step" style="display: none;">
+                            <div class="config-header">
+                                <h3>⚙️ Configuration & Assignation</h3>
+                                <button class="btn btn-outline btn-sm" id="edit-machines">
+                                    ⚙️ Configurer Machines
+                                </button>
+                            </div>
+                            
+                            <div class="machines-overview" id="machines-overview">
+                                <!-- Vue d'ensemble des machines générée dynamiquement -->
+                            </div>
+                            
+                            <div class="assignments-summary" id="assignments-summary">
+                                <!-- Résumé des assignations -->
+                            </div>
+                            
+                            <div class="config-actions">
+                                <button class="btn btn-primary" id="generate-export">
+                                    📊 Générer Export
+                                </button>
+                                <button class="btn btn-outline" id="optimize-assignments">
+                                    🎯 Optimiser Assignations
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Étape 4: Export -->
+                        <div class="export-zone" id="export-step" style="display: none;">
+                            <div class="export-header">
+                                <h3>📤 Export & Intégration ERP</h3>
+                                <p>Exportez les résultats vers votre ERP ou système de gestion</p>
+                            </div>
+                            
+                            <div class="export-options">
+                                <div class="export-item">
+                                    <h4>📋 Nomenclature Production</h4>
+                                    <p>Liste détaillée avec temps, coûts et assignations machines</p>
+                                    <button class="btn btn-primary">📥 Télécharger Excel</button>
+                                </div>
+                                
+                                <div class="export-item">
+                                    <h4>🔗 Intégration ERP</h4>
+                                    <p>Export direct vers votre système ERP via API</p>
+                                    <button class="btn btn-primary">🚀 Envoyer vers ERP</button>
+                                </div>
+                                
+                                <div class="export-item">
+                                    <h4>📊 Rapport d'Analyse</h4>
+                                    <p>Rapport complet avec recommandations d'optimisation</p>
+                                    <button class="btn btn-primary">📑 Générer PDF</button>
+                                </div>
+                            </div>
+                            
+                            <div class="export-actions">
+                                <button class="btn btn-outline" onclick="location.reload()">
+                                    🔄 Nouvelle Simulation
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Modal de modification d'assignation -->
-            <div class="modal" id="assign-modal" style="display: none;">
-                <div class="modal-backdrop"></div>
-                <div class="modal-content">
+            <!-- Modal d'assignation de pièce -->
+            <div class="modal-overlay" id="assign-modal" style="display: none;">
+                <div class="modal-content modal-large">
                     <div class="modal-header">
-                        <h3>🔧 Modifier l'Assignation</h3>
+                        <h3>🔧 Assignation de Pièce</h3>
                         <button class="modal-close">&times;</button>
                     </div>
                     <div class="modal-body">
                         <div class="current-piece-info" id="current-piece-info">
-                            <!-- Info de la pièce courante -->
+                            <!-- Informations de la pièce courante -->
                         </div>
                         
-                        <div class="machine-selection">
-                            <h4>Machines Compatibles</h4>
-                            <div class="machines-list" id="machines-list">
-                                <!-- Liste des machines avec temps estimés -->
+                        <h4>Sélection de la machine :</h4>
+                        <div class="machines-selection" id="machines-selection">
+                            <!-- Options de machines générées dynamiquement -->
+                        </div>
+                        
+                        <h4>Temps de production estimés :</h4>
+                        <div class="time-inputs">
+                            <div class="time-input-group">
+                                <label for="prep-time">Préparation (min)</label>
+                                <input type="number" id="prep-time" min="0" step="0.1">
+                            </div>
+                            <div class="time-input-group">
+                                <label for="machining-time">Usinage (min)</label>
+                                <input type="number" id="machining-time" min="0" step="0.1">
+                            </div>
+                            <div class="time-input-group">
+                                <label for="finishing-time">Finition (min)</label>
+                                <input type="number" id="finishing-time" min="0" step="0.1">
                             </div>
                         </div>
                         
-                        <div class="time-adjustment">
-                            <h4>Ajustement Manuel du Temps</h4>
-                            <div class="time-inputs">
-                                <div class="time-input">
-                                    <label>Temps de Préparation (min)</label>
-                                    <input type="number" id="prep-time" step="0.5" placeholder="15">
-                                </div>
-                                <div class="time-input">
-                                    <label>Temps d'Usinage (min)</label>
-                                    <input type="number" id="machining-time" step="0.1" placeholder="8.5">
-                                </div>
-                                <div class="time-input">
-                                    <label>Temps de Finition (min)</label>
-                                    <input type="number" id="finishing-time" step="0.5" placeholder="3">
-                                </div>
-                            </div>
-                            
-                            <div class="total-time">
-                                <label>Temps Total Estimé:</label>
-                                <span id="total-estimated-time">26.5 min</span>
-                            </div>
+                        <div class="total-time">
+                            <strong>Temps total estimé : <span id="total-estimated-time">0 min</span></strong>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" id="cancel-assign">Annuler</button>
-                        <button class="btn btn-primary" id="save-assign">Sauvegarder</button>
+                        <button class="btn btn-secondary" id="cancel-assignment">Annuler</button>
+                        <button class="btn btn-primary" id="save-assignment">Valider Assignation</button>
                     </div>
                 </div>
             </div>
 
             <!-- Modal de configuration des machines -->
-            <div class="modal" id="machines-config-modal" style="display: none;">
-                <div class="modal-backdrop"></div>
+            <div class="modal-overlay" id="config-modal" style="display: none;">
                 <div class="modal-content modal-large">
                     <div class="modal-header">
                         <h3>⚙️ Configuration des Machines</h3>
@@ -239,44 +319,935 @@ window.pages['import-dstv-demo'] = {
         `;
     },
 
+    /**
+     * Initialisation de la page - Version robuste
+     */
     init() {
         console.log('🔄 Initialisation de la page import DSTV...');
         
-        // VÉRIFICATION D'ACCÈS CLIENT OBLIGATOIRE
-        if (!this.verifyClientAccess()) {
-            this.renderAccessDenied();
-            return;
-        }
-        
-        // Attendre que le DOM soit prêt
-        setTimeout(() => {
-            this.initializeMachinesData();
-            this.bindEvents();
-            this.addDSTVStyles();
-            
-            if (typeof window.setupBackButton === 'function') {
-                window.setupBackButton();
+        try {
+            // Vérification d'accès avec fallback
+            if (!this.verifyClientAccess()) {
+                console.warn('🔐 Accès client non vérifié - affichage page d\'accès');
+                this.renderAccessDenied();
+                return;
             }
             
-            console.log('✅ Page import DSTV initialisée (accès client vérifié)');
-            this.showClientWelcome();
-        }, 100);
+            // Initialisation avec gestion d'erreurs
+            this.safeInitialization();
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation DSTV demo:', error);
+            this.renderErrorPage();
+        }
+    },
+    
+    /**
+     * Initialisation sécurisée
+     */
+    safeInitialization() {
+        // Attendre DOM avec timeout
+        const initTimeout = setTimeout(() => {
+            console.error('❌ Timeout initialisation DSTV demo');
+            this.renderErrorPage();
+        }, 5000);
+        
+        const tryInit = () => {
+            try {
+                if (!document.getElementById('app')) {
+                    setTimeout(tryInit, 50);
+                    return;
+                }
+                
+                clearTimeout(initTimeout);
+                
+                this.initializeMachinesData();
+                this.bindEvents();
+                this.addDSTVStyles();
+                this.setupBackButton();
+                
+                console.log('✅ Page import DSTV initialisée avec succès');
+                this.showClientWelcome();
+                
+            } catch (error) {
+                clearTimeout(initTimeout);
+                console.error('❌ Erreur dans tryInit:', error);
+                this.renderErrorPage();
+            }
+        };
+        
+        setTimeout(tryInit, 100);
     },
 
     /**
-     * Vérifier l'accès client
+     * Vérification d'accès améliorée
      */
     verifyClientAccess() {
+        // Vérifier disponibilité du système d'accès
         if (typeof window.OweoClientAccess === 'undefined') {
-            console.error('❌ OweoClientAccess not available');
+            console.error('❌ OweoClientAccess non disponible');
             return false;
         }
         
-        return window.OweoClientAccess.hasAccess();
+        try {
+            const hasAccess = window.OweoClientAccess.hasAccess();
+            console.log('🔐 Vérification accès client:', hasAccess);
+            return hasAccess;
+            
+        } catch (error) {
+            console.error('❌ Erreur vérification accès:', error);
+            return false;
+        }
     },
 
     /**
-     * Afficher la page d'accès refusé
+     * Initialisation des données machines robuste
+     */
+    initializeMachinesData() {
+        try {
+            this.machinesData = {
+                'plasma': {
+                    nom: 'Plasma CNC',
+                    type: 'Découpe Plasma',
+                    icone: '⚡',
+                    epaisseurMax: 40,
+                    vitesse: 1200, // mm/min
+                    precision: 0.5,
+                    coutHoraire: 85,
+                    disponible: true,
+                    charge: 0.3 // 30% de charge
+                },
+                'laser': {
+                    nom: 'Laser Fiber',
+                    type: 'Découpe Laser',
+                    icone: '🔥',
+                    epaisseurMax: 25,
+                    vitesse: 2500,
+                    precision: 0.1,
+                    coutHoraire: 120,
+                    disponible: true,
+                    charge: 0.6 // 60% de charge
+                },
+                'percage': {
+                    nom: 'Centre Perçage',
+                    type: 'Perçage Multi-axes',
+                    icone: '🔩',
+                    diamMax: 50,
+                    vitesse: 800,
+                    precision: 0.05,
+                    coutHoraire: 95,
+                    disponible: true,
+                    charge: 0.2 // 20% de charge
+                }
+            };
+            
+            console.log('✅ Données machines initialisées');
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation machines:', error);
+            // Données par défaut en cas d'erreur
+            this.machinesData = {};
+        }
+    },
+
+    /**
+     * Liaison d'événements robuste avec vérification DOM
+     */
+    bindEvents() {
+        console.log('🔗 Liaison des événements DSTV...');
+        
+        try {
+            // Attendre que le DOM soit complètement prêt
+            const bindWithRetry = (attempt = 0) => {
+                if (attempt > 10) {
+                    console.error('❌ Impossible de lier les événements après 10 tentatives');
+                    return;
+                }
+                
+                // Vérifier présence des éléments principaux
+                const fileInput = document.getElementById('file-input');
+                const dropZone = document.getElementById('file-drop-zone');
+                
+                if (!fileInput || !dropZone) {
+                    console.log(`🔄 Tentative ${attempt + 1}/10 - Éléments DOM non prêts`);
+                    setTimeout(() => bindWithRetry(attempt + 1), 100);
+                    return;
+                }
+                
+                // Lier les événements principaux
+                this.bindFileEvents();
+                this.bindDemoButtons();
+                this.bindStepButtons();
+                this.bindModalEvents();
+                this.setupDragDrop();
+                
+                console.log('✅ Événements DSTV liés avec succès');
+            };
+            
+            bindWithRetry();
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison événements DSTV:', error);
+        }
+    },
+
+    /**
+     * Événements de fichiers robustes
+     */
+    bindFileEvents() {
+        try {
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput) return;
+            
+            // Nettoyer les anciens listeners
+            const newFileInput = fileInput.cloneNode(true);
+            fileInput.parentNode.replaceChild(newFileInput, fileInput);
+            
+            // Ajouter le nouveau listener
+            newFileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    this.handleFileImport(files);
+                }
+                // Reset pour permettre re-sélection du même fichier
+                e.target.value = '';
+            });
+            
+            console.log('✅ Événements fichiers liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison événements fichiers:', error);
+        }
+    },
+
+    /**
+     * Boutons démo avec délégation d'événements
+     */
+    bindDemoButtons() {
+        try {
+            // Utiliser la délégation d'événements pour robustesse
+            document.addEventListener('click', (e) => {
+                const demoBtn = e.target.closest('[data-demo]');
+                if (!demoBtn || !demoBtn.closest('#import-step')) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const demoType = demoBtn.dataset.demo;
+                console.log(`🎯 Bouton démo cliqué: ${demoType}`);
+                
+                // Animation du bouton
+                demoBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    demoBtn.style.transform = '';
+                }, 150);
+                
+                // Charger les données démo
+                this.loadDemoData(demoType);
+            });
+            
+            console.log('✅ Boutons démo liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison boutons démo:', error);
+        }
+    },
+
+    /**
+     * Boutons d'étapes avec gestion d'erreurs
+     */
+    bindStepButtons() {
+        try {
+            // Auto-assignation
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'auto-assign') {
+                    e.preventDefault();
+                    console.log('🤖 Auto-assignation déclenchée');
+                    this.performAutoAssignments();
+                }
+                
+                if (e.target.id === 'edit-machines') {
+                    e.preventDefault();
+                    console.log('⚙️ Configuration machines');
+                    this.showMachinesConfigModal();
+                }
+                
+                if (e.target.id === 'generate-export') {
+                    e.preventDefault();
+                    console.log('📊 Génération export');
+                    this.advanceToStep(4);
+                }
+            });
+            
+            console.log('✅ Boutons d\'étapes liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison boutons étapes:', error);
+        }
+    },
+
+    /**
+     * Drag & Drop robuste avec gestion d'erreurs
+     */
+    setupDragDrop() {
+        try {
+            const dropZone = document.getElementById('file-drop-zone');
+            if (!dropZone) {
+                console.warn('⚠️ Zone de drop non trouvée');
+                return;
+            }
+            
+            // Événements de base pour prévenir le comportement par défaut
+            const preventDefaults = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            };
+            
+            // Liste complète des événements à gérer
+            const dragEvents = ['dragenter', 'dragover', 'dragleave', 'drop'];
+            
+            // Lier les événements de prévention
+            dragEvents.forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Gestion visuelle du drag
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+            
+            // Gestion du drop avec validation
+            dropZone.addEventListener('drop', (e) => {
+                try {
+                    const files = e.dataTransfer.files;
+                    if (files && files.length > 0) {
+                        console.log(`📁 ${files.length} fichier(s) déposé(s)`);
+                        this.handleFileImport(files);
+                    } else {
+                        console.warn('⚠️ Aucun fichier dans le drop');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur traitement drop:', error);
+                    this.showImportError('Erreur lors du dépose des fichiers');
+                }
+            }, false);
+            
+            console.log('✅ Drag & Drop configuré');
+            
+        } catch (error) {
+            console.error('❌ Erreur setup drag & drop:', error);
+        }
+    },
+
+    /**
+     * Gestion des modales robuste
+     */
+    bindModalEvents() {
+        try {
+            // Utiliser la délégation pour toutes les modales
+            document.addEventListener('click', (e) => {
+                // Boutons de fermeture des modales
+                if (e.target.classList.contains('modal-close') || e.target.closest('.modal-close')) {
+                    e.preventDefault();
+                    this.closeAllModals();
+                    return;
+                }
+                
+                // Clic sur l'overlay pour fermer
+                if (e.target.classList.contains('modal-overlay')) {
+                    e.preventDefault();
+                    this.closeAllModals();
+                    return;
+                }
+                
+                // Boutons d'action spécifiques
+                this.handleModalActionButtons(e);
+            });
+            
+            // Échappement pour fermer les modales
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closeAllModals();
+                }
+            });
+            
+            console.log('✅ Événements modales liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison modales:', error);
+        }
+    },
+
+    /**
+     * Gestion des boutons d'action des modales
+     */
+    handleModalActionButtons(e) {
+        try {
+            const target = e.target;
+            
+            // Bouton d'assignation
+            if (target.id === 'save-assignment') {
+                e.preventDefault();
+                this.validatePieceAssignment();
+                return;
+            }
+            
+            // Bouton annulation assignation
+            if (target.id === 'cancel-assignment') {
+                e.preventDefault();
+                this.closeAllModals();
+                return;
+            }
+            
+            // Bouton sauvegarde configuration
+            if (target.id === 'save-config') {
+                e.preventDefault();
+                this.saveMachinesConfig();
+                return;
+            }
+            
+            // Bouton annulation configuration
+            if (target.id === 'cancel-config') {
+                e.preventDefault();
+                this.closeAllModals();
+                return;
+            }
+            
+            // Boutons d'assignation de pièces
+            const assignBtn = target.closest('.btn-assign');
+            if (assignBtn) {
+                e.preventDefault();
+                const pieceId = assignBtn.dataset.pieceId;
+                if (pieceId) {
+                    console.log(`🔧 Assignation pièce: ${pieceId}`);
+                    this.showAssignmentModal(pieceId);
+                }
+                return;
+            }
+            
+            // Inputs de temps
+            if (target.matches('#prep-time, #machining-time, #finishing-time')) {
+                this.updateTotalTime();
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur gestion boutons modales:', error);
+        }
+    },
+
+    /**
+     * Charger les données démo
+     */
+    loadDemoData(type) {
+        try {
+            let pieces = [];
+            
+            switch(type) {
+                case 'profils':
+                    pieces = [...this.exampleDSTVData.profils];
+                    break;
+                case 'plaques':
+                    pieces = [...this.exampleDSTVData.plaques];
+                    break;
+                case 'mixte':
+                    pieces = [...this.exampleDSTVData.profils, ...this.exampleDSTVData.plaques];
+                    break;
+            }
+
+            this.currentPieces = pieces.map(piece => ({
+                ...piece,
+                machineAssignee: null,
+                tempsEstime: null,
+                statut: 'nouveau',
+                fichierSource: `demo_${type}.dstv`
+            }));
+
+            this.advanceToStep(2);
+            this.renderPiecesAnalysis();
+            
+            console.log(`✅ ${pieces.length} pièces démo chargées (${type})`);
+            
+        } catch (error) {
+            console.error('❌ Erreur chargement données démo:', error);
+            this.showImportError('Erreur lors du chargement des données de démonstration');
+        }
+    },
+
+    /**
+     * Import de fichiers DSTV amélioré
+     */
+    handleFileImport(files) {
+        if (!files || files.length === 0) {
+            this.showImportError('Aucun fichier sélectionné');
+            return;
+        }
+        
+        console.log('📁 Import de fichiers DSTV:', Array.from(files).map(f => f.name));
+        
+        try {
+            // Validation des fichiers
+            const validFiles = Array.from(files).filter(file => {
+                const extension = file.name.toLowerCase().split('.').pop();
+                return ['nc1', 'nc2', 'dstv', 'xml'].includes(extension);
+            });
+            
+            if (validFiles.length === 0) {
+                this.showImportError('Aucun fichier DSTV valide trouvé (.nc1, .nc2, .dstv, .xml)');
+                return;
+            }
+            
+            // Simulation de traitement
+            this.processImportedFiles(validFiles);
+            
+        } catch (error) {
+            console.error('❌ Erreur import fichiers:', error);
+            this.showImportError('Erreur lors de l\'import des fichiers');
+        }
+    },
+
+    /**
+     * Traitement des fichiers importés
+     */
+    processImportedFiles(files) {
+        try {
+            // Simulation d'analyse des fichiers DSTV
+            const pieces = [];
+            
+            files.forEach((file, index) => {
+                // Simulation de parsing DSTV
+                const piecesFromFile = this.simulateDSTVParsing(file, index);
+                pieces.push(...piecesFromFile);
+            });
+            
+            this.currentPieces = pieces.map(piece => ({
+                ...piece,
+                machineAssignee: null,
+                tempsEstime: null,
+                statut: 'nouveau',
+                fichierSource: piece.fichier
+            }));
+            
+            console.log(`✅ ${pieces.length} pièces extraites des fichiers DSTV`);
+            
+            // Avancer vers l'étape d'analyse
+            this.advanceToStep(2);
+            this.renderPiecesAnalysis();
+            
+        } catch (error) {
+            console.error('❌ Erreur traitement fichiers:', error);
+            this.showImportError('Erreur lors du traitement des fichiers DSTV');
+        }
+    },
+
+    /**
+     * Simulation parsing DSTV améliorée
+     */
+    simulateDSTVParsing(file, fileIndex) {
+        const pieces = [];
+        const fileName = file.name.replace(/\.[^/.]+$/, "");
+        
+        // Simulation basée sur le nom/taille du fichier
+        const pieceCount = Math.floor(Math.random() * 8) + 3; // 3-10 pièces par fichier
+        
+        for (let i = 0; i < pieceCount; i++) {
+            const pieceTypes = ['Profile', 'Plaque', 'Gousset', 'Raidisseur'];
+            const materials = ['S235', 'S275', 'S355'];
+            const epaisseurs = [8, 10, 12, 15, 20, 25];
+            
+            pieces.push({
+                id: `${fileName}_P${i + 1}`,
+                nom: `${fileName}_Piece_${i + 1}`,
+                type: pieceTypes[Math.floor(Math.random() * pieceTypes.length)],
+                materiau: materials[Math.floor(Math.random() * materials.length)],
+                epaisseur: epaisseurs[Math.floor(Math.random() * epaisseurs.length)],
+                longueur: Math.floor(Math.random() * 3000) + 500,
+                largeur: Math.floor(Math.random() * 500) + 100,
+                surface: 0, // Calculé après
+                perimetreCoupe: Math.floor(Math.random() * 2000) + 200,
+                nbPerçages: Math.floor(Math.random() * 20),
+                fichier: file.name,
+                complexite: Math.floor(Math.random() * 3) + 1 // 1-3
+            });
+        }
+        
+        // Calculer la surface
+        pieces.forEach(piece => {
+            piece.surface = Math.round(piece.longueur * piece.largeur / 1000000 * 100) / 100; // m²
+        });
+        
+        return pieces;
+    },
+
+    /**
+     * Rendu de l'analyse des pièces
+     */
+    renderPiecesAnalysis() {
+        try {
+            const analysisStep = document.getElementById('analysis-step');
+            if (!analysisStep) return;
+            
+            // Résumé de l'analyse
+            const summary = document.getElementById('analysis-summary');
+            if (summary) {
+                const totalPieces = this.currentPieces.length;
+                const profiles = this.currentPieces.filter(p => p.type === 'Profile').length;
+                const plaques = this.currentPieces.filter(p => p.type === 'Plaque').length;
+                const totalSurface = this.currentPieces.reduce((sum, p) => sum + p.surface, 0);
+                
+                summary.innerHTML = `
+                    <div class="analysis-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total pièces</span>
+                            <span class="stat-value">${totalPieces}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Profils</span>
+                            <span class="stat-value">${profiles}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Plaques</span>
+                            <span class="stat-value">${plaques}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Surface totale</span>
+                            <span class="stat-value">${totalSurface.toFixed(2)} m²</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Grille des pièces
+            const grid = document.getElementById('pieces-grid');
+            if (grid) {
+                grid.innerHTML = this.currentPieces.map(piece => `
+                    <div class="piece-card ${piece.statut === 'assignee' ? 'assigned' : ''}" data-piece-id="${piece.id}">
+                        <div class="piece-header">
+                            <div class="piece-name">${piece.nom}</div>
+                            <div class="piece-type">${piece.type}</div>
+                        </div>
+                        
+                        <div class="piece-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Matériau:</span>
+                                <span class="spec-value">${piece.materiau}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Épaisseur:</span>
+                                <span class="spec-value">${piece.epaisseur}mm</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Dimensions:</span>
+                                <span class="spec-value">${piece.longueur}×${piece.largeur}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Surface:</span>
+                                <span class="spec-value">${piece.surface.toFixed(2)} m²</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Perçages:</span>
+                                <span class="spec-value">${piece.nbPerçages}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Complexité:</span>
+                                <span class="spec-value">${'★'.repeat(piece.complexite)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="piece-actions">
+                            <button class="btn btn-sm btn-primary btn-assign" data-piece-id="${piece.id}">
+                                🔧 Assigner Machine
+                            </button>
+                        </div>
+                        
+                        ${piece.machineAssignee ? `
+                            <div class="piece-assignment">
+                                <strong>Assignée à: ${this.machinesData[piece.machineAssignee]?.nom || piece.machineAssignee}</strong>
+                                <div>Temps: ${piece.tempsEstime?.total.toFixed(1) || 0} min</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+            
+            analysisStep.style.display = 'block';
+            
+        } catch (error) {
+            console.error('❌ Erreur rendu analyse pièces:', error);
+        }
+    },
+
+    /**
+     * Assignation automatique des machines
+     */
+    performAutoAssignments() {
+        try {
+            console.log('🤖 Démarrage assignation automatique...');
+            
+            this.currentPieces.forEach(piece => {
+                // Algorithme simple d'assignation basé sur les caractéristiques
+                let bestMachine = null;
+                let bestScore = 0;
+                
+                Object.keys(this.machinesData).forEach(machineId => {
+                    const machine = this.machinesData[machineId];
+                    if (!machine.disponible) return;
+                    
+                    let score = 0;
+                    
+                    // Score basé sur l'épaisseur
+                    if (piece.epaisseur <= machine.epaisseurMax) {
+                        score += 10;
+                        // Bonus si proche de la capacité max
+                        score += (piece.epaisseur / machine.epaisseurMax) * 5;
+                    }
+                    
+                    // Score basé sur le type de pièce
+                    if (piece.type === 'Profile' && machineId === 'plasma') score += 5;
+                    if (piece.type === 'Plaque' && machineId === 'laser') score += 5;
+                    if (piece.nbPerçages > 5 && machineId === 'percage') score += 8;
+                    
+                    // Pénalité pour charge élevée
+                    score -= machine.charge * 10;
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMachine = machineId;
+                    }
+                });
+                
+                if (bestMachine) {
+                    const temps = this.calculateMachiningTime(piece, this.machinesData[bestMachine]);
+                    
+                    piece.machineAssignee = bestMachine;
+                    piece.tempsEstime = temps;
+                    piece.statut = 'assignee';
+                    piece.coutEstime = Math.round(temps.total * this.machinesData[bestMachine].coutHoraire / 60);
+                    
+                    // Mettre à jour la charge de la machine
+                    this.machinesData[bestMachine].charge = Math.min(1, this.machinesData[bestMachine].charge + 0.1);
+                }
+            });
+            
+            // Mettre à jour l'affichage
+            this.renderPiecesAnalysis();
+            this.showSuccessMessage('Assignation automatique terminée !');
+            
+            // Avancer vers l'étape suivante
+            setTimeout(() => {
+                this.advanceToStep(3);
+                this.renderMachinesOverview();
+            }, 1500);
+            
+        } catch (error) {
+            console.error('❌ Erreur assignation automatique:', error);
+            this.showImportError('Erreur lors de l\'assignation automatique');
+        }
+    },
+
+    /**
+     * Calcul des temps d'usinage
+     */
+    calculateMachiningTime(piece, machine) {
+        try {
+            // Algorithme de calcul basé sur les caractéristiques
+            const baseTime = piece.surface * 2; // 2 min/m² de base
+            const complexityFactor = piece.complexite * 0.5;
+            const thicknessFactor = piece.epaisseur / 10;
+            const drillingTime = piece.nbPerçages * 0.5; // 30s par perçage
+            
+            const machiningTime = baseTime * (1 + complexityFactor + thicknessFactor);
+            const preparationTime = 3 + (piece.complexite * 2); // 3-9 min selon complexité
+            const finishingTime = 2 + (piece.surface * 0.5); // 2+ min selon surface
+            
+            return {
+                preparation: preparationTime,
+                usinage: machiningTime,
+                finition: finishingTime,
+                total: preparationTime + machiningTime + finishingTime
+            };
+            
+        } catch (error) {
+            console.error('❌ Erreur calcul temps:', error);
+            return {
+                preparation: 5,
+                usinage: 10,
+                finition: 3,
+                total: 18
+            };
+        }
+    },
+
+    /**
+     * Configuration du bouton retour
+     */
+    setupBackButton() {
+        try {
+            if (typeof window.setupBackButton === 'function') {
+                window.setupBackButton();
+                console.log('✅ Bouton retour configuré');
+            } else {
+                console.warn('⚠️ setupBackButton non disponible');
+            }
+        } catch (error) {
+            console.error('❌ Erreur configuration bouton retour:', error);
+        }
+    },
+
+    /**
+     * Avancer à l'étape suivante
+     */
+    advanceToStep(stepNumber) {
+        try {
+            this.currentStep = stepNumber;
+            
+            // Mettre à jour les indicateurs d'étapes
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+            
+            // Masquer toutes les zones
+            ['import-step', 'analysis-step', 'machines-step', 'export-step'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+            
+            // Afficher la zone correspondante
+            const stepIds = ['import-step', 'analysis-step', 'machines-step', 'export-step'];
+            const targetStep = document.getElementById(stepIds[stepNumber - 1]);
+            if (targetStep) {
+                targetStep.style.display = 'block';
+            }
+            
+            console.log(`✅ Avancé à l'étape ${stepNumber}`);
+            
+        } catch (error) {
+            console.error(`❌ Erreur avancement étape ${stepNumber}:`, error);
+        }
+    },
+
+    /**
+     * Affichage de la vue d'ensemble des machines
+     */
+    renderMachinesOverview() {
+        try {
+            const overview = document.getElementById('machines-overview');
+            if (!overview) return;
+            
+            overview.innerHTML = Object.keys(this.machinesData).map(machineId => {
+                const machine = this.machinesData[machineId];
+                const assignedPieces = this.currentPieces.filter(p => p.machineAssignee === machineId);
+                const totalTime = assignedPieces.reduce((sum, p) => sum + (p.tempsEstime?.total || 0), 0);
+                const totalCost = assignedPieces.reduce((sum, p) => sum + (p.coutEstime || 0), 0);
+                
+                const chargeClass = machine.charge < 0.3 ? 'charge-faible' : 
+                                   machine.charge < 0.6 ? 'charge-moyenne' : 
+                                   machine.charge < 0.8 ? 'charge-elevee' : 'charge-critique';
+                
+                return `
+                    <div class="machine-card">
+                        <div class="machine-header">
+                            <div class="machine-icon">${machine.icone}</div>
+                            <div>
+                                <div class="machine-name">${machine.nom}</div>
+                                <div class="machine-type">${machine.type}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="machine-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Pièces assignées:</span>
+                                <span class="stat-value">${assignedPieces.length}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Temps total:</span>
+                                <span class="stat-value">${totalTime.toFixed(1)} min</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Coût estimé:</span>
+                                <span class="stat-value">${totalCost}€</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Charge:</span>
+                                <span class="stat-value ${chargeClass}">${Math.round(machine.charge * 100)}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="charge-indicator">
+                            <div class="charge-fill ${chargeClass}" style="width: ${machine.charge * 100}%"></div>
+                        </div>
+                        
+                        <div class="pieces-list">
+                            <h5>Pièces assignées:</h5>
+                            <ul>
+                                ${assignedPieces.map(piece => `
+                                    <li>${piece.nom} - ${piece.tempsEstime?.total.toFixed(1) || 0} min</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error('❌ Erreur rendu machines overview:', error);
+        }
+    },
+
+    /**
+     * Messages d'erreur et succès
+     */
+    showImportError(message) {
+        this.showNotification(`❌ ${message}`, 'error', 4000);
+    },
+
+    showSuccessMessage(message) {
+        this.showNotification(`✅ ${message}`, 'success', 2000);
+    },
+
+    showNotification(message, type = 'info', duration = 3000) {
+        try {
+            if (window.OweoClientAccess && typeof window.OweoClientAccess.showNotification === 'function') {
+                window.OweoClientAccess.showNotification(message, type, duration);
+            } else {
+                console.log(message);
+            }
+        } catch (error) {
+            console.error('❌ Erreur notification:', error);
+            console.log(message);
+        }
+    },
+
+    /**
+     * Affichage message de bienvenue client
+     */
+    showClientWelcome() {
+        try {
+            const session = window.OweoClientAccess?.getSessionInfo();
+            if (session) {
+                this.showSuccessMessage('Bienvenue dans la démonstration Import DSTV !');
+            }
+        } catch (error) {
+            console.error('❌ Erreur message bienvenue:', error);
+        }
+    },
+
+    /**
+     * Pages d'erreur
      */
     renderAccessDenied() {
         const appContainer = document.getElementById('app');
@@ -290,13 +1261,13 @@ window.pages['import-dstv-demo'] = {
                         <h1>Accès Client Requis</h1>
                         <p class="access-denied-message">
                             Cette démonstration avancée d'import DSTV est exclusivement réservée à nos clients.
+                            Contactez votre référent Oweo pour obtenir un code d'accès.
                         </p>
-                        
                         <div class="access-denied-actions">
-                            <button class="btn btn-primary btn-large" onclick="OweoClientAccess.showAuthModal()">
-                                🔑 Saisir Code d'Accès
+                            <button class="btn btn-primary" onclick="window.OweoClientAccess?.showAuthModal('import-dstv-demo')">
+                                🔐 Saisir Code d'Accès
                             </button>
-                            <button class="btn btn-secondary btn-large" onclick="history.back()">
+                            <button class="btn btn-secondary" onclick="window.history.back()">
                                 ← Retour
                             </button>
                         </div>
@@ -306,1559 +1277,209 @@ window.pages['import-dstv-demo'] = {
         `;
     },
 
-    showClientWelcome() {
-        if (window.OweoUtils && window.OweoUtils.notification) {
-            window.OweoUtils.notification.show(
-                `🔄 Démonstration Import DSTV - Assignation Automatique activée !`,
-                'success',
-                4000
-            );
-        }
-    },
-
-    // Données des machines et leurs paramètres
-    machinesData: {
-        'oxycoupage': {
-            id: 'oxycoupage',
-            nom: 'Oxycoupage CNC',
-            type: 'découpe',
-            icone: '🔥',
-            capacites: {
-                epaisseurMax: 300,
-                longueurMax: 12000,
-                largeurMax: 3000,
-                materiaux: ['S235', 'S355', 'S420', 'S460']
-            },
-            temps: {
-                preparation: 15, // minutes
-                vitesseCoupe: 800, // mm/min pour épaisseur 20mm
-                facteurEpaisseur: 0.8, // réduction vitesse par mm d'épaisseur
-                finition: 5
-            },
-            couts: {
-                horaire: 65, // €/h
-                consommables: 0.15 // €/mm de coupe
-            },
-            priorite: 3, // 1=max, 5=min
-            disponible: true
-        },
-        'plasma': {
-            id: 'plasma',
-            nom: 'Plasma HD',
-            type: 'découpe',
-            icone: '⚡',
-            capacites: {
-                epaisseurMax: 80,
-                longueurMax: 6000,
-                largeurMax: 2000,
-                materiaux: ['S235', 'S355', 'Inox', 'Alu']
-            },
-            temps: {
-                preparation: 10,
-                vitesseCoupe: 2000, // mm/min
-                facteurEpaisseur: 0.9,
-                finition: 3
-            },
-            couts: {
-                horaire: 85,
-                consommables: 0.08
-            },
-            priorite: 2,
-            disponible: true
-        },
-        'laser': {
-            id: 'laser',
-            nom: 'Laser Fibre 6kW',
-            type: 'découpe',
-            icone: '🔦',
-            capacites: {
-                epaisseurMax: 25,
-                longueurMax: 4000,
-                largeurMax: 2000,
-                materiaux: ['S235', 'S355', 'Inox', 'Alu']
-            },
-            temps: {
-                preparation: 8,
-                vitesseCoupe: 3500, // mm/min pour 8mm
-                facteurEpaisseur: 0.7,
-                finition: 2
-            },
-            couts: {
-                horaire: 120,
-                consommables: 0.05
-            },
-            priorite: 1,
-            disponible: true
-        },
-        'poinconnage': {
-            id: 'poinconnage',
-            nom: 'Poinçonneuse CNC',
-            type: 'perçage',
-            icone: '🔩',
-            capacites: {
-                epaisseurMax: 40,
-                longueurMax: 15000,
-                largeurMax: 1500,
-                materiaux: ['S235', 'S355', 'S420']
-            },
-            temps: {
-                preparation: 12,
-                vitessePercage: 60, // trous/min
-                facteurDiametre: 1.2,
-                finition: 5
-            },
-            couts: {
-                horaire: 75,
-                consommables: 0.02
-            },
-            priorite: 2,
-            disponible: true
-        },
-        'sciage': {
-            id: 'sciage',
-            nom: 'Scie à Ruban Automatique',
-            type: 'tronçonnage',
-            icone: '🪚',
-            capacites: {
-                diametreMax: 500,
-                longueurMax: 18000,
-                materiaux: ['S235', 'S355', 'S420', 'S460', 'Inox']
-            },
-            temps: {
-                preparation: 5,
-                vitesseCoupe: 80, // mm²/min
-                facteurMateriau: 1.0,
-                finition: 2
-            },
-            couts: {
-                horaire: 45,
-                consommables: 0.01
-            },
-            priorite: 4,
-            disponible: true
-        }
-    },
-
-    // Données d'exemple DSTV
-    exampleDSTVData: {
-        'profils': [
-            {
-                id: 'P001',
-                nom: 'Poteau IPE240-01',
-                type: 'profil',
-                section: 'IPE240',
-                longueur: 7000,
-                materiau: 'S355',
-                epaisseur: 9.8,
-                perimetreCoupe: 480,
-                nbTrous: 12,
-                complexite: 'moyenne'
-            },
-            {
-                id: 'P002',
-                nom: 'Traverse IPE360-01',
-                type: 'profil',
-                section: 'IPE360',
-                longueur: 12000,
-                materiau: 'S355',
-                epaisseur: 12.7,
-                perimetreCoupe: 720,
-                nbTrous: 24,
-                complexite: 'élevée'
-            },
-            {
-                id: 'P003',
-                nom: 'Panne IPE200-01',
-                type: 'profil',
-                section: 'IPE200',
-                longueur: 6000,
-                materiau: 'S235',
-                epaisseur: 8.5,
-                perimetreCoupe: 400,
-                nbTrous: 8,
-                complexite: 'simple'
-            },
-            {
-                id: 'P004',
-                nom: 'Contrevent L100x10',
-                type: 'profil',
-                section: 'L100x10',
-                longueur: 4500,
-                materiau: 'S235',
-                epaisseur: 10,
-                perimetreCoupe: 200,
-                nbTrous: 4,
-                complexite: 'simple'
-            },
-            {
-                id: 'P005',
-                nom: 'Jarret IPE270-01',
-                type: 'profil',
-                section: 'IPE270',
-                longueur: 3200,
-                materiau: 'S355',
-                epaisseur: 10.2,
-                perimetreCoupe: 540,
-                nbTrous: 16,
-                complexite: 'élevée'
-            }
-        ],
-        'plaques': [
-            {
-                id: 'PL001',
-                nom: 'Platine Poteau 400x400',
-                type: 'plaque',
-                longueur: 400,
-                largeur: 400,
-                epaisseur: 20,
-                materiau: 'S355',
-                perimetreCoupe: 1600,
-                nbTrous: 8,
-                complexite: 'moyenne'
-            },
-            {
-                id: 'PL002',
-                nom: 'Gousset Assemblage',
-                type: 'plaque',
-                longueur: 350,
-                largeur: 250,
-                epaisseur: 15,
-                materiau: 'S235',
-                perimetreCoupe: 1200,
-                nbTrous: 6,
-                complexite: 'élevée'
-            },
-            {
-                id: 'PL003',
-                nom: 'Raidisseur 300x150',
-                type: 'plaque',
-                longueur: 300,
-                largeur: 150,
-                epaisseur: 8,
-                materiau: 'S235',
-                perimetreCoupe: 900,
-                nbTrous: 4,
-                complexite: 'simple'
-            }
-        ]
-    },
-
-    currentPieces: [],
-    currentStep: 1,
-
-    initializeMachinesData() {
-        this.renderMachinesConfig();
-    },
-
-    bindEvents() {
-        // Import de fichiers
-        document.getElementById('file-input')?.addEventListener('change', (e) => {
-            this.handleFileImport(e.target.files);
-        });
-
-        // Démo buttons
-        document.querySelectorAll('[data-demo]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const demoType = e.target.dataset.demo;
-                this.loadDemoData(demoType);
-            });
-        });
-
-        // Assignation automatique
-        document.getElementById('run-auto-assign')?.addEventListener('click', () => {
-            this.runAutoAssignment();
-        });
-
-        // Validation
-        document.getElementById('validate-assignments')?.addEventListener('click', () => {
-            this.validateAssignments();
-        });
-
-        // Configuration machines
-        document.getElementById('edit-machines')?.addEventListener('click', () => {
-            this.showMachinesConfigModal();
-        });
-
-        // Modales
-        this.bindModalEvents();
-
-        // Drag & Drop
-        this.setupDragDrop();
-    },
-
-    setupDragDrop() {
-        const dropZone = document.getElementById('file-drop-zone');
-        if (!dropZone) return;
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, this.preventDefaults, false);
-        });
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            this.handleFileImport(files);
-        }, false);
-    },
-
-    preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    },
-
-    loadDemoData(type) {
-        let pieces = [];
+    renderErrorPage() {
+        const appContainer = document.getElementById('app');
+        if (!appContainer) return;
         
-        switch(type) {
-            case 'profils':
-                pieces = [...this.exampleDSTVData.profils];
-                break;
-            case 'plaques':
-                pieces = [...this.exampleDSTVData.plaques];
-                break;
-            case 'mixte':
-                pieces = [...this.exampleDSTVData.profils, ...this.exampleDSTVData.plaques];
-                break;
-        }
-
-        this.currentPieces = pieces.map(piece => ({
-            ...piece,
-            machineAssignee: null,
-            tempsEstime: null,
-            statut: 'nouveau'
-        }));
-
-        this.advanceToStep(2);
-        this.renderPiecesAnalysis();
-    },
-
-    handleFileImport(files) {
-        // Simulation de l'import de fichiers DSTV
-        console.log('📁 Importing files:', Array.from(files).map(f => f.name));
-        
-        // Pour la démo, on simule l'analyse de fichiers
-        setTimeout(() => {
-            this.loadDemoData('mixte'); // Charger données d'exemple
-            
-            if (window.OweoUtils && window.OweoUtils.notification) {
-                window.OweoUtils.notification.show(
-                    `✅ ${files.length} fichier(s) DSTV importé(s) avec succès`,
-                    'success'
-                );
-            }
-        }, 1500);
-    },
-
-    advanceToStep(step) {
-        this.currentStep = step;
-        
-        // Mise à jour visuelle des étapes
-        document.querySelectorAll('.step').forEach(s => {
-            const stepNum = parseInt(s.dataset.step);
-            s.classList.toggle('active', stepNum === step);
-            s.classList.toggle('completed', stepNum < step);
-        });
-
-        // Affichage des sections correspondantes
-        this.updateVisibleSections();
-    },
-
-    updateVisibleSections() {
-        const sections = {
-            1: ['import-zone'],
-            2: ['machines-config', 'pieces-analysis'],
-            3: ['machines-config', 'pieces-analysis'],
-            4: ['machines-config', 'pieces-analysis', 'machines-summary'],
-            5: ['machines-config', 'pieces-analysis', 'machines-summary', 'export-zone']
-        };
-
-        // Masquer toutes les sections d'abord
-        ['import-zone', 'machines-config', 'pieces-analysis', 'machines-summary', 'export-zone'].forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.style.display = 'none';
-        });
-
-        // Afficher les sections pour l'étape courante
-        const visibleSections = sections[this.currentStep] || [];
-        visibleSections.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.style.display = 'block';
-        });
-    },
-
-    renderMachinesConfig() {
-        const container = document.getElementById('machines-grid');
-        if (!container) return;
-
-        container.innerHTML = Object.values(this.machinesData).map(machine => `
-            <div class="machine-card ${machine.disponible ? 'available' : 'unavailable'}">
-                <div class="machine-header">
-                    <span class="machine-icon">${machine.icone}</span>
-                    <h4>${machine.nom}</h4>
-                    <span class="machine-status ${machine.disponible ? 'online' : 'offline'}">
-                        ${machine.disponible ? '🟢' : '🔴'}
-                    </span>
-                </div>
-                <div class="machine-specs">
-                    <div class="spec-item">
-                        <label>Type:</label>
-                        <span>${machine.type}</span>
-                    </div>
-                    <div class="spec-item">
-                        <label>Coût/h:</label>
-                        <span>${machine.couts.horaire}€</span>
-                    </div>
-                    <div class="spec-item">
-                        <label>Priorité:</label>
-                        <span class="priority-${machine.priorite}">${machine.priorite}/5</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    },
-
-    renderPiecesAnalysis() {
-        const tbody = document.querySelector('#pieces-table tbody');
-        if (!tbody) return;
-
-        tbody.innerHTML = this.currentPieces.map((piece, index) => `
-            <tr class="piece-row ${piece.statut}" data-piece-index="${index}">
-                <td class="piece-name">
-                    <strong>${piece.nom}</strong>
-                    <small>${piece.id}</small>
-                </td>
-                <td class="piece-type">
-                    <span class="type-badge type-${piece.type}">${piece.type}</span>
-                </td>
-                <td class="piece-dimensions">
-                    ${this.formatDimensions(piece)}
-                </td>
-                <td class="piece-material">
-                    <span class="material-badge">${piece.materiau}</span>
-                    <small>${piece.epaisseur}mm</small>
-                </td>
-                <td class="piece-complexity">
-                    <span class="complexity-${piece.complexite}">${piece.complexite}</span>
-                </td>
-                <td class="piece-machine">
-                    ${piece.machineAssignee ? 
-                        `<span class="machine-assigned">${this.machinesData[piece.machineAssignee]?.icone} ${this.machinesData[piece.machineAssignee]?.nom}</span>` :
-                        '<span class="machine-pending">⏳ En attente</span>'
-                    }
-                </td>
-                <td class="piece-time">
-                    ${piece.tempsEstime ? 
-                        `<span class="time-estimated">${piece.tempsEstime.total.toFixed(1)} min</span>` :
-                        '<span class="time-pending">-</span>'
-                    }
-                </td>
-                <td class="piece-actions">
-                    <button class="btn btn-outline btn-xs" onclick="dstvDemo.editAssignment(${index})">
-                        ✏️ Modifier
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    },
-
-    formatDimensions(piece) {
-        if (piece.type === 'profil') {
-            return `${piece.section}<br><small>L: ${piece.longueur}mm</small>`;
-        } else {
-            return `${piece.longueur}×${piece.largeur}mm<br><small>e: ${piece.epaisseur}mm</small>`;
-        }
-    },
-
-    runAutoAssignment() {
-        console.log('🤖 Running automatic assignment...');
-        
-        this.currentPieces.forEach((piece, index) => {
-            const assignment = this.calculateOptimalAssignment(piece);
-            piece.machineAssignee = assignment.machine;
-            piece.tempsEstime = assignment.temps;
-            piece.statut = 'assigne';
-        });
-
-        this.renderPiecesAnalysis();
-        this.renderMachinesSummary();
-        this.advanceToStep(4);
-
-        if (window.OweoUtils && window.OweoUtils.notification) {
-            window.OweoUtils.notification.show(
-                `🤖 Assignation automatique terminée - ${this.currentPieces.length} pièces assignées`,
-                'success'
-            );
-        }
-    },
-
-    calculateOptimalAssignment(piece) {
-        const compatibleMachines = this.findCompatibleMachines(piece);
-        
-        if (compatibleMachines.length === 0) {
-            return { machine: null, temps: null };
-        }
-
-        // Calcul du score pour chaque machine compatible
-        let bestMachine = null;
-        let bestScore = Infinity;
-        let bestTime = null;
-
-        compatibleMachines.forEach(machineId => {
-            const machine = this.machinesData[machineId];
-            const temps = this.calculateMachiningTime(piece, machine);
-            const cout = this.calculateCost(temps, machine);
-            
-            // Score basé sur le coût, la priorité et l'efficacité
-            const score = cout + (machine.priorite * 10) + (temps.total * 0.5);
-            
-            if (score < bestScore) {
-                bestScore = score;
-                bestMachine = machineId;
-                bestTime = temps;
-            }
-        });
-
-        return { machine: bestMachine, temps: bestTime };
-    },
-
-    findCompatibleMachines(piece) {
-        const compatible = [];
-
-        Object.values(this.machinesData).forEach(machine => {
-            if (!machine.disponible) return;
-
-            let isCompatible = false;
-
-            if (piece.type === 'profil') {
-                // Logique pour profils
-                if (machine.type === 'découpe' && piece.nbTrous === 0) {
-                    isCompatible = piece.epaisseur <= machine.capacites.epaisseurMax &&
-                                 piece.longueur <= machine.capacites.longueurMax &&
-                                 machine.capacites.materiaux.includes(piece.materiau);
-                } else if (machine.type === 'perçage' && piece.nbTrous > 0) {
-                    isCompatible = piece.epaisseur <= machine.capacites.epaisseurMax &&
-                                 piece.longueur <= machine.capacites.longueurMax &&
-                                 machine.capacites.materiaux.includes(piece.materiau);
-                } else if (machine.type === 'tronçonnage') {
-                    isCompatible = machine.capacites.materiaux.includes(piece.materiau);
-                }
-            } else if (piece.type === 'plaque') {
-                // Logique pour plaques
-                if (machine.type === 'découpe') {
-                    isCompatible = piece.epaisseur <= machine.capacites.epaisseurMax &&
-                                 piece.longueur <= machine.capacites.longueurMax &&
-                                 piece.largeur <= machine.capacites.largeurMax &&
-                                 machine.capacites.materiaux.includes(piece.materiau);
-                } else if (machine.type === 'perçage' && piece.nbTrous > 0) {
-                    isCompatible = piece.epaisseur <= machine.capacites.epaisseurMax &&
-                                 piece.longueur <= machine.capacites.longueurMax &&
-                                 machine.capacites.materiaux.includes(piece.materiau);
-                }
-            }
-
-            if (isCompatible) {
-                compatible.push(machine.id);
-            }
-        });
-
-        return compatible;
-    },
-
-    calculateMachiningTime(piece, machine) {
-        let preparation = machine.temps.preparation;
-        let usinage = 0;
-        let finition = machine.temps.finition;
-
-        if (machine.type === 'découpe') {
-            // Calcul basé sur le périmètre de coupe
-            const vitesse = machine.temps.vitesseCoupe * Math.pow(machine.temps.facteurEpaisseur, piece.epaisseur - 10);
-            usinage = (piece.perimetreCoupe / vitesse) * 60; // conversion en minutes
-        } else if (machine.type === 'perçage') {
-            // Calcul basé sur le nombre de trous
-            const vitesse = machine.temps.vitessePercage;
-            usinage = (piece.nbTrous / vitesse) * 60;
-        } else if (machine.type === 'tronçonnage') {
-            // Calcul basé sur la section
-            const section = piece.type === 'profil' ? 
-                this.getProfileSection(piece.section) : 
-                piece.longueur * piece.largeur;
-            usinage = (section / machine.temps.vitesseCoupe) / 60;
-        }
-
-        // Facteur de complexité
-        const complexityFactor = {
-            'simple': 1.0,
-            'moyenne': 1.3,
-            'élevée': 1.7
-        }[piece.complexite] || 1.0;
-
-        usinage *= complexityFactor;
-
-        return {
-            preparation,
-            usinage,
-            finition,
-            total: preparation + usinage + finition
-        };
-    },
-
-    getProfileSection(section) {
-        // Estimation de la section des profilés courants (en mm²)
-        const sections = {
-            'IPE200': 2850,
-            'IPE240': 3910,
-            'IPE270': 4590,
-            'IPE300': 5380,
-            'IPE360': 7270,
-            'L100x10': 1950
-        };
-        return sections[section] || 3000;
-    },
-
-    calculateCost(temps, machine) {
-        const coutHoraire = machine.couts.horaire * (temps.total / 60);
-        const coutConsommables = machine.couts.consommables * 100; // estimation
-        return coutHoraire + coutConsommables;
-    },
-
-    renderMachinesSummary() {
-        const container = document.getElementById('summary-grid');
-        if (!container) return;
-
-        const summary = this.calculateMachinesSummary();
-
-        container.innerHTML = Object.entries(summary).map(([machineId, data]) => {
-            const machine = this.machinesData[machineId];
-            if (!machine) return '';
-
-            return `
-                <div class="machine-summary-card">
-                    <div class="summary-header">
-                        <span class="machine-icon">${machine.icone}</span>
-                        <h4>${machine.nom}</h4>
-                    </div>
-                    <div class="summary-stats">
-                        <div class="stat-item">
-                            <label>Pièces assignées:</label>
-                            <span class="stat-value">${data.nbPieces}</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Temps total:</label>
-                            <span class="stat-value">${data.tempsTotal.toFixed(1)} min</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Coût estimé:</label>
-                            <span class="stat-value">${data.coutTotal.toFixed(0)} €</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Charge machine:</label>
-                            <span class="stat-value charge-${this.getChargeLevel(data.tempsTotal)}">${this.getChargeLabel(data.tempsTotal)}</span>
+        appContainer.innerHTML = `
+            <section class="section error-page">
+                <div class="container">
+                    <div class="error-content">
+                        <div class="error-icon">⚠️</div>
+                        <h1>Erreur de Chargement</h1>
+                        <p>Une erreur est survenue lors du chargement de la démonstration.</p>
+                        <div class="error-actions">
+                            <button class="btn btn-primary" onclick="location.reload()">
+                                🔄 Recharger la page
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.history.back()">
+                                ← Retour
+                            </button>
                         </div>
                     </div>
-                    <div class="pieces-list">
-                        <h5>Pièces à usiner:</h5>
-                        <ul>
-                            ${data.pieces.map(piece => `
-                                <li>${piece.nom} <small>(${piece.tempsEstime.total.toFixed(1)}min)</small></li>
-                            `).join('')}
-                        </ul>
-                    </div>
                 </div>
-            `;
-        }).join('');
-    },
-
-    calculateMachinesSummary() {
-        const summary = {};
-
-        this.currentPieces.forEach(piece => {
-            if (!piece.machineAssignee || !piece.tempsEstime) return;
-
-            const machineId = piece.machineAssignee;
-            const machine = this.machinesData[machineId];
-
-            if (!summary[machineId]) {
-                summary[machineId] = {
-                    nbPieces: 0,
-                    tempsTotal: 0,
-                    coutTotal: 0,
-                    pieces: []
-                };
-            }
-
-            summary[machineId].nbPieces++;
-            summary[machineId].tempsTotal += piece.tempsEstime.total;
-            summary[machineId].coutTotal += this.calculateCost(piece.tempsEstime, machine);
-            summary[machineId].pieces.push(piece);
-        });
-
-        return summary;
-    },
-
-    getChargeLevel(tempsTotal) {
-        if (tempsTotal < 60) return 'faible';
-        if (tempsTotal < 180) return 'moyenne';
-        if (tempsTotal < 360) return 'elevee';
-        return 'critique';
-    },
-
-    getChargeLabel(tempsTotal) {
-        const level = this.getChargeLevel(tempsTotal);
-        const labels = {
-            'faible': 'Faible',
-            'moyenne': 'Moyenne', 
-            'elevee': 'Élevée',
-            'critique': 'Critique'
-        };
-        return labels[level];
-    },
-
-    editAssignment(pieceIndex) {
-        const piece = this.currentPieces[pieceIndex];
-        this.currentEditingPiece = pieceIndex;
-        
-        this.showAssignmentModal(piece);
-    },
-
-    showAssignmentModal(piece) {
-        const modal = document.getElementById('assign-modal');
-        const pieceInfo = document.getElementById('current-piece-info');
-        const machinesList = document.getElementById('machines-list');
-
-        // Info de la pièce
-        pieceInfo.innerHTML = `
-            <div class="piece-detail">
-                <h4>${piece.nom}</h4>
-                <div class="piece-specs">
-                    <span class="spec">Type: ${piece.type}</span>
-                    <span class="spec">Matériau: ${piece.materiau}</span>
-                    <span class="spec">Épaisseur: ${piece.epaisseur}mm</span>
-                    <span class="spec">Complexité: ${piece.complexite}</span>
-                </div>
-            </div>
+            </section>
         `;
+    },
 
-        // Machines compatibles
-        const compatibleMachines = this.findCompatibleMachines(piece);
-        machinesList.innerHTML = compatibleMachines.map(machineId => {
-            const machine = this.machinesData[machineId];
-            const temps = this.calculateMachiningTime(piece, machine);
-            const cout = this.calculateCost(temps, machine);
-            const isSelected = piece.machineAssignee === machineId;
-
-            return `
-                <div class="machine-option ${isSelected ? 'selected' : ''}" data-machine="${machineId}">
-                    <div class="machine-info">
-                        <div class="machine-name">
-                            ${machine.icone} ${machine.nom}
-                        </div>
-                        <div class="machine-metrics">
-                            <span class="metric">Temps: ${temps.total.toFixed(1)}min</span>
-                            <span class="metric">Coût: ${cout.toFixed(0)}€</span>
-                        </div>
-                    </div>
-                    <div class="machine-details">
-                        <small>Prep: ${temps.preparation}min | Usinage: ${temps.usinage.toFixed(1)}min | Finition: ${temps.finition}min</small>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Event listeners pour la sélection
-        machinesList.querySelectorAll('.machine-option').forEach(option => {
-            option.addEventListener('click', () => {
-                machinesList.querySelectorAll('.machine-option').forEach(o => o.classList.remove('selected'));
-                option.classList.add('selected');
-                this.selectedMachine = option.dataset.machine;
-                this.updateTimeInputs(piece, this.machinesData[this.selectedMachine]);
+    /**
+     * Gestion des modales - Méthodes utilitaires
+     */
+    closeAllModals() {
+        try {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
             });
-        });
-
-        // Remplir les temps si machine déjà assignée
-        if (piece.machineAssignee && piece.tempsEstime) {
-            document.getElementById('prep-time').value = piece.tempsEstime.preparation;
-            document.getElementById('machining-time').value = piece.tempsEstime.usinage.toFixed(1);
-            document.getElementById('finishing-time').value = piece.tempsEstime.finition;
-            this.selectedMachine = piece.machineAssignee;
-        }
-
-        this.updateTotalTime();
-        this.showModal('assign-modal');
-    },
-
-    updateTimeInputs(piece, machine) {
-        const temps = this.calculateMachiningTime(piece, machine);
-        document.getElementById('prep-time').value = temps.preparation;
-        document.getElementById('machining-time').value = temps.usinage.toFixed(1);
-        document.getElementById('finishing-time').value = temps.finition;
-        this.updateTotalTime();
-    },
-
-    updateTotalTime() {
-        const prep = parseFloat(document.getElementById('prep-time').value) || 0;
-        const machining = parseFloat(document.getElementById('machining-time').value) || 0;
-        const finishing = parseFloat(document.getElementById('finishing-time').value) || 0;
-        const total = prep + machining + finishing;
-        
-        document.getElementById('total-estimated-time').textContent = `${total.toFixed(1)} min`;
-    },
-
-    validateAssignments() {
-        this.advanceToStep(5);
-        
-        if (window.OweoUtils && window.OweoUtils.notification) {
-            window.OweoUtils.notification.show(
-                `✅ Toutes les assignations validées - Prêt pour l'export ERP`,
-                'success'
-            );
-        }
-    },
-
-    bindModalEvents() {
-        // Fermeture des modales
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-backdrop') || 
-                e.target.classList.contains('modal-close')) {
-                this.hideModals();
-            }
-        });
-
-        // Sauvegarde assignation
-        document.getElementById('save-assign')?.addEventListener('click', () => {
-            this.saveAssignment();
-        });
-
-        // Annulation
-        document.getElementById('cancel-assign')?.addEventListener('click', () => {
-            this.hideModals();
-        });
-
-        // Mise à jour temps en temps réel
-        ['prep-time', 'machining-time', 'finishing-time'].forEach(id => {
-            document.getElementById(id)?.addEventListener('input', () => {
-                this.updateTotalTime();
-            });
-        });
-    },
-
-    saveAssignment() {
-        if (this.currentEditingPiece === undefined || !this.selectedMachine) return;
-
-        const piece = this.currentPieces[this.currentEditingPiece];
-        const prep = parseFloat(document.getElementById('prep-time').value) || 0;
-        const machining = parseFloat(document.getElementById('machining-time').value) || 0;
-        const finishing = parseFloat(document.getElementById('finishing-time').value) || 0;
-
-        piece.machineAssignee = this.selectedMachine;
-        piece.tempsEstime = {
-            preparation: prep,
-            usinage: machining,
-            finition: finishing,
-            total: prep + machining + finishing
-        };
-        piece.statut = 'modifie';
-
-        this.renderPiecesAnalysis();
-        this.renderMachinesSummary();
-        this.hideModals();
-
-        if (window.OweoUtils && window.OweoUtils.notification) {
-            window.OweoUtils.notification.show(
-                `✅ Assignation mise à jour pour ${piece.nom}`,
-                'success'
-            );
+            
+            // Nettoyer les variables de modal active
+            this.currentModal = null;
+            this.selectedMachine = null;
+            
+            console.log('✅ Modales fermées');
+            
+        } catch (error) {
+            console.error('❌ Erreur fermeture modales:', error);
         }
     },
 
     showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'block';
-            setTimeout(() => {
-                modal.classList.add('modal-visible');
-            }, 10);
+        try {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error(`❌ Modal ${modalId} non trouvée`);
+                return;
+            }
+            
+            // Fermer les autres modales d'abord
+            this.closeAllModals();
+            
+            // Afficher la modal avec animation
+            modal.style.display = 'flex';
+            modal.style.opacity = '0';
+            
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+            });
+            
+            this.currentModal = modalId;
+            console.log(`✅ Modal ${modalId} affichée`);
+            
+        } catch (error) {
+            console.error(`❌ Erreur affichage modal ${modalId}:`, error);
         }
     },
 
-    hideModals() {
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.classList.remove('modal-visible');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        });
+    /**
+     * Validation d'assignation de pièce améliorée
+     */
+    validatePieceAssignment() {
+        try {
+            if (!this.selectedMachine) {
+                this.showImportError('Veuillez sélectionner une machine');
+                return;
+            }
+            
+            if (!this.currentPieceId) {
+                this.showImportError('Pièce non identifiée');
+                return;
+            }
+            
+            // Récupérer les temps
+            const prepTime = parseFloat(document.getElementById('prep-time')?.value) || 0;
+            const machiningTime = parseFloat(document.getElementById('machining-time')?.value) || 0;
+            const finishingTime = parseFloat(document.getElementById('finishing-time')?.value) || 0;
+            
+            if (machiningTime <= 0) {
+                this.showImportError('Temps d\'usinage requis');
+                return;
+            }
+            
+            // Sauvegarder l'assignation
+            this.saveAssignment(this.currentPieceId, this.selectedMachine, {
+                preparation: prepTime,
+                usinage: machiningTime,
+                finition: finishingTime,
+                total: prepTime + machiningTime + finishingTime
+            });
+            
+            this.closeAllModals();
+            
+        } catch (error) {
+            console.error('❌ Erreur validation assignation:', error);
+            this.showImportError('Erreur lors de la validation');
+        }
     },
 
+    /**
+     * Sauvegarde d'assignation robuste
+     */
+    saveAssignment(pieceId, machineId, timeData) {
+        try {
+            const piece = this.currentPieces.find(p => p.id === pieceId);
+            if (!piece) {
+                throw new Error(`Pièce ${pieceId} non trouvée`);
+            }
+            
+            piece.machineAssignee = machineId;
+            piece.tempsEstime = timeData;
+            piece.statut = 'assignee';
+            
+            // Calculer le coût
+            const machine = this.machinesData[machineId];
+            if (machine) {
+                piece.coutEstime = Math.round(timeData.total * machine.coutHoraire / 60);
+            }
+            
+            console.log(`✅ Assignation sauvegardée: ${pieceId} -> ${machineId}`);
+            
+            // Mettre à jour l'affichage
+            this.renderPiecesAnalysis();
+            
+            // Notification
+            this.showSuccessMessage(`Pièce ${piece.nom} assignée à ${machine?.nom || machineId}`);
+            
+        } catch (error) {
+            console.error('❌ Erreur sauvegarde assignation:', error);
+            this.showImportError('Erreur lors de la sauvegarde');
+        }
+    },
+
+    updateTotalTime() {
+        try {
+            const prep = parseFloat(document.getElementById('prep-time')?.value) || 0;
+            const machining = parseFloat(document.getElementById('machining-time')?.value) || 0;
+            const finishing = parseFloat(document.getElementById('finishing-time')?.value) || 0;
+            const total = prep + machining + finishing;
+            
+            const totalDisplay = document.getElementById('total-estimated-time');
+            if (totalDisplay) {
+                totalDisplay.textContent = `${total.toFixed(1)} min`;
+            }
+        } catch (error) {
+            console.error('❌ Erreur mise à jour temps total:', error);
+        }
+    },
+
+    /**
+     * Ajout des styles CSS
+     */
     addDSTVStyles() {
         if (document.getElementById('dstv-demo-styles')) return;
         
         const styles = document.createElement('style');
         styles.id = 'dstv-demo-styles';
         styles.textContent = `
-            /* Styles pour la démo DSTV */
-            .process-steps {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: var(--space-4);
-                margin: var(--space-8) 0;
-                padding: var(--space-6);
-                background: var(--bg-card);
-                border-radius: var(--radius-lg);
-                border: 1px solid var(--border-color);
-            }
-            
-            .step {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: var(--space-2);
-                padding: var(--space-3);
-                border-radius: var(--radius-md);
-                transition: var(--transition-base);
-                opacity: 0.5;
-            }
-            
-            .step.active {
-                opacity: 1;
-                background: var(--primary-color);
-                color: white;
-                transform: scale(1.1);
-            }
-            
-            .step.completed {
-                opacity: 0.8;
-                background: var(--success-color);
-                color: white;
-            }
-            
-            .step-number {
-                width: 30px;
-                height: 30px;
-                border: 2px solid currentColor;
-                border-radius: var(--radius-full);
+            /* Styles de base pour la démo DSTV - Version complète dans le fichier CSS dédié */
+            .access-denied, .error-page {
+                min-height: 70vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-weight: bold;
-                font-size: var(--font-size-sm);
-            }
-            
-            .step-label {
-                font-size: var(--font-size-xs);
-                font-weight: 600;
                 text-align: center;
             }
             
-            .dstv-interface {
-                margin: var(--space-8) 0;
+            .access-denied-content, .error-content {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 2rem;
             }
             
-            /* Zone d'import */
-            .import-zone {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-                margin-bottom: var(--space-6);
+            .access-denied-icon, .error-icon {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+                color: var(--accent-color, #ff6b35);
             }
             
-            .import-header {
+            .access-denied-actions, .error-actions {
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-6);
-            }
-            
-            .import-info {
-                display: flex;
-                gap: var(--space-2);
-            }
-            
-            .info-badge {
-                padding: var(--space-1) var(--space-3);
-                background: var(--success-color);
-                color: white;
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-xs);
-                font-weight: 600;
-            }
-            
-            .file-drop-zone {
-                border: 2px dashed var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-8);
-                text-align: center;
-                transition: var(--transition-base);
-                cursor: pointer;
-            }
-            
-            .file-drop-zone:hover,
-            .file-drop-zone.dragover {
-                border-color: var(--primary-color);
-                background: rgba(0, 212, 255, 0.05);
-            }
-            
-            .drop-content {
-                margin-bottom: var(--space-6);
-            }
-            
-            .drop-icon {
-                font-size: 3rem;
-                margin-bottom: var(--space-4);
-                opacity: 0.7;
-            }
-            
-            .drop-content h4 {
-                color: var(--text-primary);
-                margin-bottom: var(--space-2);
-            }
-            
-            .drop-content p {
-                color: var(--text-secondary);
-                margin-bottom: var(--space-4);
-            }
-            
-            .demo-files {
-                border-top: 1px solid var(--border-color);
-                padding-top: var(--space-4);
-            }
-            
-            .demo-files h5 {
-                color: var(--text-secondary);
-                margin-bottom: var(--space-3);
-                font-size: var(--font-size-sm);
-            }
-            
-            .demo-buttons {
-                display: flex;
-                gap: var(--space-3);
+                gap: 1rem;
                 justify-content: center;
+                margin-top: 2rem;
                 flex-wrap: wrap;
-            }
-            
-            /* Configuration machines */
-            .machines-config {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-                margin-bottom: var(--space-6);
-            }
-            
-            .config-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-6);
-            }
-            
-            .machines-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: var(--space-4);
-            }
-            
-            .machine-card {
-                background: var(--bg-dark);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-4);
-                transition: var(--transition-base);
-            }
-            
-            .machine-card.available {
-                border-color: var(--success-color);
-            }
-            
-            .machine-card.unavailable {
-                opacity: 0.6;
-                border-color: var(--error-color);
-            }
-            
-            .machine-header {
-                display: flex;
-                align-items: center;
-                gap: var(--space-3);
-                margin-bottom: var(--space-4);
-            }
-            
-            .machine-icon {
-                font-size: var(--font-size-xl);
-            }
-            
-            .machine-header h4 {
-                flex: 1;
-                margin: 0;
-                color: var(--text-primary);
-            }
-            
-            .machine-status {
-                font-size: var(--font-size-sm);
-            }
-            
-            .machine-specs {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-2);
-            }
-            
-            .spec-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: var(--font-size-sm);
-            }
-            
-            .spec-item label {
-                color: var(--text-secondary);
-                font-weight: 500;
-            }
-            
-            .priority-1 { color: var(--success-color); }
-            .priority-2 { color: var(--primary-color); }
-            .priority-3 { color: var(--accent-color); }
-            .priority-4 { color: var(--warning-color); }
-            .priority-5 { color: var(--error-color); }
-            
-            /* Analyse des pièces */
-            .pieces-analysis {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-                margin-bottom: var(--space-6);
-            }
-            
-            .analysis-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-6);
-            }
-            
-            .analysis-controls {
-                display: flex;
-                gap: var(--space-3);
-            }
-            
-            .pieces-table-container {
-                overflow-x: auto;
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-            }
-            
-            .pieces-table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: var(--font-size-sm);
-            }
-            
-            .pieces-table th {
-                background: var(--bg-medium);
-                padding: var(--space-3);
-                text-align: left;
-                border-bottom: 1px solid var(--border-color);
-                color: var(--text-primary);
-                font-weight: 600;
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
-            
-            .pieces-table td {
-                padding: var(--space-3);
-                border-bottom: 1px solid var(--border-color);
-                vertical-align: top;
-            }
-            
-            .piece-row {
-                transition: var(--transition-fast);
-            }
-            
-            .piece-row:hover {
-                background: var(--bg-card-hover);
-            }
-            
-            .piece-row.nouveau {
-                border-left: 3px solid var(--info-color);
-            }
-            
-            .piece-row.assigne {
-                border-left: 3px solid var(--success-color);
-            }
-            
-            .piece-row.modifie {
-                border-left: 3px solid var(--accent-color);
-            }
-            
-            .piece-name strong {
-                color: var(--text-primary);
-                font-size: var(--font-size-base);
-            }
-            
-            .piece-name small {
-                color: var(--text-muted);
-                display: block;
-                margin-top: var(--space-1);
-            }
-            
-            .type-badge {
-                padding: var(--space-1) var(--space-2);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-xs);
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-            
-            .type-profil {
-                background: var(--primary-color);
-                color: white;
-            }
-            
-            .type-plaque {
-                background: var(--secondary-color);
-                color: white;
-            }
-            
-            .material-badge {
-                background: var(--bg-medium);
-                color: var(--text-primary);
-                padding: var(--space-1) var(--space-2);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-xs);
-                font-weight: 600;
-            }
-            
-            .complexity-simple { color: var(--success-color); }
-            .complexity-moyenne { color: var(--warning-color); }
-            .complexity-élevée { color: var(--error-color); }
-            
-            .machine-assigned {
-                background: var(--success-color);
-                color: white;
-                padding: var(--space-1) var(--space-2);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-xs);
-                font-weight: 600;
-            }
-            
-            .machine-pending {
-                color: var(--text-muted);
-                font-style: italic;
-            }
-            
-            .time-estimated {
-                color: var(--success-color);
-                font-weight: 600;
-            }
-            
-            .time-pending {
-                color: var(--text-muted);
-            }
-            
-            /* Récapitulatif machines */
-            .machines-summary {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-                margin-bottom: var(--space-6);
-            }
-            
-            .summary-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                gap: var(--space-4);
-            }
-            
-            .machine-summary-card {
-                background: var(--bg-dark);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-5);
-            }
-            
-            .summary-header {
-                display: flex;
-                align-items: center;
-                gap: var(--space-3);
-                margin-bottom: var(--space-4);
-            }
-            
-            .summary-header h4 {
-                margin: 0;
-                color: var(--text-primary);
-            }
-            
-            .summary-stats {
-                margin-bottom: var(--space-4);
-            }
-            
-            .stat-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-2);
-                font-size: var(--font-size-sm);
-            }
-            
-            .stat-item label {
-                color: var(--text-secondary);
-            }
-            
-            .stat-value {
-                font-weight: 600;
-                color: var(--text-primary);
-            }
-            
-            .charge-faible { color: var(--success-color); }
-            .charge-moyenne { color: var(--warning-color); }
-            .charge-elevee { color: var(--accent-color); }
-            .charge-critique { color: var(--error-color); }
-            
-            .pieces-list h5 {
-                margin-bottom: var(--space-3);
-                color: var(--text-primary);
-                font-size: var(--font-size-sm);
-            }
-            
-            .pieces-list ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            
-            .pieces-list li {
-                padding: var(--space-1) 0;
-                font-size: var(--font-size-xs);
-                color: var(--text-secondary);
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .pieces-list li:last-child {
-                border-bottom: none;
-            }
-            
-            /* Zone d'export */
-            .export-zone {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-            }
-            
-            .export-header {
-                text-align: center;
-                margin-bottom: var(--space-6);
-            }
-            
-            .export-options {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: var(--space-6);
-            }
-            
-            .export-item {
-                background: var(--bg-dark);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-5);
-                text-align: center;
-            }
-            
-            .export-item h4 {
-                color: var(--primary-color);
-                margin-bottom: var(--space-3);
-            }
-            
-            .export-item p {
-                color: var(--text-secondary);
-                margin-bottom: var(--space-4);
-                font-size: var(--font-size-sm);
-            }
-            
-            /* Modales */
-            .modal-large .modal-content {
-                max-width: 800px;
-            }
-            
-            .current-piece-info {
-                background: var(--bg-medium);
-                padding: var(--space-4);
-                border-radius: var(--radius-md);
-                margin-bottom: var(--space-4);
-            }
-            
-            .piece-detail h4 {
-                margin-bottom: var(--space-3);
-                color: var(--primary-color);
-            }
-            
-            .piece-specs {
-                display: flex;
-                gap: var(--space-3);
-                flex-wrap: wrap;
-            }
-            
-            .piece-specs .spec {
-                background: var(--bg-dark);
-                padding: var(--space-1) var(--space-2);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-xs);
-                color: var(--text-secondary);
-            }
-            
-            .machine-selection h4,
-            .time-adjustment h4 {
-                margin-bottom: var(--space-4);
-                color: var(--text-primary);
-            }
-            
-            .machines-list {
-                max-height: 300px;
-                overflow-y: auto;
-                margin-bottom: var(--space-6);
-            }
-            
-            .machine-option {
-                background: var(--bg-medium);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-4);
-                margin-bottom: var(--space-3);
-                cursor: pointer;
-                transition: var(--transition-fast);
-            }
-            
-            .machine-option:hover {
-                border-color: var(--primary-color);
-            }
-            
-            .machine-option.selected {
-                border-color: var(--primary-color);
-                background: rgba(0, 212, 255, 0.1);
-            }
-            
-            .machine-info {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-2);
-            }
-            
-            .machine-name {
-                font-weight: 600;
-                color: var(--text-primary);
-            }
-            
-            .machine-metrics {
-                display: flex;
-                gap: var(--space-3);
-            }
-            
-            .metric {
-                font-size: var(--font-size-xs);
-                color: var(--text-secondary);
-            }
-            
-            .machine-details {
-                color: var(--text-muted);
-                font-size: var(--font-size-xs);
-            }
-            
-            .time-inputs {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: var(--space-4);
-                margin-bottom: var(--space-4);
-            }
-            
-            .time-input label {
-                display: block;
-                margin-bottom: var(--space-2);
-                font-weight: 600;
-                color: var(--text-primary);
-                font-size: var(--font-size-sm);
-            }
-            
-            .time-input input {
-                width: 100%;
-                padding: var(--space-2);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                background: var(--bg-medium);
-                color: var(--text-primary);
-            }
-            
-            .total-time {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: var(--space-3);
-                background: var(--bg-medium);
-                border-radius: var(--radius-md);
-                font-weight: 600;
-            }
-            
-            .total-time span {
-                color: var(--primary-color);
-                font-size: var(--font-size-lg);
-            }
-            
-            /* Responsive */
-            @media (max-width: 1024px) {
-                .process-steps {
-                    flex-wrap: wrap;
-                }
-                
-                .machines-grid {
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                }
-                
-                .summary-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .import-header,
-                .config-header,
-                .analysis-header {
-                    flex-direction: column;
-                    gap: var(--space-3);
-                    align-items: stretch;
-                }
-                
-                .analysis-controls,
-                .demo-buttons {
-                    flex-direction: column;
-                }
-                
-                .pieces-table-container {
-                    font-size: var(--font-size-xs);
-                }
-                
-                .export-options {
-                    grid-template-columns: 1fr;
-                }
-                
-                .time-inputs {
-                    grid-template-columns: 1fr;
-                }
-                
-                .machine-info {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: var(--space-2);
-                }
             }
         `;
         
@@ -1866,7 +1487,4 @@ window.pages['import-dstv-demo'] = {
     }
 };
 
-// Instance globale pour les callbacks
-window.dstvDemo = window.pages['import-dstv-demo'];
-
-console.log('🔄 Page import DSTV & assignation machines chargée');
+console.log('🔄 DSTV Demo page loaded with complete corrections');

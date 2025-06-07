@@ -1,587 +1,902 @@
-// js/pages/services.js - Page Services Métallurgie CORRIGÉE
+// js/pages/services.js - Version complète corrigée
+// Page des services avec détails complets
 
 window.pages = window.pages || {};
-
-window.pages.services = {
+window.pages['services'] = {
+    
+    // État de la page
+    initialized: false,
+    activeService: null,
+    
+    /**
+     * Générer le rendu HTML de la page des services
+     */
     render() {
         return `
-            <section class="section">
-                <div class="container">
-                    <!-- CORRECTION : Bouton retour sans onclick inline -->
-                    <button class="btn-back" type="button" aria-label="Retourner à l'accueil">← Retour</button>
-                    
-                    <div class="section-header">
-                        <h1 class="section-title gradient-text">Nos Services pour la Métallurgie</h1>
-                        <p class="section-subtitle">
-                            Solutions complètes pour chaudronnerie, serrurerie et charpente métallique.<br>
-                            <strong>De l'audit gratuit</strong> à l'accompagnement complet de votre transformation.
-                        </p>
-                    </div>
-
-                    <!-- Stats services -->
-                    <div class="hero-stats mb-3">
-                        <div class="stat">
-                            <div class="stat-number">15+</div>
-                            <div class="stat-label">Projets réussis</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">100%</div>
-                            <div class="stat-label">Clients satisfaits</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">6 mois</div>
-                            <div class="stat-label">Support inclus</div>
-                        </div>
-                    </div>
-
-                    <!-- Offres de services -->
-                    <div class="section-header">
-                        <h2 class="section-title">📋 Nos Offres Adaptées à Vos Besoins</h2>
-                        <p class="section-subtitle">3 formules pour accompagner votre transformation</p>
-                    </div>
-                    
-                    <div class="services-offers" id="services-offers"></div>
-
-                    <!-- Expertise sectorielle -->
-                    <div class="section-header mt-3">
-                        <h2 class="section-title">🏭 Notre Expertise Sectorielle</h2>
-                        <p class="section-subtitle">Spécialisation par métier de la métallurgie</p>
-                    </div>
-                    
-                    <div class="sector-expertise" id="sector-expertise"></div>
-
-                    <!-- Méthodologie projet -->
-                    <div class="section-header mt-3">
-                        <h2 class="section-title">⚡ Notre Méthodologie Projet</h2>
-                        <p class="section-subtitle">6 étapes pour garantir votre succès</p>
-                    </div>
-                    
-                    <div class="project-methodology" id="project-methodology"></div>
-
-                    <!-- Garanties -->
-                    <div class="section-header mt-3">
-                        <h2 class="section-title">🛡️ Nos Engagements</h2>
-                    </div>
-                    
-                    <div class="guarantees" id="guarantees"></div>
-
-                    <!-- Tarification -->
-                    <div class="section-header mt-3">
-                        <h2 class="section-title">💰 Tarification Transparente</h2>
-                        <p class="section-subtitle">Investissement adapté à votre taille d'entreprise</p>
-                    </div>
-                    
-                    <div class="pricing-info" id="pricing-info"></div>
-
-                    <!-- CTA -->
-                    <div class="article-cta mt-3">
-                        <h3>🚀 Commençons par un Diagnostic Gratuit</h3>
-                        <p>30 minutes pour identifier vos priorités et estimer vos gains potentiels</p>
-                        <div class="cta-actions">
-                            <button class="btn btn-primary btn-large" data-calendly="true">
-                                📅 Réserver mon Diagnostic
-                            </button>
-                            <a href="mailto:${OweoConfig.contact.email}" class="btn btn-secondary btn-large">
-                                📧 Demander un Devis
-                            </a>
-                        </div>
-                        <div class="cta-urgency">
-                            <p>⚡ <strong>Offre limitée :</strong> 5 diagnostics gratuits par mois</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        `;
-    },
-
-    init() {
-        console.log('📋 Initializing Services page...');
-        
-        // CORRECTION : Setup du bouton retour en premier
-        this.setupBackButton();
-        
-        // Ensuite le reste du contenu
-        this.renderServicesOffers();
-        this.renderSectorExpertise();
-        this.renderProjectMethodology();
-        this.renderGuarantees();
-        this.renderPricingInfo();
-        this.bindEvents();
-        
-        console.log('📋 Services page initialized');
-    },
-
-    // CORRECTION : Méthode dédiée pour le bouton retour
-    setupBackButton() {
-        console.log('Setting up back button for services page');
-        
-        // Utiliser la fonction globale si disponible
-        if (typeof window.setupBackButton === 'function') {
-            window.setupBackButton();
-        } else {
-            // Fallback manuel
-            const backButton = document.querySelector('.btn-back');
-            if (backButton) {
-                // Nettoyer les onclick existants
-                backButton.removeAttribute('onclick');
-                
-                // Ajouter le bon event listener
-                backButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log('Services back button clicked');
-                    this.navigateHome();
-                });
-                
-                // Support clavier
-                backButton.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        this.navigateHome();
-                    }
-                });
-            }
-        }
-    },
-
-    // CORRECTION : Méthode de navigation robuste
-    navigateHome() {
-        console.log('Navigating to home from services page');
-        
-        try {
-            // Option 1 : Router global
-            if (window.router && typeof window.router.navigate === 'function') {
-                window.router.navigate('/');
-                return;
-            }
-            
-            // Option 2 : Router de l'app
-            if (window.oweoApp && window.oweoApp.router) {
-                window.oweoApp.router.navigate('/');
-                return;
-            }
-            
-            // Option 3 : Navigation component
-            if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
-                window.navigation.navigateToPage('home');
-                return;
-            }
-            
-            // Option 4 : Hash fallback
-            window.location.hash = '';
-            
-        } catch (error) {
-            console.error('Navigation error from services:', error);
-            // Dernier fallback
-            window.location.href = window.location.origin + window.location.pathname;
-        }
-    },
-
-    renderServicesOffers() {
-        const offers = [
-            {
-                id: 'diagnostic',
-                name: 'Diagnostic Digital',
-                badge: 'Gratuit',
-                subtitle: 'Point de départ idéal',
-                duration: '2-3 jours',
-                price: '0€',
-                priceNote: 'Sans engagement',
-                description: 'Audit complet pour identifier vos priorités',
-                includes: [
-                    'Visite sur site (atelier + bureaux)',
-                    'Analyse processus complets',
-                    'Identification gains rapides',
-                    'Rapport détaillé 20+ pages',
-                    'Plan action personnalisé',
-                    'Estimation ROI'
-                ],
-                results: 'Vision claire + feuille de route',
-                ideal: 'Toute entreprise de métallurgie',
-                popular: false
-            },
-            {
-                id: 'strategie',
-                name: 'Accompagnement Stratégique',
-                badge: 'Best-seller',
-                subtitle: 'Transformation pilotée',
-                duration: '3-6 mois',
-                price: 'Sur devis',
-                priceNote: '15-50k€ selon taille',
-                description: 'Accompagnement complet avec garantie résultats',
-                includes: [
-                    'Diagnostic approfondi inclus',
-                    'Sélection solutions optimales',
-                    'Gestion projet complète',
-                    'Négociation fournisseurs',
-                    'Formation équipes',
-                    'Support 6 mois inclus'
-                ],
-                results: 'Transformation réussie garantie',
-                ideal: 'PME 10-100 salariés',
-                popular: true
-            },
-            {
-                id: 'premium',
-                name: 'Transformation Clé en Main',
-                badge: 'Premium',
-                subtitle: 'Délégation totale',
-                duration: '6-12 mois',
-                price: 'Sur mesure',
-                priceNote: '50k€+',
-                description: 'Prise en charge intégrale de A à Z',
-                includes: [
-                    'Tout l\'accompagnement stratégique',
-                    'Déploiement multi-sites',
-                    'Développements spécifiques',
-                    'Intégrations complexes',
-                    'Conduite changement avancée',
-                    'Support illimité 1 an'
-                ],
-                results: 'Excellence opérationnelle',
-                ideal: 'ETI et groupes',
-                popular: false
-            }
-        ];
-
-        const container = document.getElementById('services-offers');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="offers-grid">
-                ${offers.map(offer => `
-                    <div class="offer-card ${offer.popular ? 'offer-popular' : ''}">
-                        ${offer.popular ? '<div class="offer-badge">⭐ Le plus choisi</div>' : ''}
-                        <div class="offer-header">
-                            <h3>${offer.name}</h3>
-                            <p class="offer-subtitle">${offer.subtitle}</p>
-                            <div class="offer-price">
-                                <span class="price-value">${offer.price}</span>
-                                <span class="price-note">${offer.priceNote}</span>
+            <main class="services-page">
+                <!-- En-tête de page -->
+                <section class="page-hero">
+                    <div class="container">
+                        <div class="page-hero-content">
+                            <h1 class="page-title gradient-text">Nos Services</h1>
+                            <p class="page-subtitle">
+                                Solutions complètes pour optimiser et digitaliser votre entreprise de métallurgie
+                            </p>
+                            <div class="hero-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">100+</div>
+                                    <div class="stat-label">Projets réalisés</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">15+</div>
+                                    <div class="stat-label">Années d'expérience</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">3</div>
+                                    <div class="stat-label">Domaines d'expertise</div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <p class="offer-description">${offer.description}</p>
-                        
-                        <div class="offer-meta">
-                            <span>⏱️ ${offer.duration}</span>
-                            <span>🎯 ${offer.ideal}</span>
-                        </div>
-                        
-                        <div class="offer-includes">
-                            <h4>Inclus :</h4>
-                            <ul>
-                                ${offer.includes.map(item => `<li>✓ ${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                        
-                        <div class="offer-result">
-                            <strong>📈 Résultat :</strong> ${offer.results}
-                        </div>
-                        
-                        <button class="btn btn-primary btn-full" data-calendly="true" data-service="${offer.id}">
-                            ${offer.id === 'diagnostic' ? '📅 Réserver (gratuit)' : '📞 Me contacter'}
-                        </button>
                     </div>
-                `).join('')}
-            </div>
+                </section>
+
+                <!-- Navigation services -->
+                <section class="services-navigation">
+                    <div class="container">
+                        <nav class="services-nav">
+                            <button class="service-nav-btn active" data-service="overview">
+                                📋 Vue d'ensemble
+                            </button>
+                            <button class="service-nav-btn" data-service="erp">
+                                🛠️ ERP Métallurgie
+                            </button>
+                            <button class="service-nav-btn" data-service="conseil">
+                                📊 Conseil Stratégique
+                            </button>
+                            <button class="service-nav-btn" data-service="formation">
+                                🎓 Formation & Support
+                            </button>
+                        </nav>
+                    </div>
+                </section>
+
+                <!-- Contenu des services -->
+                <section class="services-content">
+                    <div class="container">
+                        
+                        <!-- Vue d'ensemble -->
+                        <div class="service-section active" id="overview-section">
+                            <div class="services-overview">
+                                <div class="overview-intro">
+                                    <h2>Notre Approche Globale</h2>
+                                    <p>
+                                        Chez Oweo, nous proposons une approche complète et intégrée pour accompagner 
+                                        votre transformation digitale. Nos trois domaines d'expertise se complètent 
+                                        pour vous offrir une solution sur-mesure.
+                                    </p>
+                                </div>
+                                
+                                <div class="services-grid-overview">
+                                    <div class="service-overview-card" data-service="erp">
+                                        <div class="service-icon-large">🛠️</div>
+                                        <h3>Solutions ERP Métallurgie</h3>
+                                        <p>
+                                            Logiciels spécialisés pour la gestion complète de votre activité : 
+                                            production, chiffrage, planning, qualité.
+                                        </p>
+                                        <ul class="overview-features">
+                                            <li>✅ Gestion de production intégrée</li>
+                                            <li>✅ Chiffrage automatisé</li>
+                                            <li>✅ Planification optimisée</li>
+                                            <li>✅ Traçabilité complète</li>
+                                        </ul>
+                                        <div class="service-metrics">
+                                            <div class="metric">
+                                                <strong>60%</strong>
+                                                <span>Gain de temps chiffrage</span>
+                                            </div>
+                                            <div class="metric">
+                                                <strong>40%</strong>
+                                                <span>Réduction erreurs</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline" onclick="window.pages.services.showService('erp')">
+                                            Découvrir en détail →
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="service-overview-card" data-service="conseil">
+                                        <div class="service-icon-large">📊</div>
+                                        <h3>Conseil Stratégique</h3>
+                                        <p>
+                                            Accompagnement personnalisé pour optimiser vos processus et accélérer 
+                                            votre transformation digitale.
+                                        </p>
+                                        <ul class="overview-features">
+                                            <li>✅ Audit approfondi</li>
+                                            <li>✅ Stratégie sur-mesure</li>
+                                            <li>✅ Accompagnement au changement</li>
+                                            <li>✅ Optimisation continue</li>
+                                        </ul>
+                                        <div class="service-metrics">
+                                            <div class="metric">
+                                                <strong>30%</strong>
+                                                <span>Amélioration productivité</span>
+                                            </div>
+                                            <div class="metric">
+                                                <strong>6 mois</strong>
+                                                <span>ROI moyen</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline" onclick="window.pages.services.showService('conseil')">
+                                            Découvrir en détail →
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="service-overview-card" data-service="formation">
+                                        <div class="service-icon-large">🎓</div>
+                                        <h3>Formation & Support</h3>
+                                        <p>
+                                            Formation complète de vos équipes et support technique continu 
+                                            pour garantir le succès de vos projets.
+                                        </p>
+                                        <ul class="overview-features">
+                                            <li>✅ Formation sur-mesure</li>
+                                            <li>✅ Support technique 7j/7</li>
+                                            <li>✅ Documentation complète</li>
+                                            <li>✅ Maintenance évolutive</li>
+                                        </ul>
+                                        <div class="service-metrics">
+                                            <div class="metric">
+                                                <strong>95%</strong>
+                                                <span>Satisfaction clients</span>
+                                            </div>
+                                            <div class="metric">
+                                                <strong>24h</strong>
+                                                <span>Délai de réponse</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline" onclick="window.pages.services.showService('formation')">
+                                            Découvrir en détail →
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="overview-cta">
+                                    <h3>Besoin d'une solution personnalisée ?</h3>
+                                    <p>Nos experts analysent vos besoins et vous proposent la solution optimale.</p>
+                                    <button class="btn btn-primary btn-lg" 
+                                            onclick="window.open('${this.getCalendlyUrl()}', '_blank')">
+                                        📅 Réserver une Consultation Gratuite
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ERP Métallurgie -->
+                        <div class="service-section" id="erp-section">
+                            <div class="service-detail">
+                                <div class="service-header">
+                                    <div class="service-icon-detail">🛠️</div>
+                                    <div class="service-title-group">
+                                        <h2>Solutions ERP Métallurgie</h2>
+                                        <p class="service-tagline">
+                                            La solution complète pour digitaliser votre entreprise de charpente métallique
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-content-grid">
+                                    <div class="service-description">
+                                        <h3>Une Solution Adaptée à Votre Métier</h3>
+                                        <p>
+                                            Notre expertise de plus de 15 années dans le secteur de la charpente métallique 
+                                            nous permet de proposer des solutions ERP parfaitement adaptées aux spécificités 
+                                            de votre métier.
+                                        </p>
+                                        <p>
+                                            De la gestion des devis à la livraison, en passant par la production et le contrôle 
+                                            qualité, notre solution couvre l'ensemble de votre chaîne de valeur.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="service-visual">
+                                        <div class="workflow-diagram">
+                                            <div class="workflow-step">
+                                                <div class="step-icon">📋</div>
+                                                <div class="step-label">Chiffrage</div>
+                                            </div>
+                                            <div class="workflow-arrow">→</div>
+                                            <div class="workflow-step">
+                                                <div class="step-icon">🏗️</div>
+                                                <div class="step-label">Production</div>
+                                            </div>
+                                            <div class="workflow-arrow">→</div>
+                                            <div class="workflow-step">
+                                                <div class="step-icon">📦</div>
+                                                <div class="step-label">Livraison</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-modules">
+                                    <h3>Modules Disponibles</h3>
+                                    <div class="modules-grid">
+                                        <div class="module-card">
+                                            <div class="module-icon">💰</div>
+                                            <h4>Gestion Commerciale</h4>
+                                            <ul>
+                                                <li>Chiffrage automatisé</li>
+                                                <li>Gestion des devis</li>
+                                                <li>Suivi des commandes</li>
+                                                <li>Facturation intégrée</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="module-card">
+                                            <div class="module-icon">🏭</div>
+                                            <h4>Gestion de Production</h4>
+                                            <ul>
+                                                <li>Planification atelier</li>
+                                                <li>Suivi temps réel</li>
+                                                <li>Gestion des ressources</li>
+                                                <li>Optimisation des charges</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="module-card">
+                                            <div class="module-icon">📊</div>
+                                            <h4>Pilotage & Reporting</h4>
+                                            <ul>
+                                                <li>Tableaux de bord</li>
+                                                <li>Indicateurs KPI</li>
+                                                <li>Analyse rentabilité</li>
+                                                <li>Rapports personnalisés</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="module-card">
+                                            <div class="module-icon">📦</div>
+                                            <h4>Gestion des Stocks</h4>
+                                            <ul>
+                                                <li>Inventaire temps réel</li>
+                                                <li>Réapprovisionnement auto</li>
+                                                <li>Traçabilité matières</li>
+                                                <li>Optimisation stockage</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-benefits">
+                                    <h3>Bénéfices Mesurés</h3>
+                                    <div class="benefits-stats">
+                                        <div class="benefit-stat">
+                                            <div class="stat-number">60%</div>
+                                            <div class="stat-description">
+                                                Réduction du temps de chiffrage grâce à l'automatisation 
+                                                et aux métrés intégrés
+                                            </div>
+                                        </div>
+                                        <div class="benefit-stat">
+                                            <div class="stat-number">40%</div>
+                                            <div class="stat-description">
+                                                Diminution des erreurs de production grâce à la 
+                                                traçabilité et aux contrôles automatiques
+                                            </div>
+                                        </div>
+                                        <div class="benefit-stat">
+                                            <div class="stat-number">25%</div>
+                                            <div class="stat-description">
+                                                Amélioration de la productivité globale de l'entreprise 
+                                                par l'optimisation des processus
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-cta">
+                                    <div class="cta-content">
+                                        <h3>Découvrez notre Solution en Action</h3>
+                                        <p>Testez notre outil de chiffrage interactif et découvrez la puissance de nos solutions ERP.</p>
+                                    </div>
+                                    <div class="cta-actions">
+                                        <button class="btn btn-primary" 
+                                                onclick="this.accessClientDemo('outil-chiffrage-demo')">
+                                            🔐 Démo Interactive Chiffrage
+                                        </button>
+                                        <button class="btn btn-outline" 
+                                                onclick="window.open('${this.getCalendlyUrl()}', '_blank')">
+                                            📅 Demander une Démonstration
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Conseil Stratégique -->
+                        <div class="service-section" id="conseil-section">
+                            <div class="service-detail">
+                                <div class="service-header">
+                                    <div class="service-icon-detail">📊</div>
+                                    <div class="service-title-group">
+                                        <h2>Conseil Stratégique</h2>
+                                        <p class="service-tagline">
+                                            Accompagnement expert pour optimiser et transformer votre entreprise
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="service-methodology">
+                                    <h3>Notre Méthodologie Éprouvée</h3>
+                                    <div class="methodology-timeline">
+                                        <div class="methodology-step">
+                                            <div class="step-number">1</div>
+                                            <div class="step-content">
+                                                <h4>Audit Complet</h4>
+                                                <p>Analyse approfondie de vos processus actuels, identification des forces et axes d'amélioration</p>
+                                                <ul>
+                                                    <li>Audit organisationnel</li>
+                                                    <li>Analyse des flux</li>
+                                                    <li>Évaluation des outils</li>
+                                                    <li>Benchmark secteur</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="methodology-step">
+                                            <div class="step-number">2</div>
+                                            <div class="step-content">
+                                                <h4>Stratégie Personnalisée</h4>
+                                                <p>Élaboration d'une feuille de route adaptée à vos objectifs et contraintes spécifiques</p>
+                                                <ul>
+                                                    <li>Plan d'action détaillé</li>
+                                                    <li>Priorisation des actions</li>
+                                                    <li>Budget et planning</li>
+                                                    <li>Indicateurs de succès</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="methodology-step">
+                                            <div class="step-number">3</div>
+                                            <div class="step-content">
+                                                <h4>Accompagnement au Changement</h4>
+                                                <p>Support continu pour assurer le succès de la transformation et l'adhésion des équipes</p>
+                                                <ul>
+                                                    <li>Formation des équipes</li>
+                                                    <li>Gestion du changement</li>
+                                                    <li>Support technique</li>
+                                                    <li>Suivi des résultats</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="consulting-areas">
+                                    <h3>Domaines d'Intervention</h3>
+                                    <div class="areas-grid">
+                                        <div class="area-card">
+                                            <div class="area-icon">🔄</div>
+                                            <h4>Optimisation des Processus</h4>
+                                            <p>Analyse et refonte de vos processus métier pour éliminer les gaspillages et améliorer l'efficacité.</p>
+                                        </div>
+                                        
+                                        <div class="area-card">
+                                            <div class="area-icon">💻</div>
+                                            <h4>Transformation Digitale</h4>
+                                            <p>Accompagnement dans la digitalisation de vos activités et l'adoption de nouvelles technologies.</p>
+                                        </div>
+                                        
+                                        <div class="area-card">
+                                            <div class="area-icon">📈</div>
+                                            <h4>Performance & Pilotage</h4>
+                                            <p>Mise en place d'indicateurs de performance et d'outils de pilotage pour un meilleur contrôle.</p>
+                                        </div>
+                                        
+                                        <div class="area-card">
+                                            <div class="area-icon">🎯</div>
+                                            <h4>Stratégie Commerciale</h4>
+                                            <p>Optimisation de votre approche commerciale et de vos processus de chiffrage et négociation.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="case-studies">
+                                    <h3>Exemples de Réussites</h3>
+                                    <div class="case-study-carousel">
+                                        <div class="case-study active">
+                                            <div class="case-study-content">
+                                                <h4>Métallerie Loire - Optimisation Production</h4>
+                                                <div class="case-study-metrics">
+                                                    <div class="case-metric">
+                                                        <strong>+40%</strong>
+                                                        <span>Productivité</span>
+                                                    </div>
+                                                    <div class="case-metric">
+                                                        <strong>-25%</strong>
+                                                        <span>Délais</span>
+                                                    </div>
+                                                    <div class="case-metric">
+                                                        <strong>+15%</strong>
+                                                        <span>Marge</span>
+                                                    </div>
+                                                </div>
+                                                <p>
+                                                    Refonte complète des processus de production et mise en place 
+                                                    d'un système de pilotage temps réel.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formation & Support -->
+                        <div class="service-section" id="formation-section">
+                            <div class="service-detail">
+                                <div class="service-header">
+                                    <div class="service-icon-detail">🎓</div>
+                                    <div class="service-title-group">
+                                        <h2>Formation & Support</h2>
+                                        <p class="service-tagline">
+                                            Accompagnement complet pour garantir l'adoption et le succès de vos projets
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="formation-approach">
+                                    <h3>Notre Approche Pédagogique</h3>
+                                    <div class="approach-grid">
+                                        <div class="approach-item">
+                                            <div class="approach-icon">🎯</div>
+                                            <h4>Formation Sur-Mesure</h4>
+                                            <p>Programmes adaptés à vos besoins spécifiques et au niveau de vos équipes</p>
+                                        </div>
+                                        
+                                        <div class="approach-item">
+                                            <div class="approach-icon">🛠️</div>
+                                            <h4>Apprentissage Pratique</h4>
+                                            <p>Formation basée sur vos données et cas d'usage réels pour une meilleure appropriation</p>
+                                        </div>
+                                        
+                                        <div class="approach-item">
+                                            <div class="approach-icon">📚</div>
+                                            <h4>Ressources Complètes</h4>
+                                            <p>Documentation détaillée, tutoriels vidéo et guides utilisateur personnalisés</p>
+                                        </div>
+                                        
+                                        <div class="approach-item">
+                                            <div class="approach-icon">🔄</div>
+                                            <h4>Suivi Continu</h4>
+                                            <p>Accompagnement post-formation et sessions de perfectionnement régulières</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="formation-programs">
+                                    <h3>Programmes de Formation</h3>
+                                    <div class="programs-tabs">
+                                        <button class="program-tab active" data-program="utilisateurs">
+                                            👥 Formation Utilisateurs
+                                        </button>
+                                        <button class="program-tab" data-program="administrateurs">
+                                            ⚙️ Formation Administrateurs
+                                        </button>
+                                        <button class="program-tab" data-program="managers">
+                                            📊 Formation Managers
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="program-content active" id="utilisateurs-program">
+                                        <div class="program-details">
+                                            <h4>Formation Utilisateurs Finaux</h4>
+                                            <p>Programme complet pour maîtriser l'utilisation quotidienne des outils</p>
+                                            <div class="program-info">
+                                                <div class="info-item">
+                                                    <strong>Durée:</strong> 2-3 jours
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Format:</strong> Présentiel ou distanciel
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Groupe:</strong> 6-8 personnes max
+                                                </div>
+                                            </div>
+                                            <div class="program-curriculum">
+                                                <h5>Programme:</h5>
+                                                <ul>
+                                                    <li>Prise en main de l'interface</li>
+                                                    <li>Saisie et gestion des données</li>
+                                                    <li>Génération de rapports</li>
+                                                    <li>Cas pratiques métier</li>
+                                                    <li>Bonnes pratiques</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="program-content" id="administrateurs-program">
+                                        <div class="program-details">
+                                            <h4>Formation Administrateurs Système</h4>
+                                            <p>Formation technique pour la configuration et l'administration des solutions</p>
+                                            <div class="program-info">
+                                                <div class="info-item">
+                                                    <strong>Durée:</strong> 3-5 jours
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Format:</strong> Technique approfondi
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Prérequis:</strong> Compétences IT
+                                                </div>
+                                            </div>
+                                            <div class="program-curriculum">
+                                                <h5>Programme:</h5>
+                                                <ul>
+                                                    <li>Architecture et configuration</li>
+                                                    <li>Gestion des utilisateurs et droits</li>
+                                                    <li>Paramétrage avancé</li>
+                                                    <li>Maintenance et sauvegarde</li>
+                                                    <li>Dépannage et support</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="program-content" id="managers-program">
+                                        <div class="program-details">
+                                            <h4>Formation Managers et Décideurs</h4>
+                                            <p>Formation axée sur le pilotage et l'analyse des données de performance</p>
+                                            <div class="program-info">
+                                                <div class="info-item">
+                                                    <strong>Durée:</strong> 1-2 jours
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Format:</strong> Stratégique
+                                                </div>
+                                                <div class="info-item">
+                                                    <strong>Focus:</strong> ROI et pilotage
+                                                </div>
+                                            </div>
+                                            <div class="program-curriculum">
+                                                <h5>Programme:</h5>
+                                                <ul>
+                                                    <li>Tableaux de bord et KPI</li>
+                                                    <li>Analyse de performance</li>
+                                                    <li>Prise de décision data-driven</li>
+                                                    <li>Optimisation continue</li>
+                                                    <li>Vision stratégique</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="support-services">
+                                    <h3>Services de Support</h3>
+                                    <div class="support-grid">
+                                        <div class="support-card">
+                                            <div class="support-icon">🆘</div>
+                                            <h4>Support Technique</h4>
+                                            <ul>
+                                                <li>Hotline dédiée</li>
+                                                <li>Résolution rapide</li>
+                                                <li>Support à distance</li>
+                                                <li>Escalade expert</li>
+                                            </ul>
+                                            <div class="support-sla">
+                                                <strong>SLA: 24h</strong>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="support-card">
+                                            <div class="support-icon">🔧</div>
+                                            <h4>Maintenance</h4>
+                                            <ul>
+                                                <li>Mises à jour régulières</li>
+                                                <li>Maintenance préventive</li>
+                                                <li>Sauvegarde sécurisée</li>
+                                                <li>Monitoring continu</li>
+                                            </ul>
+                                            <div class="support-sla">
+                                                <strong>Disponibilité: 99.5%</strong>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="support-card">
+                                            <div class="support-icon">📚</div>
+                                            <h4>Ressources</h4>
+                                            <ul>
+                                                <li>Base de connaissances</li>
+                                                <li>Tutoriels vidéo</li>
+                                                <li>FAQ complète</li>
+                                                <li>Communauté utilisateurs</li>
+                                            </ul>
+                                            <div class="support-sla">
+                                                <strong>Accès: 24/7</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section CTA finale -->
+                <section class="services-cta section">
+                    <div class="container">
+                        <div class="cta-content">
+                            <h2>Prêt à Optimiser Votre Entreprise ?</h2>
+                            <p>
+                                Nos experts analysent vos besoins et vous proposent la solution la mieux adaptée 
+                                à vos objectifs et contraintes.
+                            </p>
+                            <div class="cta-actions">
+                                <button class="btn btn-primary btn-xl" 
+                                        onclick="window.open('${this.getCalendlyUrl()}', '_blank')">
+                                    📅 Réserver une Consultation Gratuite
+                                </button>
+                                <button class="btn btn-outline btn-lg" 
+                                        onclick="this.scrollToContact()">
+                                    📧 Nous Contacter
+                                </button>
+                            </div>
+                            <div class="cta-guarantees">
+                                <div class="guarantee-item">
+                                    <span class="guarantee-icon">✅</span>
+                                    <span>Consultation gratuite de 30 minutes</span>
+                                </div>
+                                <div class="guarantee-item">
+                                    <span class="guarantee-icon">✅</span>
+                                    <span>Analyse personnalisée de vos besoins</span>
+                                </div>
+                                <div class="guarantee-item">
+                                    <span class="guarantee-icon">✅</span>
+                                    <span>Recommandations concrètes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         `;
     },
 
-    renderSectorExpertise() {
-        const sectors = [
-            {
-                name: 'Charpente Métallique',
-                icon: '🏗️',
-                expertise: 'Expertise complète',
-                specifics: [
-                    'Intégration Tekla native',
-                    'Gestion EN1090 Exc.3',
-                    'Optimisation découpe',
-                    'Suivi montage chantier'
-                ],
-                clients: '8 entreprises accompagnées'
-            },
-            {
-                name: 'Serrurerie-Métallerie',
-                icon: '🔧',
-                expertise: 'Spécialisation poussée',
-                specifics: [
-                    'Chiffrage sur-mesure',
-                    'Planning atelier optimisé',
-                    'Gestion poses multiples',
-                    'Suivi SAV intégré'
-                ],
-                clients: '5 entreprises transformées'
-            },
-            {
-                name: 'Chaudronnerie',
-                icon: '⚙️',
-                expertise: 'Processus maîtrisés',
-                specifics: [
-                    'Traçabilité matières',
-                    'Contrôle qualité renforcé',
-                    'Gestion sous-traitance',
-                    'Conformité normative'
-                ],
-                clients: '4 projets réussis'
-            },
-            {
-                name: 'Tôlerie Fine',
-                icon: '📐',
-                expertise: 'Solutions adaptées',
-                specifics: [
-                    'Optimisation matière',
-                    'Pilotage laser/pliage',
-                    'Devis automatisés',
-                    'Stock temps réel'
-                ],
-                clients: '3 clients satisfaits'
+    /**
+     * Initialisation de la page
+     */
+    init() {
+        try {
+            if (this.initialized) {
+                console.log('📋 Page services déjà initialisée');
+                return;
             }
-        ];
 
-        const container = document.getElementById('sector-expertise');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="sectors-grid">
-                ${sectors.map(sector => `
-                    <div class="sector-card">
-                        <div class="sector-header">
-                            <span class="sector-icon">${sector.icon}</span>
-                            <h4>${sector.name}</h4>
-                        </div>
-                        <p class="sector-expertise">${sector.expertise}</p>
-                        
-                        <div class="sector-specifics">
-                            <h5>Points forts :</h5>
-                            <ul>
-                                ${sector.specifics.map(item => `<li>${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                        
-                        <div class="sector-clients">
-                            <strong>✅ ${sector.clients}</strong>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    },
-
-    renderProjectMethodology() {
-        const steps = [
-            {
-                number: '1',
-                title: 'Cadrage',
-                duration: '1 semaine',
-                activities: ['Définition périmètre', 'Constitution équipe', 'Planning détaillé'],
-                critical: true
-            },
-            {
-                number: '2',
-                title: 'Analyse',
-                duration: '2-3 semaines',
-                activities: ['Audit terrain', 'Cartographie AS-IS', 'Identification gains'],
-                critical: true
-            },
-            {
-                number: '3',
-                title: 'Conception',
-                duration: '2-4 semaines',
-                activities: ['Design TO-BE', 'Choix solutions', 'Validation budget'],
-                critical: true
-            },
-            {
-                number: '4',
-                title: 'Réalisation',
-                duration: '1-3 mois',
-                activities: ['Paramétrage', 'Développements', 'Tests complets'],
-                critical: false
-            },
-            {
-                number: '5',
-                title: 'Déploiement',
-                duration: '2-4 semaines',
-                activities: ['Migration données', 'Formation users', 'Go-live'],
-                critical: true
-            },
-            {
-                number: '6',
-                title: 'Support',
-                duration: '6 mois',
-                activities: ['Assistance illimitée', 'Optimisations', 'Mesure ROI'],
-                critical: false
-            }
-        ];
-
-        const container = document.getElementById('project-methodology');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="methodology-steps">
-                ${steps.map(step => `
-                    <div class="method-step ${step.critical ? 'step-critical' : ''}">
-                        <div class="step-header">
-                            <span class="step-number">${step.number}</span>
-                            <h4>${step.title}</h4>
-                            ${step.critical ? '<span class="critical-badge">Critique</span>' : ''}
-                        </div>
-                        <p class="step-duration">⏱️ ${step.duration}</p>
-                        <ul class="step-activities">
-                            ${step.activities.map(activity => `<li>${activity}</li>`).join('')}
-                        </ul>
-                    </div>
-                `).join('')}
-            </div>
+            console.log('📋 Initialisation page services...');
             
-            <div class="methodology-note">
-                <p>📌 <strong>Note :</strong> Planning adapté à chaque projet. Méthode agile pour flexibilité maximale.</p>
-            </div>
-        `;
-    },
-
-    renderGuarantees() {
-        const guarantees = [
-            {
-                icon: '✅',
-                title: 'Résultats Garantis',
-                description: 'Si objectifs non atteints, nous reprenons le projet sans frais'
-            },
-            {
-                icon: '🎯',
-                title: '100% de Réussite',
-                description: '15 projets déployés, 15 succès. Track record parfait.'
-            },
-            {
-                icon: '📞',
-                title: 'Support Illimité',
-                description: 'Assistance téléphonique illimitée pendant 6 mois'
-            },
-            {
-                icon: '💰',
-                title: 'ROI Transparent',
-                description: 'Calcul ROI avant projet et validation à 6 mois'
-            },
-            {
-                icon: '⏰',
-                title: 'Délais Respectés',
-                description: 'Planning garanti ou compensation financière'
-            },
-            {
-                icon: '🔒',
-                title: 'Budget Maîtrisé',
-                description: 'Devis ferme, pas de surprise'
-            }
-        ];
-
-        const container = document.getElementById('guarantees');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="guarantees-grid">
-                ${guarantees.map(guarantee => `
-                    <div class="guarantee-card">
-                        <div class="guarantee-icon">${guarantee.icon}</div>
-                        <h4>${guarantee.title}</h4>
-                        <p>${guarantee.description}</p>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    },
-
-    renderPricingInfo() {
-        const pricing = [
-            {
-                company: 'TPE (< 10 salariés)',
-                diagnostic: 'Gratuit',
-                strategy: '5-15k€',
-                complete: '20-40k€',
-                roi: '12-18 mois'
-            },
-            {
-                company: 'PME (10-50 salariés)',
-                diagnostic: 'Gratuit',
-                strategy: '15-30k€',
-                complete: '40-80k€',
-                roi: '15-24 mois'
-            },
-            {
-                company: 'ETI (50-250 salariés)',
-                diagnostic: 'Gratuit',
-                strategy: '30-50k€',
-                complete: '80-200k€',
-                roi: '18-30 mois'
-            },
-            {
-                company: 'Grands Groupes',
-                diagnostic: 'Sur devis',
-                strategy: 'Sur mesure',
-                complete: 'Sur mesure',
-                roi: 'Selon projet'
-            }
-        ];
-
-        const container = document.getElementById('pricing-info');
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="pricing-table-wrapper">
-                <table class="pricing-table">
-                    <thead>
-                        <tr>
-                            <th>Taille entreprise</th>
-                            <th>Diagnostic</th>
-                            <th>Accompagnement</th>
-                            <th>Clé en main</th>
-                            <th>ROI moyen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${pricing.map(price => `
-                            <tr>
-                                <td><strong>${price.company}</strong></td>
-                                <td class="price-free">${price.diagnostic}</td>
-                                <td>${price.strategy}</td>
-                                <td>${price.complete}</td>
-                                <td class="roi-time">${price.roi}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+            this.bindEvents();
+            this.initializeServiceNavigation();
+            this.initialized = true;
             
-            <div class="pricing-notes">
-                <p>💡 <strong>Financement :</strong> Éligible aux aides France Num, crédit d'impôt innovation, subventions régionales.</p>
-                <p>📊 <strong>Paiement :</strong> Échelonnement possible sur la durée du projet.</p>
-            </div>
-        `;
+            console.log('✅ Page services initialisée');
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation page services:', error);
+        }
     },
 
+    /**
+     * Liaison des événements
+     */
     bindEvents() {
-        // Calendly avec tracking service
-        document.querySelectorAll('[data-calendly]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const service = button.dataset.service || 'general';
-                this.openCalendly(service);
-            });
-        });
-    },
+        try {
+            // Navigation entre services
+            document.addEventListener('click', (e) => {
+                const navBtn = e.target.closest('.service-nav-btn');
+                if (navBtn) {
+                    const service = navBtn.dataset.service;
+                    this.showService(service);
+                }
 
-    openCalendly(serviceType = 'general') {
-        if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
-            Calendly.initPopupWidget({
-                url: OweoConfig.urls.calendly,
-                prefill: {
-                    customAnswers: {
-                        a1: `Service intéressé: ${serviceType}`
-                    }
+                // Onglets de formation
+                const programTab = e.target.closest('.program-tab');
+                if (programTab) {
+                    const program = programTab.dataset.program;
+                    this.showProgram(program);
+                }
+
+                // Accès aux démos client
+                const demoBtn = e.target.closest('[onclick*="accessClientDemo"]');
+                if (demoBtn) {
+                    e.preventDefault();
+                    const demoId = this.extractDemoId(demoBtn.getAttribute('onclick'));
+                    this.accessClientDemo(demoId);
                 }
             });
-        } else {
-            window.open(OweoConfig.urls.calendly, '_blank');
+
+            console.log('✅ Événements page services liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison événements services:', error);
+        }
+    },
+
+    /**
+     * Initialiser la navigation des services
+     */
+    initializeServiceNavigation() {
+        try {
+            // Activer le premier service par défaut
+            this.showService('overview');
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation navigation services:', error);
+        }
+    },
+
+    /**
+     * Afficher un service spécifique
+     */
+    showService(serviceId) {
+        try {
+            this.activeService = serviceId;
+
+            // Mettre à jour les boutons de navigation
+            document.querySelectorAll('.service-nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.service === serviceId);
+            });
+
+            // Mettre à jour les sections
+            document.querySelectorAll('.service-section').forEach(section => {
+                section.classList.toggle('active', section.id === `${serviceId}-section`);
+            });
+
+            // Scroll vers le contenu
+            const targetSection = document.getElementById(`${serviceId}-section`);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            console.log(`✅ Service affiché: ${serviceId}`);
+            
+        } catch (error) {
+            console.error(`❌ Erreur affichage service ${serviceId}:`, error);
+        }
+    },
+
+    /**
+     * Afficher un programme de formation
+     */
+    showProgram(programId) {
+        try {
+            // Mettre à jour les onglets
+            document.querySelectorAll('.program-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.program === programId);
+            });
+
+            // Mettre à jour le contenu
+            document.querySelectorAll('.program-content').forEach(content => {
+                content.classList.toggle('active', content.id === `${programId}-program`);
+            });
+
+            console.log(`✅ Programme affiché: ${programId}`);
+            
+        } catch (error) {
+            console.error(`❌ Erreur affichage programme ${programId}:`, error);
+        }
+    },
+
+    /**
+     * Accès aux démos client
+     */
+    accessClientDemo(demoId) {
+        try {
+            console.log(`🔐 Tentative d'accès à la démo: ${demoId}`);
+            
+            // Vérifier la disponibilité du système d'accès client
+            if (typeof window.OweoClientAccess === 'undefined') {
+                this.showNotification('Système d\'accès client non disponible', 'error');
+                return;
+            }
+
+            // Vérifier l'accès
+            if (window.OweoClientAccess.hasAccess()) {
+                // Accès direct
+                if (window.router) {
+                    window.router.navigate(demoId);
+                } else {
+                    window.location.hash = demoId;
+                }
+            } else {
+                // Demander l'authentification
+                window.OweoClientAccess.showAuthModal(demoId);
+            }
+            
+        } catch (error) {
+            console.error(`❌ Erreur accès démo ${demoId}:`, error);
+            this.showNotification('Erreur lors de l\'accès à la démonstration', 'error');
+        }
+    },
+
+    /**
+     * Extraire l'ID de démo d'un attribut onclick
+     */
+    extractDemoId(onclickStr) {
+        try {
+            const match = onclickStr.match(/'([^']+)'/);
+            return match ? match[1] : null;
+        } catch (error) {
+            console.error('❌ Erreur extraction ID démo:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Navigation
+     */
+    scrollToContact() {
+        try {
+            // Si on est sur la page d'accueil, scroller vers contact
+            if (window.router && window.router.currentRoute?.component === 'home') {
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                // Naviguer vers la page d'accueil puis contact
+                if (window.router) {
+                    window.router.navigate('home');
+                    setTimeout(() => {
+                        this.scrollToContact();
+                    }, 500);
+                }
+            }
+        } catch (error) {
+            console.error('❌ Erreur scroll vers contact:', error);
+        }
+    },
+
+    /**
+     * Notifications
+     */
+    showNotification(message, type = 'info', duration = 3000) {
+        try {
+            if (window.OweoClientAccess && typeof window.OweoClientAccess.showNotification === 'function') {
+                window.OweoClientAccess.showNotification(message, type, duration);
+            } else {
+                console.log(`${type.toUpperCase()}: ${message}`);
+            }
+        } catch (error) {
+            console.error('❌ Erreur notification:', error);
+            console.log(message);
+        }
+    },
+
+    /**
+     * Getters pour la configuration
+     */
+    getCalendlyUrl() {
+        return (typeof OweoConfig !== 'undefined' && OweoConfig.urls?.calendly) || 'https://calendly.com/oweo-consulting';
+    },
+
+    /**
+     * Destruction propre
+     */
+    destroy() {
+        try {
+            this.activeService = null;
+            this.initialized = false;
+            console.log('📋 Page services détruite');
+            
+        } catch (error) {
+            console.error('❌ Erreur destruction page services:', error);
         }
     }
 };
 
-console.log('📋 Services page loaded');
+console.log('📋 Services page loaded with complete functionality');

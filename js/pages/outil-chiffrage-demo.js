@@ -1,256 +1,1223 @@
-// js/pages/outil-chiffrage-demo.js - Démonstration outil de chiffrage charpente métallique
+// js/pages/outil-chiffrage-demo.js - Version complète corrigée
+// Page de démonstration Outil de Chiffrage ERP
 
 window.pages = window.pages || {};
-
 window.pages['outil-chiffrage-demo'] = {
+    
+    // État de la page
+    currentProject: null,
+    selectedElement: null,
+    calculationMode: 'automatic',
+    currentStep: 1,
+    projectData: {},
+    
+    // Base de données produits simulée
+    productsDatabase: {
+        profiles: {
+            'IPE200': { name: 'IPE 200', unit: 'ml', pricePerUnit: 12.50, weight: 22.4, category: 'Profils' },
+            'IPE300': { name: 'IPE 300', unit: 'ml', pricePerUnit: 18.75, weight: 42.2, category: 'Profils' },
+            'HEA160': { name: 'HEA 160', unit: 'ml', pricePerUnit: 15.20, weight: 30.4, category: 'Profils' },
+            'UPN140': { name: 'UPN 140', unit: 'ml', pricePerUnit: 11.80, weight: 16.0, category: 'Profils' }
+        },
+        plates: {
+            'PLQ_8': { name: 'Plaque 8mm', unit: 'm²', pricePerUnit: 45.00, weight: 62.8, category: 'Tôlerie' },
+            'PLQ_10': { name: 'Plaque 10mm', unit: 'm²', pricePerUnit: 52.50, weight: 78.5, category: 'Tôlerie' },
+            'PLQ_15': { name: 'Plaque 15mm', unit: 'm²', pricePerUnit: 67.50, weight: 117.8, category: 'Tôlerie' }
+        },
+        fixings: {
+            'BOULON_M16': { name: 'Boulon M16x60', unit: 'pce', pricePerUnit: 2.15, weight: 0.12, category: 'Boulonnerie' },
+            'BOULON_M20': { name: 'Boulon M20x80', unit: 'pce', pricePerUnit: 3.25, weight: 0.18, category: 'Boulonnerie' },
+            'SOUDURE': { name: 'Soudure ML', unit: 'ml', pricePerUnit: 8.50, weight: 0, category: 'Soudure' }
+        }
+    },
+    
+    // Données d'exemple pour la démo
+    exampleProjects: {
+        simple: {
+            name: 'Hangar Simple 20x15m',
+            elements: [
+                { id: 'portique_1', name: 'Portique Principal', type: 'structure', quantity: 8, children: [
+                    { id: 'poteau_gauche', name: 'Poteau Gauche', type: 'element', product: 'IPE300', quantity: 6.5, unit: 'ml' },
+                    { id: 'poteau_droit', name: 'Poteau Droit', type: 'element', product: 'IPE300', quantity: 6.5, unit: 'ml' },
+                    { id: 'traverse', name: 'Traverse', type: 'element', product: 'IPE200', quantity: 15.2, unit: 'ml' }
+                ]},
+                { id: 'couverture', name: 'Couverture', type: 'structure', quantity: 1, children: [
+                    { id: 'pannes', name: 'Pannes', type: 'element', product: 'UPN140', quantity: 320, unit: 'ml' },
+                    { id: 'lisses', name: 'Lisses', type: 'element', product: 'UPN140', quantity: 180, unit: 'ml' }
+                ]}
+            ]
+        },
+        complex: {
+            name: 'Bâtiment Industriel 40x25m',
+            elements: [
+                { id: 'structure_principale', name: 'Structure Principale', type: 'structure', quantity: 1, children: [
+                    { id: 'portiques', name: 'Portiques', type: 'structure', quantity: 12, children: [
+                        { id: 'poteaux', name: 'Poteaux', type: 'element', product: 'IPE300', quantity: 8.5, unit: 'ml' },
+                        { id: 'traverses', name: 'Traverses', type: 'element', product: 'IPE200', quantity: 25.8, unit: 'ml' }
+                    ]},
+                    { id: 'contreventement', name: 'Contreventement', type: 'structure', quantity: 1, children: [
+                        { id: 'diagonales', name: 'Diagonales', type: 'element', product: 'IPE200', quantity: 240, unit: 'ml' }
+                    ]}
+                ]},
+                { id: 'ossature_secondaire', name: 'Ossature Secondaire', type: 'structure', quantity: 1, children: [
+                    { id: 'pannes_toiture', name: 'Pannes Toiture', type: 'element', product: 'UPN140', quantity: 850, unit: 'ml' },
+                    { id: 'lisses_bardage', name: 'Lisses Bardage', type: 'element', product: 'UPN140', quantity: 450, unit: 'ml' }
+                ]},
+                { id: 'assemblages', name: 'Assemblages', type: 'structure', quantity: 1, children: [
+                    { id: 'platines', name: 'Platines', type: 'element', product: 'PLQ_15', quantity: 8.5, unit: 'm²' },
+                    { id: 'goussets', name: 'Goussets', type: 'element', product: 'PLQ_10', quantity: 12.3, unit: 'm²' },
+                    { id: 'boulons_m16', name: 'Boulons M16', type: 'element', product: 'BOULON_M16', quantity: 240, unit: 'pce' },
+                    { id: 'boulons_m20', name: 'Boulons M20', type: 'element', product: 'BOULON_M20', quantity: 180, unit: 'pce' },
+                    { id: 'soudures', name: 'Soudures', type: 'element', product: 'SOUDURE', quantity: 450, unit: 'ml' }
+                ]}
+            ]
+        }
+    },
+    
+    /**
+     * Générer le rendu HTML de la page
+     */
     render() {
         return `
-            <!-- Header de la page -->
             <section class="section">
                 <div class="container">
-                    <button class="btn-back">← Retour</button>
-                    
-                    <div class="section-header">
-                        <h1 class="section-title">Démonstration : Outil de Chiffrage Charpente Métallique</h1>
-                        <p class="section-subtitle">
-                            Interface simplifiée d'un logiciel de chiffrage spécialisé avec structure hiérarchique et métrés automatisés
-                        </p>
-                    </div>
-                    
-                    <!-- Barre d'outils de chiffrage -->
-                    <div class="chiffrage-toolbar">
-                        <div class="toolbar-left">
-                            <span class="project-info">📋 Projet: Hangar Industriel 40x25m</span>
-                            <span class="client-info">👤 Client: SARL Construction Métallique</span>
-                        </div>
-                        <div class="toolbar-right">
-                            <button class="btn btn-secondary btn-sm">💾 Sauvegarder</button>
-                            <button class="btn btn-primary btn-sm">📄 Générer Devis</button>
+                    <!-- En-tête avec bouton retour -->
+                    <div class="page-header">
+                        <button class="btn btn-back">
+                            ← Retour
+                        </button>
+                        <div class="header-content">
+                            <h1 class="gradient-text">🔐 Outil de Chiffrage ERP</h1>
+                            <p class="page-subtitle">
+                                Démonstration d'un système de chiffrage hiérarchique intégré avec calculs automatisés et métrés en temps réel
+                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Interface de chiffrage principale -->
-            <section class="chiffrage-interface">
-                <div class="container">
-                    <div class="chiffrage-layout">
-                        
-                        <!-- Colonne gauche : Structure hiérarchique -->
-                        <div class="chiffrage-tree">
-                            <div class="tree-header">
-                                <h3>🏗️ Structure du Projet</h3>
-                                <button class="btn btn-outline btn-sm" id="add-rubrique">+ Ajouter Rubrique</button>
-                            </div>
-                            
-                            <div class="tree-content" id="project-tree">
-                                <!-- Contenu généré dynamiquement -->
-                            </div>
+                    <!-- Étapes du processus de chiffrage -->
+                    <div class="chiffrage-steps" id="chiffrage-steps">
+                        <div class="step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Projet</div>
                         </div>
-                        
-                        <!-- Colonne droite : Détails et calculs -->
-                        <div class="chiffrage-details">
-                            <div class="details-header">
-                                <h3 id="selected-item-title">Sélectionnez un élément</h3>
-                                <div class="details-actions">
-                                    <button class="btn btn-outline btn-sm" id="add-article">+ Article</button>
-                                    <button class="btn btn-outline btn-sm" id="add-metre">+ Métré</button>
-                                </div>
-                            </div>
-                            
-                            <div class="details-content" id="details-content">
-                                <div class="empty-selection">
-                                    <p>👆 Sélectionnez un élément dans l'arborescence pour voir les détails</p>
-                                </div>
-                            </div>
+                        <div class="step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Structure</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Métrés</div>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Synthèse</div>
                         </div>
                     </div>
-                    
-                    <!-- Récapitulatif financier -->
-                    <div class="chiffrage-summary">
-                        <h3>💰 Récapitulatif Financier</h3>
-                        <div class="summary-grid">
-                            <div class="summary-item">
-                                <div class="summary-label">Matières Premières</div>
-                                <div class="summary-value" id="total-matieres">45 280 €</div>
+
+                    <!-- Interface principale de chiffrage -->
+                    <div class="chiffrage-interface" id="chiffrage-interface">
+                        
+                        <!-- Étape 1: Création/Sélection de projet -->
+                        <div class="project-setup" id="project-step" style="display: block;">
+                            <div class="setup-header">
+                                <h3>📋 Configuration du Projet</h3>
+                                <p>Créez un nouveau projet ou chargez un exemple pour démarrer le chiffrage</p>
                             </div>
-                            <div class="summary-item">
-                                <div class="summary-label">Main d'Œuvre</div>
-                                <div class="summary-value" id="total-mo">28 350 €</div>
+                            
+                            <div class="project-options">
+                                <div class="project-create">
+                                    <h4>Nouveau Projet</h4>
+                                    <div class="form-group">
+                                        <label for="project-name">Nom du projet</label>
+                                        <input type="text" id="project-name" placeholder="Ex: Hangar Industriel Zone A">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="project-client">Client</label>
+                                        <input type="text" id="project-client" placeholder="Ex: SARL Métallerie Loire">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="project-reference">Référence</label>
+                                        <input type="text" id="project-reference" placeholder="Ex: DEV-2024-001">
+                                    </div>
+                                    <button class="btn btn-primary" id="create-project">
+                                        ✨ Créer Nouveau Projet
+                                    </button>
+                                </div>
+                                
+                                <div class="project-examples">
+                                    <h4>Projets d'Exemple</h4>
+                                    <p>Chargez un projet pré-configuré pour découvrir les fonctionnalités</p>
+                                    
+                                    <div class="example-projects">
+                                        <div class="example-card" data-example="simple">
+                                            <div class="example-icon">🏗️</div>
+                                            <h5>Hangar Simple</h5>
+                                            <p>Structure basique 20x15m avec portiques</p>
+                                            <div class="example-specs">
+                                                <span>8 portiques</span>
+                                                <span>≈ 15 éléments</span>
+                                                <span>⏱️ 5 min</span>
+                                            </div>
+                                            <button class="btn btn-outline btn-sm">
+                                                📁 Charger
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="example-card" data-example="complex">
+                                            <div class="example-icon">🏭</div>
+                                            <h5>Bâtiment Industriel</h5>
+                                            <p>Structure complète 40x25m avec assemblages</p>
+                                            <div class="example-specs">
+                                                <span>12 portiques</span>
+                                                <span>≈ 50 éléments</span>
+                                                <span>⏱️ 10 min</span>
+                                            </div>
+                                            <button class="btn btn-outline btn-sm">
+                                                📁 Charger
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="summary-item">
-                                <div class="summary-label">Sous-Traitance</div>
-                                <div class="summary-value" id="total-st">8 200 €</div>
+                        </div>
+
+                        <!-- Étape 2: Structure hiérarchique -->
+                        <div class="project-structure" id="structure-step" style="display: none;">
+                            <div class="structure-header">
+                                <h3 id="current-project-title">🏗️ Structure du Projet</h3>
+                                <div class="structure-actions">
+                                    <button class="btn btn-outline btn-sm" id="expand-all">
+                                        ⬇️ Tout Déplier
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" id="collapse-all">
+                                        ⬆️ Tout Replier
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="add-element">
+                                        ➕ Ajouter Élément
+                                    </button>
+                                </div>
                             </div>
-                            <div class="summary-item highlight">
-                                <div class="summary-label">Total HT</div>
-                                <div class="summary-value" id="total-ht">81 830 €</div>
+                            
+                            <div class="structure-workspace">
+                                <div class="structure-tree" id="structure-tree">
+                                    <!-- Arbre hiérarchique généré dynamiquement -->
+                                </div>
+                                
+                                <div class="element-details" id="element-details">
+                                    <div class="details-placeholder">
+                                        <div class="placeholder-icon">📝</div>
+                                        <h4>Sélectionnez un élément</h4>
+                                        <p>Cliquez sur un élément dans l'arbre pour voir ses détails et configurer ses propriétés</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="summary-item">
-                                <div class="summary-label">Marge (%)</div>
-                                <div class="summary-value" id="marge-percent">22%</div>
+                            
+                            <div class="structure-navigation">
+                                <button class="btn btn-secondary" id="back-to-project">
+                                    ← Retour Projet
+                                </button>
+                                <button class="btn btn-primary" id="proceed-to-metrage">
+                                    Calculs Métrés →
+                                </button>
                             </div>
-                            <div class="summary-item final">
-                                <div class="summary-label">Prix de Vente HT</div>
-                                <div class="summary-value" id="prix-vente">99 832 €</div>
+                        </div>
+
+                        <!-- Étape 3: Métrés et calculs -->
+                        <div class="metrage-workspace" id="metrage-step" style="display: none;">
+                            <div class="metrage-header">
+                                <h3>📊 Métrés & Calculs Automatiques</h3>
+                                <div class="metrage-controls">
+                                    <label class="calculation-mode">
+                                        <input type="radio" name="calc-mode" value="automatic" checked>
+                                        <span>🤖 Automatique</span>
+                                    </label>
+                                    <label class="calculation-mode">
+                                        <input type="radio" name="calc-mode" value="manual">
+                                        <span>✋ Manuel</span>
+                                    </label>
+                                    <button class="btn btn-primary btn-sm" id="recalculate">
+                                        🔄 Recalculer
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="metrage-content">
+                                <div class="metrage-tree" id="metrage-tree">
+                                    <!-- Arbre avec calculs -->
+                                </div>
+                                
+                                <div class="metrage-summary" id="metrage-summary">
+                                    <!-- Résumé des calculs -->
+                                </div>
+                            </div>
+                            
+                            <div class="metrage-navigation">
+                                <button class="btn btn-secondary" id="back-to-structure">
+                                    ← Structure
+                                </button>
+                                <button class="btn btn-primary" id="proceed-to-synthesis">
+                                    Synthèse →
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Étape 4: Synthèse et export -->
+                        <div class="synthesis-workspace" id="synthesis-step" style="display: none;">
+                            <div class="synthesis-header">
+                                <h3>📋 Synthèse & Export</h3>
+                                <p>Résumé complet du chiffrage avec options d'export</p>
+                            </div>
+                            
+                            <div class="synthesis-content">
+                                <div class="synthesis-overview" id="synthesis-overview">
+                                    <!-- Vue d'ensemble -->
+                                </div>
+                                
+                                <div class="synthesis-details" id="synthesis-details">
+                                    <!-- Détails par catégorie -->
+                                </div>
+                            </div>
+                            
+                            <div class="synthesis-actions">
+                                <button class="btn btn-outline" id="export-excel">
+                                    📊 Export Excel
+                                </button>
+                                <button class="btn btn-outline" id="export-pdf">
+                                    📑 Export PDF
+                                </button>
+                                <button class="btn btn-primary" id="save-project">
+                                    💾 Sauvegarder Projet
+                                </button>
+                                <button class="btn btn-secondary" onclick="location.reload()">
+                                    🔄 Nouveau Chiffrage
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Modal d'ajout d'article -->
-            <div class="modal" id="article-modal" style="display: none;">
-                <div class="modal-backdrop"></div>
+            <!-- Modal d'ajout d'élément -->
+            <div class="modal-overlay" id="add-element-modal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3>Ajouter un Article</h3>
+                        <h3>➕ Ajouter un Élément</h3>
                         <button class="modal-close">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <form id="article-form">
+                        <form id="element-form">
                             <div class="form-group">
-                                <label for="article-designation">Désignation</label>
-                                <input type="text" id="article-designation" placeholder="Ex: IPE 240 L=6m">
+                                <label for="element-name">Nom de l'élément</label>
+                                <input type="text" id="element-name" required>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="article-quantite">Quantité</label>
-                                    <input type="number" id="article-quantite" step="0.01" placeholder="12">
-                                </div>
-                                <div class="form-group">
-                                    <label for="article-unite">Unité</label>
-                                    <select id="article-unite">
-                                        <option value="ml">ml (mètre linéaire)</option>
-                                        <option value="kg">kg</option>
-                                        <option value="t">T (tonne)</option>
-                                        <option value="m2">m²</option>
-                                        <option value="u">U (unité)</option>
-                                    </select>
-                                </div>
+                            
+                            <div class="form-group">
+                                <label for="element-type">Type</label>
+                                <select id="element-type" required>
+                                    <option value="">Sélectionner...</option>
+                                    <option value="structure">Structure (conteneur)</option>
+                                    <option value="element">Élément (produit)</option>
+                                </select>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="article-prix-unitaire">Prix Unitaire (€)</label>
-                                    <input type="number" id="article-prix-unitaire" step="0.01" placeholder="15.50">
-                                </div>
-                                <div class="form-group">
-                                    <label for="article-temps-mo">Temps MO (h)</label>
-                                    <input type="number" id="article-temps-mo" step="0.1" placeholder="2.5">
-                                </div>
+                            
+                            <div class="form-group" id="product-selection" style="display: none;">
+                                <label for="element-product">Produit</label>
+                                <select id="element-product">
+                                    <option value="">Sélectionner un produit...</option>
+                                    <optgroup label="Profils">
+                                        <option value="IPE200">IPE 200 (12.50€/ml)</option>
+                                        <option value="IPE300">IPE 300 (18.75€/ml)</option>
+                                        <option value="HEA160">HEA 160 (15.20€/ml)</option>
+                                        <option value="UPN140">UPN 140 (11.80€/ml)</option>
+                                    </optgroup>
+                                    <optgroup label="Tôlerie">
+                                        <option value="PLQ_8">Plaque 8mm (45.00€/m²)</option>
+                                        <option value="PLQ_10">Plaque 10mm (52.50€/m²)</option>
+                                        <option value="PLQ_15">Plaque 15mm (67.50€/m²)</option>
+                                    </optgroup>
+                                    <optgroup label="Boulonnerie">
+                                        <option value="BOULON_M16">Boulon M16x60 (2.15€/pce)</option>
+                                        <option value="BOULON_M20">Boulon M20x80 (3.25€/pce)</option>
+                                        <option value="SOUDURE">Soudure ML (8.50€/ml)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="quantity-group" style="display: none;">
+                                <label for="element-quantity">Quantité</label>
+                                <input type="number" id="element-quantity" min="0" step="0.01">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" id="cancel-article">Annuler</button>
-                        <button class="btn btn-primary" id="save-article">Ajouter</button>
+                        <button class="btn btn-secondary" id="cancel-element">Annuler</button>
+                        <button class="btn btn-primary" id="save-element">Ajouter</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal d'ajout de métré -->
-            <div class="modal" id="metre-modal" style="display: none;">
-                <div class="modal-backdrop"></div>
+            <!-- Modal d'édition d'élément -->
+            <div class="modal-overlay" id="edit-element-modal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3>Ajouter un Métré Automatique</h3>
+                        <h3>✏️ Modifier l'Élément</h3>
                         <button class="modal-close">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <form id="metre-form">
+                        <div class="element-info" id="edit-element-info">
+                            <!-- Informations de l'élément -->
+                        </div>
+                        
+                        <form id="edit-element-form">
                             <div class="form-group">
-                                <label for="metre-designation">Désignation</label>
-                                <input type="text" id="metre-designation" placeholder="Ex: Charpente principale €/T">
-                            </div>
-                            <div class="form-group">
-                                <label for="metre-formule">Type de Calcul</label>
-                                <select id="metre-formule">
-                                    <option value="eur_t">€/T (Euro par tonne)</option>
-                                    <option value="eur_m2">€/m² (Euro par m²)</option>
-                                    <option value="eur_ml">€/ml (Euro par ml)</option>
-                                    <option value="eur_kg">€/kg (Euro par kg)</option>
-                                    <option value="forfait">Forfait</option>
-                                    <option value="formule_custom">Formule personnalisée</option>
-                                </select>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="metre-coefficient">Coefficient</label>
-                                    <input type="number" id="metre-coefficient" step="0.01" placeholder="2850" 
-                                           title="Ex: 2850 €/T pour la charpente principale">
-                                </div>
-                                <div class="form-group">
-                                    <label for="metre-base-calcul">Base de Calcul</label>
-                                    <select id="metre-base-calcul">
-                                        <option value="poids_total">Poids total des articles</option>
-                                        <option value="surface_total">Surface totale</option>
-                                        <option value="longueur_total">Longueur totale</option>
-                                        <option value="nb_articles">Nombre d'articles</option>
-                                    </select>
+                                <label for="edit-element-quantity">Quantité</label>
+                                <div class="quantity-input">
+                                    <input type="number" id="edit-element-quantity" min="0" step="0.01">
+                                    <span class="quantity-unit" id="edit-quantity-unit"></span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="metre-description">Description du Calcul</label>
-                                <textarea id="metre-description" rows="2" 
-                                          placeholder="Calcul automatique basé sur le poids total des profilés avec coefficient 2850€/T incluant découpe, assemblage et finition"></textarea>
+                            
+                            <div class="calculation-preview" id="calculation-preview">
+                                <!-- Aperçu des calculs -->
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" id="cancel-metre">Annuler</button>
-                        <button class="btn btn-primary" id="save-metre">Ajouter</button>
+                        <button class="btn btn-danger btn-sm" id="delete-element">🗑️ Supprimer</button>
+                        <button class="btn btn-secondary" id="cancel-edit">Annuler</button>
+                        <button class="btn btn-primary" id="save-edit">Sauvegarder</button>
                     </div>
                 </div>
             </div>
         `;
     },
 
+    /**
+     * Initialisation de la page - Version robuste
+     */
     init() {
         console.log('🔧 Initialisation de la page outil de chiffrage...');
         
-        // VÉRIFICATION D'ACCÈS CLIENT OBLIGATOIRE
-        if (!this.verifyClientAccess()) {
-            this.renderAccessDenied();
-            return;
-        }
-        
-        // Attendre que le DOM soit prêt
-        setTimeout(() => {
-            this.initializeChiffrageData();
-            this.renderProjectTree();
-            this.bindEvents();
-            this.setupModals();
-            this.addDemoCSS();
-            this.addClientAccessCSS();
-            
-            if (typeof window.setupBackButton === 'function') {
-                window.setupBackButton();
+        try {
+            // Vérification d'accès avec fallback
+            if (!this.verifyClientAccess()) {
+                console.warn('🔐 Accès client non vérifié - affichage page d\'accès');
+                this.renderAccessDenied();
+                return;
             }
             
-            console.log('✅ Page outil de chiffrage initialisée (accès client vérifié)');
+            // Initialisation avec gestion d'erreurs
+            this.safeInitialization();
             
-            // Afficher un message de bienvenue client
-            this.showClientWelcome();
-        }, 100);
+        } catch (error) {
+            console.error('❌ Erreur initialisation outil chiffrage:', error);
+            this.renderErrorPage();
+        }
+    },
+    
+    /**
+     * Initialisation sécurisée
+     */
+    safeInitialization() {
+        // Attendre DOM avec timeout
+        const initTimeout = setTimeout(() => {
+            console.error('❌ Timeout initialisation outil chiffrage');
+            this.renderErrorPage();
+        }, 5000);
+        
+        const tryInit = () => {
+            try {
+                if (!document.getElementById('app')) {
+                    setTimeout(tryInit, 50);
+                    return;
+                }
+                
+                clearTimeout(initTimeout);
+                
+                this.initializeChiffrageData();
+                this.bindEvents();
+                this.addDemoCSS();
+                this.setupBackButton();
+                
+                console.log('✅ Page outil de chiffrage initialisée avec succès');
+                this.showClientWelcome();
+                
+            } catch (error) {
+                clearTimeout(initTimeout);
+                console.error('❌ Erreur dans tryInit:', error);
+                this.renderErrorPage();
+            }
+        };
+        
+        setTimeout(tryInit, 100);
     },
 
     /**
-     * Vérifier l'accès client
+     * Vérification d'accès améliorée
      */
     verifyClientAccess() {
+        // Vérifier disponibilité du système d'accès
         if (typeof window.OweoClientAccess === 'undefined') {
-            console.error('❌ OweoClientAccess not available');
+            console.error('❌ OweoClientAccess non disponible');
             return false;
         }
         
-        const hasAccess = window.OweoClientAccess.hasAccess();
-        console.log('🔐 Client access check:', hasAccess);
-        
-        return hasAccess;
+        try {
+            const hasAccess = window.OweoClientAccess.hasAccess();
+            console.log('🔐 Vérification accès client:', hasAccess);
+            return hasAccess;
+            
+        } catch (error) {
+            console.error('❌ Erreur vérification accès:', error);
+            return false;
+        }
     },
 
     /**
-     * Afficher la page d'accès refusé
+     * Initialisation des données de chiffrage
+     */
+    initializeChiffrageData() {
+        try {
+            // Réinitialiser l'état
+            this.currentProject = null;
+            this.selectedElement = null;
+            this.calculationMode = 'automatic';
+            this.currentStep = 1;
+            this.projectData = {};
+            
+            console.log('✅ Données chiffrage initialisées');
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation données chiffrage:', error);
+        }
+    },
+
+    /**
+     * Liaison des événements
+     */
+    bindEvents() {
+        try {
+            // Délégation d'événements pour robustesse
+            document.addEventListener('click', this.handleGlobalClick.bind(this));
+            document.addEventListener('change', this.handleGlobalChange.bind(this));
+            document.addEventListener('input', this.handleGlobalInput.bind(this));
+            
+            // Événements spécifiques
+            this.bindModalEvents();
+            
+            console.log('✅ Événements chiffrage liés');
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison événements chiffrage:', error);
+        }
+    },
+
+    /**
+     * Gestionnaire principal des clics
+     */
+    handleGlobalClick(e) {
+        try {
+            const target = e.target;
+            
+            // Projets d'exemple
+            const exampleCard = target.closest('.example-card');
+            if (exampleCard) {
+                const example = exampleCard.dataset.example;
+                this.loadExampleProject(example);
+                return;
+            }
+            
+            // Création de projet
+            if (target.id === 'create-project') {
+                e.preventDefault();
+                this.createNewProject();
+                return;
+            }
+            
+            // Navigation entre étapes
+            if (target.id === 'proceed-to-metrage') {
+                this.advanceToStep(3);
+                return;
+            }
+            
+            if (target.id === 'proceed-to-synthesis') {
+                this.advanceToStep(4);
+                return;
+            }
+            
+            if (target.id === 'back-to-project') {
+                this.advanceToStep(1);
+                return;
+            }
+            
+            if (target.id === 'back-to-structure') {
+                this.advanceToStep(2);
+                return;
+            }
+            
+            // Ajout d'élément
+            if (target.id === 'add-element') {
+                this.showAddElementModal();
+                return;
+            }
+            
+            // Recalcul
+            if (target.id === 'recalculate') {
+                this.performCalculations();
+                return;
+            }
+            
+            // Éléments de l'arbre
+            const treeElement = target.closest('.tree-element');
+            if (treeElement) {
+                this.selectElement(treeElement.dataset.elementId);
+                return;
+            }
+            
+            // Exports
+            if (target.id === 'export-excel') {
+                this.exportToExcel();
+                return;
+            }
+            
+            if (target.id === 'export-pdf') {
+                this.exportToPDF();
+                return;
+            }
+            
+            if (target.id === 'save-project') {
+                this.saveProject();
+                return;
+            }
+            
+            // Modales
+            this.handleModalButtons(e);
+            
+        } catch (error) {
+            console.error('❌ Erreur gestionnaire clic global:', error);
+        }
+    },
+
+    /**
+     * Gestionnaire des changements
+     */
+    handleGlobalChange(e) {
+        try {
+            const target = e.target;
+            
+            // Mode de calcul
+            if (target.name === 'calc-mode') {
+                this.calculationMode = target.value;
+                this.performCalculations();
+                return;
+            }
+            
+            // Type d'élément dans la modal d'ajout
+            if (target.id === 'element-type') {
+                this.toggleProductSelection(target.value);
+                return;
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur gestionnaire changement global:', error);
+        }
+    },
+
+    /**
+     * Gestionnaire des inputs
+     */
+    handleGlobalInput(e) {
+        try {
+            const target = e.target;
+            
+            // Quantité en temps réel
+            if (target.id === 'edit-element-quantity') {
+                this.updateCalculationPreview();
+                return;
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur gestionnaire input global:', error);
+        }
+    },
+
+    /**
+     * Charger un projet d'exemple
+     */
+    loadExampleProject(exampleType) {
+        try {
+            const example = this.exampleProjects[exampleType];
+            if (!example) {
+                throw new Error(`Exemple ${exampleType} non trouvé`);
+            }
+            
+            this.currentProject = {
+                name: example.name,
+                client: 'Client Démonstration',
+                reference: `DEMO-${exampleType.toUpperCase()}-${Date.now()}`,
+                elements: JSON.parse(JSON.stringify(example.elements)) // Deep copy
+            };
+            
+            // Avancer à l'étape structure
+            this.advanceToStep(2);
+            this.renderProjectStructure();
+            
+            this.showSuccessMessage(`Projet "${example.name}" chargé avec succès !`);
+            
+        } catch (error) {
+            console.error('❌ Erreur chargement projet exemple:', error);
+            this.showErrorMessage('Erreur lors du chargement du projet d\'exemple');
+        }
+    },
+
+    /**
+     * Créer un nouveau projet
+     */
+    createNewProject() {
+        try {
+            const name = document.getElementById('project-name').value.trim();
+            const client = document.getElementById('project-client').value.trim();
+            const reference = document.getElementById('project-reference').value.trim();
+            
+            if (!name) {
+                this.showErrorMessage('Le nom du projet est requis');
+                return;
+            }
+            
+            this.currentProject = {
+                name: name,
+                client: client || 'Client non spécifié',
+                reference: reference || `PRJ-${Date.now()}`,
+                elements: []
+            };
+            
+            // Avancer à l'étape structure
+            this.advanceToStep(2);
+            this.renderProjectStructure();
+            
+            this.showSuccessMessage(`Nouveau projet "${name}" créé !`);
+            
+        } catch (error) {
+            console.error('❌ Erreur création nouveau projet:', error);
+            this.showErrorMessage('Erreur lors de la création du projet');
+        }
+    },
+
+    /**
+     * Avancer à une étape
+     */
+    advanceToStep(stepNumber) {
+        try {
+            this.currentStep = stepNumber;
+            
+            // Mettre à jour les indicateurs d'étapes
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+            
+            // Masquer toutes les sections
+            ['project-step', 'structure-step', 'metrage-step', 'synthesis-step'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+            
+            // Afficher la section correspondante
+            const stepIds = ['project-step', 'structure-step', 'metrage-step', 'synthesis-step'];
+            const targetStep = document.getElementById(stepIds[stepNumber - 1]);
+            if (targetStep) {
+                targetStep.style.display = 'block';
+            }
+            
+            // Rendu spécifique à l'étape
+            switch (stepNumber) {
+                case 2:
+                    this.renderProjectStructure();
+                    break;
+                case 3:
+                    this.renderMetrageWorkspace();
+                    break;
+                case 4:
+                    this.renderSynthesis();
+                    break;
+            }
+            
+            console.log(`✅ Avancé à l'étape ${stepNumber}`);
+            
+        } catch (error) {
+            console.error(`❌ Erreur avancement étape ${stepNumber}:`, error);
+        }
+    },
+
+    /**
+     * Rendu de la structure du projet
+     */
+    renderProjectStructure() {
+        try {
+            if (!this.currentProject) return;
+            
+            // Titre du projet
+            const titleElement = document.getElementById('current-project-title');
+            if (titleElement) {
+                titleElement.textContent = `🏗️ ${this.currentProject.name}`;
+            }
+            
+            // Arbre de structure
+            const tree = document.getElementById('structure-tree');
+            if (tree) {
+                tree.innerHTML = this.generateStructureTree(this.currentProject.elements);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur rendu structure projet:', error);
+        }
+    },
+
+    /**
+     * Générer l'arbre de structure HTML
+     */
+    generateStructureTree(elements, level = 0) {
+        try {
+            return elements.map(element => {
+                const hasChildren = element.children && element.children.length > 0;
+                const indent = level * 20;
+                
+                const productInfo = element.product ? this.getProductInfo(element.product) : null;
+                
+                return `
+                    <div class="tree-element ${element.type}" 
+                         data-element-id="${element.id}" 
+                         style="margin-left: ${indent}px;">
+                        <div class="tree-element-header">
+                            ${hasChildren ? '<span class="tree-toggle">▼</span>' : '<span class="tree-spacer"></span>'}
+                            <span class="element-icon">${this.getElementIcon(element.type)}</span>
+                            <span class="element-name">${element.name}</span>
+                            ${element.quantity ? `<span class="element-quantity">×${element.quantity}</span>` : ''}
+                            ${productInfo ? `<span class="element-product">${productInfo.name}</span>` : ''}
+                            <div class="element-actions">
+                                <button class="btn-edit" data-element-id="${element.id}">✏️</button>
+                                <button class="btn-delete" data-element-id="${element.id}">🗑️</button>
+                            </div>
+                        </div>
+                        ${hasChildren ? `
+                            <div class="tree-children">
+                                ${this.generateStructureTree(element.children, level + 1)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error('❌ Erreur génération arbre structure:', error);
+            return '<div class="tree-error">Erreur de génération</div>';
+        }
+    },
+
+    /**
+     * Rendu de l'espace métrés
+     */
+    renderMetrageWorkspace() {
+        try {
+            if (!this.currentProject) return;
+            
+            this.performCalculations();
+            
+        } catch (error) {
+            console.error('❌ Erreur rendu espace métrés:', error);
+        }
+    },
+
+    /**
+     * Effectuer les calculs
+     */
+    performCalculations() {
+        try {
+            if (!this.currentProject) return;
+            
+            // Calculer récursivement
+            const calculations = this.calculateElement(this.currentProject.elements);
+            
+            // Rendu de l'arbre avec calculs
+            const metrageTree = document.getElementById('metrage-tree');
+            if (metrageTree) {
+                metrageTree.innerHTML = this.generateMetrageTree(this.currentProject.elements, calculations);
+            }
+            
+            // Résumé
+            const summary = document.getElementById('metrage-summary');
+            if (summary) {
+                summary.innerHTML = this.generateMetrageSummary(calculations);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur calculs:', error);
+        }
+    },
+
+    /**
+     * Calculer un élément (récursif)
+     */
+    calculateElement(elements) {
+        try {
+            const calculations = {
+                totalCost: 0,
+                totalWeight: 0,
+                byCategory: {},
+                details: []
+            };
+            
+            elements.forEach(element => {
+                let elementCalc = {
+                    id: element.id,
+                    name: element.name,
+                    cost: 0,
+                    weight: 0,
+                    children: null
+                };
+                
+                if (element.children && element.children.length > 0) {
+                    // Élément structure - calculer les enfants
+                    const childrenCalc = this.calculateElement(element.children);
+                    elementCalc.cost = childrenCalc.totalCost * (element.quantity || 1);
+                    elementCalc.weight = childrenCalc.totalWeight * (element.quantity || 1);
+                    elementCalc.children = childrenCalc;
+                } else if (element.product && element.quantity) {
+                    // Élément produit - calculer directement
+                    const productInfo = this.getProductInfo(element.product);
+                    if (productInfo) {
+                        elementCalc.cost = productInfo.pricePerUnit * element.quantity;
+                        elementCalc.weight = productInfo.weight * element.quantity;
+                        
+                        // Ajouter à la catégorie
+                        const category = productInfo.category;
+                        if (!calculations.byCategory[category]) {
+                            calculations.byCategory[category] = { cost: 0, weight: 0, items: [] };
+                        }
+                        calculations.byCategory[category].cost += elementCalc.cost;
+                        calculations.byCategory[category].weight += elementCalc.weight;
+                        calculations.byCategory[category].items.push({
+                            name: element.name,
+                            product: productInfo.name,
+                            quantity: element.quantity,
+                            unit: productInfo.unit,
+                            unitPrice: productInfo.pricePerUnit,
+                            cost: elementCalc.cost,
+                            weight: elementCalc.weight
+                        });
+                    }
+                }
+                
+                calculations.totalCost += elementCalc.cost;
+                calculations.totalWeight += elementCalc.weight;
+                calculations.details.push(elementCalc);
+            });
+            
+            return calculations;
+            
+        } catch (error) {
+            console.error('❌ Erreur calcul élément:', error);
+            return { totalCost: 0, totalWeight: 0, byCategory: {}, details: [] };
+        }
+    },
+
+    /**
+     * Générer l'arbre des métrés
+     */
+    generateMetrageTree(elements, calculations) {
+        try {
+            return elements.map((element, index) => {
+                const calc = calculations.details[index];
+                if (!calc) return '';
+                
+                const hasChildren = element.children && element.children.length > 0;
+                const productInfo = element.product ? this.getProductInfo(element.product) : null;
+                
+                return `
+                    <div class="metrage-element">
+                        <div class="metrage-header">
+                            <span class="element-icon">${this.getElementIcon(element.type)}</span>
+                            <span class="element-name">${element.name}</span>
+                            ${element.quantity ? `<span class="element-quantity">×${element.quantity}</span>` : ''}
+                            ${productInfo ? `
+                                <span class="element-details">
+                                    ${productInfo.name} - ${element.quantity} ${productInfo.unit} × ${productInfo.pricePerUnit}€
+                                </span>
+                            ` : ''}
+                            <div class="metrage-results">
+                                <span class="cost">${calc.cost.toFixed(2)}€</span>
+                                <span class="weight">${calc.weight.toFixed(1)}kg</span>
+                            </div>
+                        </div>
+                        ${hasChildren && calc.children ? `
+                            <div class="metrage-children">
+                                ${this.generateMetrageTree(element.children, calc.children)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error('❌ Erreur génération arbre métrés:', error);
+            return '<div class="metrage-error">Erreur de génération</div>';
+        }
+    },
+
+    /**
+     * Générer le résumé des métrés
+     */
+    generateMetrageSummary(calculations) {
+        try {
+            return `
+                <div class="summary-header">
+                    <h4>📊 Résumé Global</h4>
+                    <div class="summary-totals">
+                        <div class="total-item">
+                            <span class="total-label">Coût Total:</span>
+                            <span class="total-value">${calculations.totalCost.toFixed(2)}€</span>
+                        </div>
+                        <div class="total-item">
+                            <span class="total-label">Poids Total:</span>
+                            <span class="total-value">${calculations.totalWeight.toFixed(1)}kg</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="summary-categories">
+                    <h5>Par Catégorie:</h5>
+                    ${Object.keys(calculations.byCategory).map(category => {
+                        const categoryData = calculations.byCategory[category];
+                        return `
+                            <div class="category-summary">
+                                <div class="category-header">
+                                    <strong>${category}</strong>
+                                    <span class="category-totals">
+                                        ${categoryData.cost.toFixed(2)}€ - ${categoryData.weight.toFixed(1)}kg
+                                    </span>
+                                </div>
+                                <div class="category-items">
+                                    ${categoryData.items.map(item => `
+                                        <div class="item-line">
+                                            ${item.name}: ${item.quantity} ${item.unit} × ${item.unitPrice}€ = ${item.cost.toFixed(2)}€
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error('❌ Erreur génération résumé métrés:', error);
+            return '<div class="summary-error">Erreur de génération</div>';
+        }
+    },
+
+    /**
+     * Rendu de la synthèse
+     */
+    renderSynthesis() {
+        try {
+            if (!this.currentProject) return;
+            
+            const calculations = this.calculateElement(this.currentProject.elements);
+            
+            const overview = document.getElementById('synthesis-overview');
+            if (overview) {
+                overview.innerHTML = this.generateSynthesisOverview(calculations);
+            }
+            
+            const details = document.getElementById('synthesis-details');
+            if (details) {
+                details.innerHTML = this.generateSynthesisDetails(calculations);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur rendu synthèse:', error);
+        }
+    },
+
+    /**
+     * Générer la vue d'ensemble de la synthèse
+     */
+    generateSynthesisOverview(calculations) {
+        try {
+            return `
+                <div class="overview-card">
+                    <h4>🏗️ ${this.currentProject.name}</h4>
+                    <div class="project-info">
+                        <div class="info-item">
+                            <strong>Client:</strong> ${this.currentProject.client}
+                        </div>
+                        <div class="info-item">
+                            <strong>Référence:</strong> ${this.currentProject.reference}
+                        </div>
+                        <div class="info-item">
+                            <strong>Date:</strong> ${new Date().toLocaleDateString('fr-FR')}
+                        </div>
+                    </div>
+                    
+                    <div class="overview-totals">
+                        <div class="total-box cost-box">
+                            <div class="total-icon">💰</div>
+                            <div class="total-content">
+                                <div class="total-label">Coût Total</div>
+                                <div class="total-amount">${calculations.totalCost.toFixed(2)}€</div>
+                            </div>
+                        </div>
+                        
+                        <div class="total-box weight-box">
+                            <div class="total-icon">⚖️</div>
+                            <div class="total-content">
+                                <div class="total-label">Poids Total</div>
+                                <div class="total-amount">${calculations.totalWeight.toFixed(1)}kg</div>
+                            </div>
+                        </div>
+                        
+                        <div class="total-box ratio-box">
+                            <div class="total-icon">📊</div>
+                            <div class="total-content">
+                                <div class="total-label">€/kg</div>
+                                <div class="total-amount">${(calculations.totalCost / calculations.totalWeight).toFixed(2)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error('❌ Erreur génération vue d\'ensemble synthèse:', error);
+            return '<div class="overview-error">Erreur de génération</div>';
+        }
+    },
+
+    /**
+     * Gérer les événements des modales
+     */
+    bindModalEvents() {
+        try {
+            // Délégation pour les boutons de modal
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-close')) {
+                    this.closeAllModals();
+                }
+                
+                if (e.target.classList.contains('modal-overlay')) {
+                    this.closeAllModals();
+                }
+            });
+            
+            // Échappement
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closeAllModals();
+                }
+            });
+            
+        } catch (error) {
+            console.error('❌ Erreur liaison événements modales:', error);
+        }
+    },
+
+    /**
+     * Utilitaires
+     */
+    getProductInfo(productId) {
+        try {
+            // Chercher dans toutes les catégories
+            for (const category of Object.values(this.productsDatabase)) {
+                if (category[productId]) {
+                    return category[productId];
+                }
+            }
+            return null;
+        } catch (error) {
+            console.error('❌ Erreur récupération info produit:', error);
+            return null;
+        }
+    },
+
+    getElementIcon(type) {
+        const icons = {
+            'structure': '📁',
+            'element': '🔧',
+            'default': '📄'
+        };
+        return icons[type] || icons.default;
+    },
+
+    closeAllModals() {
+        try {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        } catch (error) {
+            console.error('❌ Erreur fermeture modales:', error);
+        }
+    },
+
+    showSuccessMessage(message) {
+        this.showNotification(`✅ ${message}`, 'success', 3000);
+    },
+
+    showErrorMessage(message) {
+        this.showNotification(`❌ ${message}`, 'error', 4000);
+    },
+
+    showNotification(message, type = 'info', duration = 3000) {
+        try {
+            if (window.OweoClientAccess && typeof window.OweoClientAccess.showNotification === 'function') {
+                window.OweoClientAccess.showNotification(message, type, duration);
+            } else {
+                console.log(message);
+            }
+        } catch (error) {
+            console.error('❌ Erreur notification:', error);
+            console.log(message);
+        }
+    },
+
+    /**
+     * Configuration du bouton retour
+     */
+    setupBackButton() {
+        try {
+            if (typeof window.setupBackButton === 'function') {
+                window.setupBackButton();
+                console.log('✅ Bouton retour configuré');
+            } else {
+                console.warn('⚠️ setupBackButton non disponible');
+            }
+        } catch (error) {
+            console.error('❌ Erreur configuration bouton retour:', error);
+        }
+    },
+
+    /**
+     * Affichage message de bienvenue client
+     */
+    showClientWelcome() {
+        try {
+            const session = window.OweoClientAccess?.getSessionInfo();
+            if (session) {
+                this.showSuccessMessage('Bienvenue dans la démonstration Outil de Chiffrage !');
+            }
+        } catch (error) {
+            console.error('❌ Erreur message bienvenue:', error);
+        }
+    },
+
+    /**
+     * Pages d'erreur
      */
     renderAccessDenied() {
         const appContainer = document.getElementById('app');
@@ -263,1385 +1230,126 @@ window.pages['outil-chiffrage-demo'] = {
                         <div class="access-denied-icon">🔐</div>
                         <h1>Accès Client Requis</h1>
                         <p class="access-denied-message">
-                            Cette démonstration interactive est exclusivement réservée à nos clients.
+                            Cette démonstration interactive de chiffrage ERP est exclusivement réservée à nos clients.
+                            Contactez votre référent Oweo pour obtenir un code d'accès.
                         </p>
-                        
                         <div class="access-denied-actions">
-                            <button class="btn btn-primary btn-large" onclick="OweoClientAccess.showAuthModal()">
-                                🔑 Saisir Code d'Accès
+                            <button class="btn btn-primary" onclick="window.OweoClientAccess?.showAuthModal('outil-chiffrage-demo')">
+                                🔐 Saisir Code d'Accès
                             </button>
-                            <button class="btn btn-secondary btn-large" onclick="history.back()">
+                            <button class="btn btn-secondary" onclick="window.history.back()">
                                 ← Retour
                             </button>
-                        </div>
-                        
-                        <div class="access-denied-help">
-                            <h3>💡 Comment obtenir l'accès ?</h3>
-                            <div class="help-steps">
-                                <div class="help-step">
-                                    <span class="step-number">1</span>
-                                    <p>Contactez votre référent Oweo</p>
-                                </div>
-                                <div class="help-step">
-                                    <span class="step-number">2</span>
-                                    <p>Obtenez votre code client personnalisé</p>
-                                </div>
-                                <div class="help-step">
-                                    <span class="step-number">3</span>
-                                    <p>Accédez aux démonstrations exclusives</p>
-                                </div>
-                            </div>
-                            
-                            <div class="help-contact">
-                                <p>Besoin d'aide ? Contactez-nous :</p>
-                                <div class="contact-links">
-                                    <a href="mailto:contact@oweo-consulting.fr" class="contact-link">
-                                        📧 contact@oweo-consulting.fr
-                                    </a>
-                                    <a href="tel:+33123456789" class="contact-link">
-                                        📞 01 23 45 67 89
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </section>
         `;
+    },
+
+    renderErrorPage() {
+        const appContainer = document.getElementById('app');
+        if (!appContainer) return;
         
-        // Ajouter les styles pour la page d'accès refusé
-        this.addAccessDeniedCSS();
+        appContainer.innerHTML = `
+            <section class="section error-page">
+                <div class="container">
+                    <div class="error-content">
+                        <div class="error-icon">⚠️</div>
+                        <h1>Erreur de Chargement</h1>
+                        <p>Une erreur est survenue lors du chargement de la démonstration.</p>
+                        <div class="error-actions">
+                            <button class="btn btn-primary" onclick="location.reload()">
+                                🔄 Recharger la page
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.history.back()">
+                                ← Retour
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
     },
 
     /**
-     * Afficher un message de bienvenue client
+     * Ajout des styles CSS
      */
-    showClientWelcome() {
-        if (typeof window.OweoClientAccess === 'undefined') return;
-        
-        const sessionInfo = window.OweoClientAccess.getSessionInfo();
-        if (!sessionInfo) return;
-        
-        // Afficher une notification de bienvenue
-        if (window.OweoUtils && window.OweoUtils.notification) {
-            window.OweoUtils.notification.show(
-                `🎯 Bienvenue dans la démonstration ERP interactive !`,
-                'success',
-                4000
-            );
-        }
-        
-        // Ajouter une bannière client dans l'interface
-        const container = document.querySelector('.chiffrage-toolbar .toolbar-left');
-        if (container && !container.querySelector('.client-badge')) {
-            const clientBadge = document.createElement('span');
-            clientBadge.className = 'client-badge';
-            clientBadge.innerHTML = `🔐 Session Client Active`;
-            container.appendChild(clientBadge);
-        }
-    },
-
-    // Données d'exemple pour la démo
-    chiffrageData: {
-        projet: {
-            nom: "Hangar Industriel 40x25m",
-            client: "SARL Construction Métallique",
-            rubriques: []
-        },
-        selectedItem: null
-    },
-
-    initializeChiffrageData() {
-        // Données d'exemple préchargées
-        this.chiffrageData.projet.rubriques = [
-            {
-                id: 'rubrique_1',
-                type: 'rubrique',
-                nom: '🏗️ STRUCTURE PRINCIPALE',
-                expanded: true,
-                chapitres: [
-                    {
-                        id: 'chapitre_1_1',
-                        type: 'chapitre',
-                        nom: 'Ossature Portique',
-                        expanded: true,
-                        sousChapitres: [
-                            {
-                                id: 'souschap_1_1_1',
-                                type: 'sous-chapitre',
-                                nom: 'Poteaux',
-                                expanded: false,
-                                articles: [
-                                    {
-                                        id: 'art_1_1_1_1',
-                                        type: 'article',
-                                        designation: 'IPE 240 H=7m',
-                                        quantite: 10,
-                                        unite: 'U',
-                                        prixUnitaire: 285.50,
-                                        poids: 18.2,
-                                        tempsMO: 2.5
-                                    },
-                                    {
-                                        id: 'art_1_1_1_2',
-                                        type: 'article',
-                                        designation: 'IPE 270 H=7m',
-                                        quantite: 8,
-                                        unite: 'U',
-                                        prixUnitaire: 325.80,
-                                        poids: 20.8,
-                                        tempsMO: 2.8
-                                    }
-                                ],
-                                metres: [
-                                    {
-                                        id: 'metre_1_1_1_1',
-                                        type: 'metre',
-                                        designation: 'Assemblage poteaux €/T',
-                                        formule: 'eur_t',
-                                        coefficient: 2850,
-                                        baseCalcul: 'poids_total',
-                                        description: 'Assemblage, découpe et finition des poteaux'
-                                    }
-                                ]
-                            },
-                            {
-                                id: 'souschap_1_1_2',
-                                type: 'sous-chapitre',
-                                nom: 'Traverses',
-                                expanded: false,
-                                articles: [
-                                    {
-                                        id: 'art_1_1_2_1',
-                                        type: 'article',
-                                        designation: 'IPE 360 L=25m',
-                                        quantite: 6,
-                                        unite: 'U',
-                                        prixUnitaire: 1250.00,
-                                        poids: 142.8,
-                                        tempsMO: 8.5
-                                    }
-                                ],
-                                metres: []
-                            }
-                        ]
-                    },
-                    {
-                        id: 'chapitre_1_2',
-                        type: 'chapitre',
-                        nom: 'Contreventements',
-                        expanded: false,
-                        sousChapitres: []
-                    }
-                ]
-            },
-            {
-                id: 'rubrique_2',
-                type: 'rubrique',
-                nom: '🔩 ASSEMBLAGES ET FIXATIONS',
-                expanded: false,
-                chapitres: []
-            },
-            {
-                id: 'rubrique_3',
-                type: 'rubrique',
-                nom: '🎨 FINITIONS ET PROTECTION',
-                expanded: false,
-                chapitres: []
-            }
-        ];
-    },
-
-    renderProjectTree() {
-        const treeContainer = document.getElementById('project-tree');
-        if (!treeContainer) return;
-
-        let html = '';
-        
-        this.chiffrageData.projet.rubriques.forEach(rubrique => {
-            html += this.renderTreeItem(rubrique, 0);
-        });
-        
-        treeContainer.innerHTML = html;
-    },
-
-    renderTreeItem(item, level) {
-        const isSelected = this.chiffrageData.selectedItem?.id === item.id;
-        const indentClass = `tree-level-${level}`;
-        const expandIcon = item.expanded ? '📂' : '📁';
-        
-        let html = `
-            <div class="tree-item ${indentClass} ${isSelected ? 'selected' : ''}" 
-                 data-item-id="${item.id}" 
-                 data-item-type="${item.type}">
-                <div class="tree-item-content">
-                    ${level > 0 ? '<span class="tree-indent"></span>'.repeat(level) : ''}
-                    <span class="tree-expand" data-expand="${item.id}">
-                        ${this.hasChildren(item) ? expandIcon : '📄'}
-                    </span>
-                    <span class="tree-label">${item.nom || item.designation}</span>
-                    <span class="tree-type">${this.getTypeLabel(item.type)}</span>
-                </div>
-            </div>
-        `;
-        
-        // Ajouter les enfants si l'élément est étendu
-        if (item.expanded) {
-            // Chapitres
-            if (item.chapitres) {
-                item.chapitres.forEach(chapitre => {
-                    html += this.renderTreeItem(chapitre, level + 1);
-                });
-            }
-            
-            // Sous-chapitres
-            if (item.sousChapitres) {
-                item.sousChapitres.forEach(sousChapitre => {
-                    html += this.renderTreeItem(sousChapitre, level + 1);
-                });
-            }
-            
-            // Articles
-            if (item.articles) {
-                item.articles.forEach(article => {
-                    html += this.renderTreeItem(article, level + 1);
-                });
-            }
-            
-            // Métrés
-            if (item.metres) {
-                item.metres.forEach(metre => {
-                    html += this.renderTreeItem(metre, level + 1);
-                });
-            }
-        }
-        
-        return html;
-    },
-
-    hasChildren(item) {
-        return (item.chapitres && item.chapitres.length > 0) ||
-               (item.sousChapitres && item.sousChapitres.length > 0) ||
-               (item.articles && item.articles.length > 0) ||
-               (item.metres && item.metres.length > 0);
-    },
-
-    getTypeLabel(type) {
-        const labels = {
-            'rubrique': 'RUB',
-            'chapitre': 'CHAP',
-            'sous-chapitre': 'S-CHAP',
-            'article': 'ART',
-            'metre': 'MÉTRÉ'
-        };
-        return labels[type] || type.toUpperCase();
-    },
-
-    bindEvents() {
-        // Événements de l'arborescence
-        document.addEventListener('click', (e) => {
-            // Expand/Collapse
-            if (e.target.hasAttribute('data-expand')) {
-                e.preventDefault();
-                e.stopPropagation();
-                const itemId = e.target.getAttribute('data-expand');
-                this.toggleExpand(itemId);
-                return;
-            }
-            
-            // Sélection d'item
-            const treeItem = e.target.closest('.tree-item');
-            if (treeItem) {
-                const itemId = treeItem.getAttribute('data-item-id');
-                const itemType = treeItem.getAttribute('data-item-type');
-                this.selectItem(itemId, itemType);
-                return;
-            }
-        });
-
-        // Boutons d'ajout
-        document.getElementById('add-article')?.addEventListener('click', () => {
-            this.showModal('article-modal');
-        });
-
-        document.getElementById('add-metre')?.addEventListener('click', () => {
-            this.showModal('metre-modal');
-        });
-    },
-
-    toggleExpand(itemId) {
-        const item = this.findItemById(itemId);
-        if (item) {
-            item.expanded = !item.expanded;
-            this.renderProjectTree();
-        }
-    },
-
-    selectItem(itemId, itemType) {
-        // Retirer la sélection précédente
-        document.querySelectorAll('.tree-item.selected').forEach(el => {
-            el.classList.remove('selected');
-        });
-        
-        // Ajouter la nouvelle sélection
-        const selectedElement = document.querySelector(`[data-item-id="${itemId}"]`);
-        if (selectedElement) {
-            selectedElement.classList.add('selected');
-        }
-        
-        // Mettre à jour les détails
-        const item = this.findItemById(itemId);
-        this.chiffrageData.selectedItem = item;
-        this.renderItemDetails(item);
-    },
-
-    findItemById(itemId) {
-        // Recherche récursive dans toute la structure
-        const searchInArray = (items) => {
-            for (const item of items) {
-                if (item.id === itemId) return item;
-                
-                // Rechercher dans les enfants
-                if (item.chapitres) {
-                    const found = searchInArray(item.chapitres);
-                    if (found) return found;
-                }
-                if (item.sousChapitres) {
-                    const found = searchInArray(item.sousChapitres);
-                    if (found) return found;
-                }
-                if (item.articles) {
-                    const found = searchInArray(item.articles);
-                    if (found) return found;
-                }
-                if (item.metres) {
-                    const found = searchInArray(item.metres);
-                    if (found) return found;
-                }
-            }
-            return null;
-        };
-        
-        return searchInArray(this.chiffrageData.projet.rubriques);
-    },
-
-    renderItemDetails(item) {
-        const titleElement = document.getElementById('selected-item-title');
-        const contentElement = document.getElementById('details-content');
-        
-        if (!item) {
-            titleElement.textContent = 'Sélectionnez un élément';
-            contentElement.innerHTML = '<div class="empty-selection"><p>👆 Sélectionnez un élément dans l\'arborescence pour voir les détails</p></div>';
-            return;
-        }
-        
-        titleElement.textContent = `${this.getTypeLabel(item.type)} - ${item.nom || item.designation}`;
-        
-        let html = '';
-        
-        switch (item.type) {
-            case 'article':
-                html = this.renderArticleDetails(item);
-                break;
-            case 'metre':
-                html = this.renderMetreDetails(item);
-                break;
-            default:
-                html = this.renderGroupDetails(item);
-                break;
-        }
-        
-        contentElement.innerHTML = html;
-    },
-
-    renderArticleDetails(article) {
-        const totalMatieres = article.quantite * article.prixUnitaire;
-        const totalMO = article.tempsMO * article.quantite * 45; // 45€/h
-        const totalPoids = article.poids * article.quantite;
-        
-        return `
-            <div class="article-details">
-                <div class="details-section">
-                    <h4>📋 Informations Article</h4>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <label>Désignation:</label>
-                            <span>${article.designation}</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Quantité:</label>
-                            <span>${article.quantite} ${article.unite}</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Prix unitaire:</label>
-                            <span>${article.prixUnitaire.toFixed(2)} €</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Poids unitaire:</label>
-                            <span>${article.poids} kg</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Temps MO:</label>
-                            <span>${article.tempsMO} h/U</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="details-section">
-                    <h4>💰 Calculs Automatiques</h4>
-                    <div class="calculs-grid">
-                        <div class="calcul-item">
-                            <label>Total Matières:</label>
-                            <span class="calcul-value">${totalMatieres.toFixed(2)} €</span>
-                        </div>
-                        <div class="calcul-item">
-                            <label>Total Main d'Œuvre:</label>
-                            <span class="calcul-value">${totalMO.toFixed(2)} €</span>
-                        </div>
-                        <div class="calcul-item">
-                            <label>Poids Total:</label>
-                            <span class="calcul-value">${totalPoids.toFixed(1)} kg</span>
-                        </div>
-                        <div class="calcul-item highlight">
-                            <label>Total Article:</label>
-                            <span class="calcul-value">${(totalMatieres + totalMO).toFixed(2)} €</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="details-actions">
-                    <button class="btn btn-outline btn-sm">✏️ Modifier</button>
-                    <button class="btn btn-outline btn-sm">📋 Dupliquer</button>
-                    <button class="btn btn-outline btn-sm text-danger">🗑️ Supprimer</button>
-                </div>
-            </div>
-        `;
-    },
-
-    renderMetreDetails(metre) {
-        // Calcul simulé basé sur les articles du même sous-chapitre
-        const baseValue = 2.5; // Simulation: 2.5T de matière
-        const calculResult = baseValue * metre.coefficient;
-        
-        return `
-            <div class="metre-details">
-                <div class="details-section">
-                    <h4>⚡ Métré Automatique</h4>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <label>Désignation:</label>
-                            <span>${metre.designation}</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Type de calcul:</label>
-                            <span>${this.getFormuleLabel(metre.formule)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Coefficient:</label>
-                            <span>${metre.coefficient} ${this.getUniteCoefficient(metre.formule)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>Base de calcul:</label>
-                            <span>${this.getBaseCalculLabel(metre.baseCalcul)}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="details-section">
-                    <h4>🔢 Calcul en Temps Réel</h4>
-                    <div class="calcul-automatique">
-                        <div class="calcul-formule">
-                            <span class="formule-text">
-                                ${baseValue.toFixed(2)} ${this.getUniteBase(metre.baseCalcul)} × ${metre.coefficient} ${this.getUniteCoefficient(metre.formule)}
-                            </span>
-                        </div>
-                        <div class="calcul-resultat">
-                            <label>Résultat:</label>
-                            <span class="resultat-value">${calculResult.toFixed(2)} €</span>
-                        </div>
-                    </div>
-                    
-                    <div class="calcul-description">
-                        <p><strong>Description:</strong> ${metre.description}</p>
-                    </div>
-                </div>
-                
-                <div class="details-actions">
-                    <button class="btn btn-outline btn-sm">✏️ Modifier Formule</button>
-                    <button class="btn btn-outline btn-sm">📊 Voir Détail Calcul</button>
-                    <button class="btn btn-outline btn-sm text-danger">🗑️ Supprimer</button>
-                </div>
-            </div>
-        `;
-    },
-
-    renderGroupDetails(item) {
-        // Calcul des totaux pour les groupes
-        const stats = this.calculateGroupStats(item);
-        
-        return `
-            <div class="group-details">
-                <div class="details-section">
-                    <h4>📊 Récapitulatif ${this.getTypeLabel(item.type)}</h4>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <label>Nombre d'articles:</label>
-                            <span>${stats.nbArticles}</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Nombre de métrés:</label>
-                            <span>${stats.nbMetres}</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Poids total:</label>
-                            <span>${stats.poidsTotal.toFixed(1)} kg</span>
-                        </div>
-                        <div class="stat-item">
-                            <label>Temps MO total:</label>
-                            <span>${stats.tempsMOTotal.toFixed(1)} h</span>
-                        </div>
-                        <div class="stat-item highlight">
-                            <label>Montant total:</label>
-                            <span>${stats.montantTotal.toFixed(2)} €</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="details-section">
-                    <h4>🏗️ Composition</h4>
-                    <div class="composition-list">
-                        ${this.renderCompositionList(item)}
-                    </div>
-                </div>
-            </div>
-        `;
-    },
-
-    calculateGroupStats(item) {
-        let stats = {
-            nbArticles: 0,
-            nbMetres: 0,
-            poidsTotal: 0,
-            tempsMOTotal: 0,
-            montantTotal: 0
-        };
-        
-        // Fonction récursive pour calculer les stats
-        const calculateRecursive = (element) => {
-            if (element.articles) {
-                element.articles.forEach(article => {
-                    stats.nbArticles++;
-                    stats.poidsTotal += (article.poids || 0) * (article.quantite || 0);
-                    stats.tempsMOTotal += (article.tempsMO || 0) * (article.quantite || 0);
-                    stats.montantTotal += (article.prixUnitaire || 0) * (article.quantite || 0);
-                    stats.montantTotal += (article.tempsMO || 0) * (article.quantite || 0) * 45; // 45€/h
-                });
-            }
-            
-            if (element.metres) {
-                element.metres.forEach(metre => {
-                    stats.nbMetres++;
-                    // Simulation calcul métré
-                    stats.montantTotal += 2.5 * metre.coefficient; // Simulation
-                });
-            }
-            
-            // Récursion sur les enfants
-            ['chapitres', 'sousChapitres'].forEach(childType => {
-                if (element[childType]) {
-                    element[childType].forEach(child => calculateRecursive(child));
-                }
-            });
-        };
-        
-        calculateRecursive(item);
-        return stats;
-    },
-
-    renderCompositionList(item) {
-        let html = '';
-        
-        // Fonction récursive pour lister les éléments
-        const renderRecursive = (element, level = 0) => {
-            const indent = '&nbsp;'.repeat(level * 4);
-            
-            if (element.articles) {
-                element.articles.forEach(article => {
-                    html += `
-                        <div class="composition-item">
-                            ${indent}📄 ${article.designation} (${article.quantite} ${article.unite})
-                        </div>
-                    `;
-                });
-            }
-            
-            if (element.metres) {
-                element.metres.forEach(metre => {
-                    html += `
-                        <div class="composition-item metre">
-                            ${indent}⚡ ${metre.designation}
-                        </div>
-                    `;
-                });
-            }
-            
-            ['chapitres', 'sousChapitres'].forEach(childType => {
-                if (element[childType]) {
-                    element[childType].forEach(child => {
-                        html += `
-                            <div class="composition-item group">
-                                ${indent}📁 ${child.nom}
-                            </div>
-                        `;
-                        renderRecursive(child, level + 1);
-                    });
-                }
-            });
-        };
-        
-        renderRecursive(item);
-        return html || '<p>Aucun élément dans cette section.</p>';
-    },
-
-    getFormuleLabel(formule) {
-        const labels = {
-            'eur_t': '€ par Tonne',
-            'eur_m2': '€ par m²',
-            'eur_ml': '€ par mètre linéaire',
-            'eur_kg': '€ par kg',
-            'forfait': 'Forfait',
-            'formule_custom': 'Formule personnalisée'
-        };
-        return labels[formule] || formule;
-    },
-
-    getUniteCoefficient(formule) {
-        const unites = {
-            'eur_t': '€/T',
-            'eur_m2': '€/m²',
-            'eur_ml': '€/ml',
-            'eur_kg': '€/kg',
-            'forfait': '€',
-            'formule_custom': ''
-        };
-        return unites[formule] || '';
-    },
-
-    getBaseCalculLabel(baseCalcul) {
-        const labels = {
-            'poids_total': 'Poids total des articles',
-            'surface_total': 'Surface totale',
-            'longueur_total': 'Longueur totale',
-            'nb_articles': 'Nombre d\'articles'
-        };
-        return labels[baseCalcul] || baseCalcul;
-    },
-
-    getUniteBase(baseCalcul) {
-        const unites = {
-            'poids_total': 'T',
-            'surface_total': 'm²',
-            'longueur_total': 'ml',
-            'nb_articles': 'U'
-        };
-        return unites[baseCalcul] || '';
-    },
-
-    setupModals() {
-        // Fermeture des modales
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-backdrop') || 
-                e.target.classList.contains('modal-close') ||
-                e.target.id === 'cancel-article' ||
-                e.target.id === 'cancel-metre') {
-                this.hideModals();
-            }
-        });
-
-        // Sauvegarde des formes
-        document.getElementById('save-article')?.addEventListener('click', () => {
-            this.saveArticle();
-        });
-
-        document.getElementById('save-metre')?.addEventListener('click', () => {
-            this.saveMetre();
-        });
-    },
-
-    showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'block';
-            setTimeout(() => {
-                modal.classList.add('modal-visible');
-            }, 10);
-        }
-    },
-
-    hideModals() {
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.classList.remove('modal-visible');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        });
-    },
-
-    saveArticle() {
-        // Simulation - dans un vrai logiciel, cela ajouterait l'article à la structure
-        console.log('Article ajouté (simulation)');
-        this.hideModals();
-        // Ici on pourrait recalculer et re-rendre l'arborescence
-    },
-
-    saveMetre() {
-        // Simulation - dans un vrai logiciel, cela ajouterait le métré à la structure
-        console.log('Métré ajouté (simulation)');
-        this.hideModals();
-        // Ici on pourrait recalculer et re-rendre l'arborescence
-    },
-
     addDemoCSS() {
         if (document.getElementById('chiffrage-demo-styles')) return;
         
         const styles = document.createElement('style');
         styles.id = 'chiffrage-demo-styles';
         styles.textContent = `
-            /* Styles pour la démo de chiffrage */
-            .chiffrage-toolbar {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-4);
-                margin: var(--space-6) 0;
+            /* Styles spécifiques pour la démo chiffrage */
+            .chiffrage-steps {
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
-                flex-wrap: wrap;
-                gap: var(--space-4);
+                gap: var(--space-4, 1rem);
+                margin: var(--space-8, 2rem) 0;
+                padding: var(--space-6, 1.5rem);
+                background: var(--bg-card, rgba(255, 255, 255, 0.03));
+                border-radius: var(--radius-lg, 12px);
+                border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
             }
             
-            .toolbar-left, .toolbar-right {
-                display: flex;
-                gap: var(--space-4);
-                align-items: center;
-                flex-wrap: wrap;
-            }
-            
-            .project-info, .client-info {
-                font-size: var(--font-size-sm);
-                color: var(--text-secondary);
-                padding: var(--space-2) var(--space-3);
-                background: var(--bg-dark);
-                border-radius: var(--radius-sm);
-            }
-            
-            .client-badge {
-                font-size: var(--font-size-sm);
-                color: var(--success-color);
-                padding: var(--space-2) var(--space-3);
-                background: rgba(76, 175, 80, 0.1);
-                border: 1px solid var(--success-color);
-                border-radius: var(--radius-sm);
-                font-weight: 600;
-                animation: pulse 2s infinite;
-            }
-            
-            @keyframes pulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.7; }
-            }
-            
-            .chiffrage-interface {
-                background: var(--bg-card);
-                border-radius: var(--radius-lg);
-                padding: var(--space-6);
-                margin: var(--space-6) 0;
-            }
-            
-            .chiffrage-layout {
+            .example-projects {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-6);
-                min-height: 600px;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: var(--space-4, 1rem);
+                margin-top: var(--space-4, 1rem);
             }
             
-            .chiffrage-tree, .chiffrage-details {
-                background: var(--bg-dark);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                overflow: hidden;
-            }
-            
-            .tree-header, .details-header {
-                background: var(--bg-medium);
-                padding: var(--space-4);
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .tree-content {
-                max-height: 500px;
-                overflow-y: auto;
-                padding: var(--space-2);
-            }
-            
-            .tree-item {
-                margin: var(--space-1) 0;
-                border-radius: var(--radius-sm);
-                transition: var(--transition-fast);
+            .example-card {
+                background: var(--bg-card, rgba(255, 255, 255, 0.03));
+                border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+                border-radius: var(--radius-md, 8px);
+                padding: var(--space-4, 1rem);
+                text-align: center;
+                transition: all 0.3s ease;
                 cursor: pointer;
             }
             
-            .tree-item:hover {
-                background: var(--bg-card-hover);
-            }
-            
-            .tree-item.selected {
-                background: var(--primary-color);
-                color: var(--text-inverse);
-            }
-            
-            .tree-item-content {
-                display: flex;
-                align-items: center;
-                gap: var(--space-2);
-                padding: var(--space-2) var(--space-3);
-                font-size: var(--font-size-sm);
-            }
-            
-            .tree-expand {
-                cursor: pointer;
-                width: 20px;
-                text-align: center;
-            }
-            
-            .tree-label {
-                flex: 1;
-                font-weight: 500;
-            }
-            
-            .tree-type {
-                font-size: var(--font-size-xs);
-                padding: var(--space-1) var(--space-2);
-                background: var(--secondary-color);
-                color: white;
-                border-radius: var(--radius-sm);
-                font-weight: 600;
-            }
-            
-            .tree-level-1 .tree-item-content {
-                padding-left: var(--space-6);
-            }
-            
-            .tree-level-2 .tree-item-content {
-                padding-left: var(--space-10);
-            }
-            
-            .tree-level-3 .tree-item-content {
-                padding-left: var(--space-12);
-            }
-            
-            .details-content {
-                padding: var(--space-4);
-                max-height: 500px;
-                overflow-y: auto;
-            }
-            
-            .empty-selection {
-                text-align: center;
-                color: var(--text-muted);
-                padding: var(--space-8);
-            }
-            
-            .details-section {
-                margin-bottom: var(--space-6);
-                padding-bottom: var(--space-4);
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .details-section:last-child {
-                border-bottom: none;
-                margin-bottom: 0;
-            }
-            
-            .details-section h4 {
-                margin-bottom: var(--space-4);
-                color: var(--primary-color);
-                font-size: var(--font-size-lg);
-            }
-            
-            .details-grid, .stats-grid, .calculs-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-3);
-            }
-            
-            .detail-item, .stat-item, .calcul-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: var(--space-2);
-                background: var(--bg-card);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-sm);
-            }
-            
-            .detail-item label, .stat-item label, .calcul-item label {
-                font-weight: 600;
-                color: var(--text-secondary);
-            }
-            
-            .calcul-value {
-                font-weight: bold;
-                color: var(--primary-color);
-            }
-            
-            .calcul-item.highlight, .stat-item.highlight {
-                background: var(--primary-color);
-                color: var(--text-inverse);
-            }
-            
-            .calcul-automatique {
-                background: var(--bg-medium);
-                padding: var(--space-4);
-                border-radius: var(--radius-md);
-                margin: var(--space-4) 0;
-            }
-            
-            .calcul-formule {
-                text-align: center;
-                margin-bottom: var(--space-3);
-            }
-            
-            .formule-text {
-                font-family: 'Courier New', monospace;
-                background: var(--bg-dark);
-                padding: var(--space-2) var(--space-4);
-                border-radius: var(--radius-sm);
-                color: var(--primary-color);
-                font-weight: bold;
-            }
-            
-            .calcul-resultat {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .resultat-value {
-                font-size: var(--font-size-xl);
-                font-weight: bold;
-                color: var(--success-color);
-            }
-            
-            .calcul-description {
-                margin-top: var(--space-4);
-                padding: var(--space-3);
-                background: var(--bg-card);
-                border-radius: var(--radius-sm);
-                font-size: var(--font-size-sm);
-                color: var(--text-secondary);
-            }
-            
-            .composition-list {
-                max-height: 200px;
-                overflow-y: auto;
-                background: var(--bg-card);
-                border-radius: var(--radius-sm);
-                padding: var(--space-3);
-            }
-            
-            .composition-item {
-                padding: var(--space-1) 0;
-                font-size: var(--font-size-sm);
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .composition-item:last-child {
-                border-bottom: none;
-            }
-            
-            .composition-item.metre {
-                color: var(--accent-color);
-                font-weight: 600;
-            }
-            
-            .composition-item.group {
-                color: var(--primary-color);
-                font-weight: 600;
-            }
-            
-            .details-actions {
-                display: flex;
-                gap: var(--space-2);
-                margin-top: var(--space-4);
-                flex-wrap: wrap;
-            }
-            
-            .chiffrage-summary {
-                background: var(--bg-card);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-md);
-                padding: var(--space-6);
-                margin-top: var(--space-6);
-            }
-            
-            .chiffrage-summary h3 {
-                margin-bottom: var(--space-4);
-                color: var(--primary-color);
-            }
-            
-            .summary-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: var(--space-4);
-            }
-            
-            .summary-item {
-                background: var(--bg-dark);
-                padding: var(--space-4);
-                border-radius: var(--radius-md);
-                text-align: center;
-                border: 1px solid var(--border-color);
-            }
-            
-            .summary-item.highlight {
-                background: var(--secondary-color);
-                color: white;
-            }
-            
-            .summary-item.final {
-                background: var(--primary-color);
-                color: white;
-                font-weight: bold;
-            }
-            
-            .summary-label {
-                font-size: var(--font-size-sm);
-                color: var(--text-secondary);
-                margin-bottom: var(--space-2);
-            }
-            
-            .summary-item.highlight .summary-label,
-            .summary-item.final .summary-label {
-                color: rgba(255, 255, 255, 0.8);
-            }
-            
-            .summary-value {
-                font-size: var(--font-size-xl);
-                font-weight: bold;
-            }
-            
-            /* Modales */
-            .modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: var(--z-modal);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-            
-            .modal.modal-visible {
-                opacity: 1;
-            }
-            
-            .modal-backdrop {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.7);
-                backdrop-filter: blur(4px);
-            }
-            
-            .modal-content {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: var(--bg-dark);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-lg);
-                max-width: 600px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-            
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: var(--space-6);
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .modal-close {
-                background: none;
-                border: none;
-                font-size: var(--font-size-2xl);
-                color: var(--text-secondary);
-                cursor: pointer;
-                width: 30px;
-                height: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .modal-body {
-                padding: var(--space-6);
-            }
-            
-            .modal-footer {
-                display: flex;
-                justify-content: flex-end;
-                gap: var(--space-3);
-                padding: var(--space-6);
-                border-top: 1px solid var(--border-color);
-            }
-            
-            .form-group {
-                margin-bottom: var(--space-4);
-            }
-            
-            .form-group label {
-                display: block;
-                margin-bottom: var(--space-2);
-                font-weight: 600;
-                color: var(--text-primary);
-            }
-            
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-                width: 100%;
-                padding: var(--space-3);
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                background: var(--bg-medium);
-                color: var(--text-primary);
-                font-size: var(--font-size-base);
-            }
-            
-            .form-group input:focus,
-            .form-group select:focus,
-            .form-group textarea:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
-            }
-            
-            .form-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-4);
-            }
-            
-            .text-danger {
-                color: var(--error-color);
-            }
-            
-            /* Responsive */
-            @media (max-width: 1024px) {
-                .chiffrage-layout {
-                    grid-template-columns: 1fr;
-                }
-                
-                .summary-grid {
-                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .chiffrage-toolbar {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                
-                .toolbar-left, .toolbar-right {
-                    justify-content: center;
-                }
-                
-                .details-grid, .stats-grid, .calculs-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .form-row {
-                    grid-template-columns: 1fr;
-                }
-                
-                .modal-content {
-                    width: 95%;
-                }
-            }
-        `;
-        
-        document.head.appendChild(styles);
-    },
-
-    /**
-     * Ajouter les styles CSS pour l'accès refusé
-     */
-    addAccessDeniedCSS() {
-        if (document.getElementById('access-denied-styles')) return;
-        
-        const styles = document.createElement('style');
-        styles.id = 'access-denied-styles';
-        styles.textContent = `
-            .access-denied {
-                min-height: 80vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .access-denied-content {
-                text-align: center;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: var(--space-8);
-                background: var(--bg-card);
-                border: 2px solid var(--border-color);
-                border-radius: var(--radius-xl);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            }
-            
-            .access-denied-icon {
-                font-size: 4rem;
-                margin-bottom: var(--space-6);
-                animation: bounce 2s infinite;
-            }
-            
-            @keyframes bounce {
-                0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-                40% { transform: translateY(-10px); }
-                60% { transform: translateY(-5px); }
-            }
-            
-            .access-denied-content h1 {
-                color: var(--primary-color);
-                margin-bottom: var(--space-4);
-                font-size: var(--font-size-3xl);
-            }
-            
-            .access-denied-message {
-                color: var(--text-secondary);
-                font-size: var(--font-size-lg);
-                margin-bottom: var(--space-8);
-                line-height: var(--line-height-relaxed);
-            }
-            
-            .access-denied-actions {
-                display: flex;
-                gap: var(--space-4);
-                justify-content: center;
-                margin-bottom: var(--space-8);
-                flex-wrap: wrap;
-            }
-            
-            .access-denied-help {
-                border-top: 1px solid var(--border-color);
-                padding-top: var(--space-6);
-            }
-            
-            .access-denied-help h3 {
-                color: var(--text-primary);
-                margin-bottom: var(--space-6);
-            }
-            
-            .help-steps {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: var(--space-4);
-                margin-bottom: var(--space-6);
-            }
-            
-            .help-step {
-                background: var(--bg-dark);
-                padding: var(--space-4);
-                border-radius: var(--radius-md);
-                border: 1px solid var(--border-color);
-            }
-            
-            .step-number {
-                display: inline-block;
-                width: 30px;
-                height: 30px;
-                background: var(--primary-color);
-                color: white;
-                border-radius: var(--radius-full);
-                text-align: center;
-                line-height: 30px;
-                font-weight: bold;
-                margin-bottom: var(--space-3);
-            }
-            
-            .help-step p {
-                margin: 0;
-                color: var(--text-secondary);
-                font-size: var(--font-size-sm);
-            }
-            
-            .help-contact {
-                margin-top: var(--space-6);
-            }
-            
-            .help-contact p {
-                color: var(--text-secondary);
-                margin-bottom: var(--space-4);
-            }
-            
-            .contact-links {
-                display: flex;
-                gap: var(--space-4);
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .contact-link {
-                color: var(--primary-color);
-                text-decoration: none;
-                padding: var(--space-3) var(--space-4);
-                border: 1px solid var(--primary-color);
-                border-radius: var(--radius-md);
-                transition: var(--transition-fast);
-                font-size: var(--font-size-sm);
-                font-weight: 500;
-            }
-            
-            .contact-link:hover {
-                background: var(--primary-color);
-                color: white;
+            .example-card:hover {
+                border-color: var(--primary-color, #00d4ff);
                 transform: translateY(-2px);
             }
             
-            @media (max-width: 768px) {
-                .access-denied-content {
-                    padding: var(--space-6);
-                    margin: var(--space-4);
-                }
-                
-                .access-denied-actions {
-                    flex-direction: column;
-                    align-items: center;
-                }
-                
-                .help-steps {
-                    grid-template-columns: 1fr;
-                }
-                
-                .contact-links {
-                    flex-direction: column;
-                    align-items: center;
-                }
+            .tree-element {
+                margin: var(--space-1, 0.25rem) 0;
+                border-radius: var(--radius-sm, 4px);
+                transition: background 0.2s ease;
+            }
+            
+            .tree-element:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .tree-element-header {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2, 0.5rem);
+                padding: var(--space-2, 0.5rem);
+                cursor: pointer;
+            }
+            
+            .metrage-element {
+                margin: var(--space-2, 0.5rem) 0;
+                background: var(--bg-card, rgba(255, 255, 255, 0.03));
+                border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+                border-radius: var(--radius-sm, 4px);
+                padding: var(--space-3, 0.75rem);
+            }
+            
+            .total-box {
+                background: var(--bg-card, rgba(255, 255, 255, 0.03));
+                border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+                border-radius: var(--radius-md, 8px);
+                padding: var(--space-4, 1rem);
+                display: flex;
+                align-items: center;
+                gap: var(--space-3, 0.75rem);
             }
         `;
         
@@ -1649,4 +1357,4 @@ window.pages['outil-chiffrage-demo'] = {
     }
 };
 
-console.log('🔧 Page outil de chiffrage chargée');
+console.log('🔧 Outil Chiffrage Demo page loaded with complete functionality');

@@ -1,4 +1,4 @@
-// js/core/config.js - Configuration centralisée de l'application
+// js/config/config.js - Configuration centralisée de l'application
 
 window.OweoConfig = {
     // Meta informations
@@ -50,10 +50,10 @@ window.OweoConfig = {
     // Contact et entreprise
     company: {
         name: 'Oweo Consulting',
-        legalName: 'Oweo SARL',
+        legalName: 'Oweo SASU',
         tagline: 'Expert ERP & Transformation Digitale',
         description: 'Accompagnement sur-mesure pour entreprises de charpente métallique',
-        founded: '2014',
+        founded: '2025',
         employees: '1-10',
         location: 'Nantes, France',
         timezone: 'Europe/Paris'
@@ -62,11 +62,11 @@ window.OweoConfig = {
     // Informations de contact
     contact: {
         email: 'contact@oweo-consulting.fr',
-        phone: '+33 1 23 45 67 89',
+        phone: '+33 6 86 76 81 31',
         address: {
-            street: '123 Rue de la Métallurgie',
-            city: 'Nantes',
-            postalCode: '44000',
+            street: '10 rue du sous bois',
+            city: 'Orvault',
+            postalCode: '44700',
             country: 'France',
             region: 'Pays de la Loire'
         },
