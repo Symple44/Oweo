@@ -99,7 +99,7 @@ class OweoApp {
     }
 
     /**
-     * Initialisation des composants UI
+     * Initialisation des composants UI - CORRIGÉE comme avant
      */
     async initializeComponents() {
         console.log('🎨 Initializing UI components...');
