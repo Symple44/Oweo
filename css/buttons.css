@@ -1,0 +1,343 @@
+/* css/components/buttons.css - Tous les styles de boutons */
+
+/* =================================
+   BUTTON BASE STYLES
+================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    white-space: nowrap;
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    font-family: inherit;
+    line-height: 1.2;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* =================================
+   BUTTON VARIANTS
+================================= */
+
+/* Primary Button */
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.btn-primary:hover:not(:disabled)::before {
+    opacity: 1;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-secondary:hover:not(:disabled)::before {
+    left: 0;
+}
+
+/* Outline Button */
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+/* =================================
+   BUTTON SIZES
+================================= */
+
+.btn-sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    min-height: 36px;
+}
+
+.btn-large {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-lg);
+    min-height: 52px;
+}
+
+.btn-xl {
+    padding: var(--space-5) var(--space-10);
+    font-size: var(--font-size-xl);
+    min-height: 60px;
+}
+
+/* =================================
+   BUTTON STATES
+================================= */
+
+.btn-full {
+    width: 100%;
+}
+
+.btn-loading {
+    color: transparent;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: btnSpinner 0.8s linear infinite;
+}
+
+@keyframes btnSpinner {
+    to { transform: rotate(360deg); }
+}
+
+/* =================================
+   SPECIAL BUTTONS
+================================= */
+
+/* Back Button */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition-base);
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    min-height: 40px;
+}
+
+.btn-back:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateX(-2px);
+}
+
+.btn-back:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Icon Button */
+.btn-icon {
+    padding: var(--space-3);
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+}
+
+.btn-icon.btn-sm {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    padding: var(--space-2);
+}
+
+.btn-icon.btn-large {
+    min-width: 52px;
+    width: 52px;
+    height: 52px;
+    padding: var(--space-4);
+}
+
+/* Floating Action Button */
+.btn-fab {
+    position: fixed;
+    bottom: var(--space-6);
+    right: var(--space-6);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: var(--z-fixed);
+    padding: 0;
+}
+
+.btn-fab:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* =================================
+   BUTTON GROUPS
+================================= */
+
+.btn-group {
+    display: inline-flex;
+    gap: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    margin: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+.btn-group .btn:not(:last-child) {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* =================================
+   RESPONSIVE BUTTONS
+================================= */
+
+@media (max-width: 767px) {
+    .btn {
+        min-height: 48px;
+        font-size: var(--font-size-base);
+    }
+    
+    .btn-large {
+        min-height: 56px;
+        font-size: var(--font-size-lg);
+    }
+    
+    .btn-fab {
+        bottom: var(--space-4);
+        right: var(--space-4);
+    }
+}
+
+/* =================================
+   DARK MODE OVERRIDES
+================================= */
+
+@media (prefers-color-scheme: light) {
+    .btn-primary {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-secondary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline {
+        color: #666;
+        border-color: #ddd;
+    }
+    
+    .btn-outline:hover:not(:disabled) {
+        background: rgba(0, 212, 255, 0.08);
+    }
+}
+
+/* =================================
+   ACCESSIBILITY
+================================= */
+
+.btn:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .btn-primary {
+        background: var(--primary-color);
+    }
+}

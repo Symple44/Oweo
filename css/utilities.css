@@ -1,0 +1,569 @@
+/* css/utilities.css - Classes utilitaires avancées */
+
+/* =================================
+   BACKGROUND UTILITIES
+================================= */
+
+.bg-transparent { background-color: transparent; }
+.bg-primary { background-color: var(--primary-color); }
+.bg-secondary { background-color: var(--secondary-color); }
+.bg-accent { background-color: var(--accent-color); }
+.bg-success { background-color: var(--success-color); }
+.bg-warning { background-color: var(--warning-color); }
+.bg-error { background-color: var(--error-color); }
+.bg-info { background-color: var(--info-color); }
+
+.bg-dark { background-color: var(--bg-dark); }
+.bg-medium { background-color: var(--bg-medium); }
+.bg-light { background-color: var(--bg-light); }
+.bg-card { background-color: var(--bg-card); }
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+}
+
+.bg-gradient-hero {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 50%, var(--bg-light) 100%);
+}
+
+.bg-gradient-card {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+}
+
+.bg-gradient-error {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(255, 87, 34, 0.1) 100%);
+}
+
+/* Pattern backgrounds */
+.bg-dots {
+    background-image: radial-gradient(circle at 2px 2px, rgba(0, 212, 255, 0.1) 1px, transparent 0);
+    background-size: 20px 20px;
+}
+
+.bg-grid {
+    background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* =================================
+   COLOR UTILITIES
+================================= */
+
+.text-primary-color { color: var(--primary-color); }
+.text-secondary-color { color: var(--secondary-color); }
+.text-accent { color: var(--accent-color); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-error { color: var(--error-color); }
+.text-info { color: var(--info-color); }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-inverse { color: var(--text-inverse); }
+
+/* =================================
+   SHADOW UTILITIES
+================================= */
+
+.shadow-none { box-shadow: none; }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-base); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+
+.shadow-colored { box-shadow: var(--shadow-colored); }
+.shadow-colored-strong { box-shadow: var(--shadow-colored-strong); }
+
+.shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+
+/* =================================
+   FILTER UTILITIES
+================================= */
+
+.blur-none { filter: blur(0); }
+.blur-sm { filter: var(--blur-sm); }
+.blur { filter: var(--blur-base); }
+.blur-md { filter: var(--blur-md); }
+.blur-lg { filter: var(--blur-lg); }
+.blur-xl { filter: var(--blur-xl); }
+
+.brightness-50 { filter: brightness(0.5); }
+.brightness-75 { filter: brightness(0.75); }
+.brightness-90 { filter: brightness(0.9); }
+.brightness-100 { filter: brightness(1); }
+.brightness-110 { filter: brightness(1.1); }
+.brightness-125 { filter: brightness(1.25); }
+.brightness-150 { filter: brightness(1.5); }
+
+.contrast-50 { filter: contrast(0.5); }
+.contrast-75 { filter: contrast(0.75); }
+.contrast-100 { filter: contrast(1); }
+.contrast-125 { filter: contrast(1.25); }
+.contrast-150 { filter: contrast(1.5); }
+
+.grayscale { filter: grayscale(100%); }
+.grayscale-0 { filter: grayscale(0); }
+
+.sepia { filter: sepia(100%); }
+.sepia-0 { filter: sepia(0); }
+
+.saturate-0 { filter: saturate(0); }
+.saturate-50 { filter: saturate(0.5); }
+.saturate-100 { filter: saturate(1); }
+.saturate-150 { filter: saturate(1.5); }
+.saturate-200 { filter: saturate(2); }
+
+/* =================================
+   BACKDROP FILTER UTILITIES
+================================= */
+
+.backdrop-blur-none { backdrop-filter: blur(0); }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+.backdrop-blur { backdrop-filter: blur(8px); }
+.backdrop-blur-md { backdrop-filter: blur(12px); }
+.backdrop-blur-lg { backdrop-filter: blur(16px); }
+.backdrop-blur-xl { backdrop-filter: blur(24px); }
+
+.backdrop-brightness-50 { backdrop-filter: brightness(0.5); }
+.backdrop-brightness-75 { backdrop-filter: brightness(0.75); }
+.backdrop-brightness-100 { backdrop-filter: brightness(1); }
+.backdrop-brightness-125 { backdrop-filter: brightness(1.25); }
+.backdrop-brightness-150 { backdrop-filter: brightness(1.5); }
+
+.backdrop-contrast-50 { backdrop-filter: contrast(0.5); }
+.backdrop-contrast-75 { backdrop-filter: contrast(0.75); }
+.backdrop-contrast-100 { backdrop-filter: contrast(1); }
+.backdrop-contrast-125 { backdrop-filter: contrast(1.25); }
+.backdrop-contrast-150 { backdrop-filter: contrast(1.5); }
+
+.backdrop-grayscale { backdrop-filter: grayscale(100%); }
+.backdrop-grayscale-0 { backdrop-filter: grayscale(0); }
+
+/* =================================
+   TRANSFORM UTILITIES
+================================= */
+
+.transform { transform: translateZ(0); }
+.transform-none { transform: none; }
+
+.scale-0 { transform: scale(0); }
+.scale-50 { transform: scale(0.5); }
+.scale-75 { transform: scale(0.75); }
+.scale-90 { transform: scale(0.9); }
+.scale-95 { transform: scale(0.95); }
+.scale-100 { transform: scale(1); }
+.scale-105 { transform: scale(1.05); }
+.scale-110 { transform: scale(1.1); }
+.scale-125 { transform: scale(1.25); }
+.scale-150 { transform: scale(1.5); }
+
+.rotate-0 { transform: rotate(0deg); }
+.rotate-1 { transform: rotate(1deg); }
+.rotate-2 { transform: rotate(2deg); }
+.rotate-3 { transform: rotate(3deg); }
+.rotate-6 { transform: rotate(6deg); }
+.rotate-12 { transform: rotate(12deg); }
+.rotate-45 { transform: rotate(45deg); }
+.rotate-90 { transform: rotate(90deg); }
+.rotate-180 { transform: rotate(180deg); }
+
+.-rotate-1 { transform: rotate(-1deg); }
+.-rotate-2 { transform: rotate(-2deg); }
+.-rotate-3 { transform: rotate(-3deg); }
+.-rotate-6 { transform: rotate(-6deg); }
+.-rotate-12 { transform: rotate(-12deg); }
+.-rotate-45 { transform: rotate(-45deg); }
+.-rotate-90 { transform: rotate(-90deg); }
+.-rotate-180 { transform: rotate(-180deg); }
+
+.skew-x-0 { transform: skewX(0deg); }
+.skew-x-1 { transform: skewX(1deg); }
+.skew-x-2 { transform: skewX(2deg); }
+.skew-x-3 { transform: skewX(3deg); }
+.skew-x-6 { transform: skewX(6deg); }
+.skew-x-12 { transform: skewX(12deg); }
+
+.skew-y-0 { transform: skewY(0deg); }
+.skew-y-1 { transform: skewY(1deg); }
+.skew-y-2 { transform: skewY(2deg); }
+.skew-y-3 { transform: skewY(3deg); }
+.skew-y-6 { transform: skewY(6deg); }
+.skew-y-12 { transform: skewY(12deg); }
+
+.translate-x-0 { transform: translateX(0); }
+.translate-x-1 { transform: translateX(var(--space-1)); }
+.translate-x-2 { transform: translateX(var(--space-2)); }
+.translate-x-3 { transform: translateX(var(--space-3)); }
+.translate-x-4 { transform: translateX(var(--space-4)); }
+
+.translate-y-0 { transform: translateY(0); }
+.translate-y-1 { transform: translateY(var(--space-1)); }
+.translate-y-2 { transform: translateY(var(--space-2)); }
+.translate-y-3 { transform: translateY(var(--space-3)); }
+.translate-y-4 { transform: translateY(var(--space-4)); }
+
+.-translate-x-1 { transform: translateX(calc(-1 * var(--space-1))); }
+.-translate-x-2 { transform: translateX(calc(-1 * var(--space-2))); }
+.-translate-x-3 { transform: translateX(calc(-1 * var(--space-3))); }
+.-translate-x-4 { transform: translateX(calc(-1 * var(--space-4))); }
+
+.-translate-y-1 { transform: translateY(calc(-1 * var(--space-1))); }
+.-translate-y-2 { transform: translateY(calc(-1 * var(--space-2))); }
+.-translate-y-3 { transform: translateY(calc(-1 * var(--space-3))); }
+.-translate-y-4 { transform: translateY(calc(-1 * var(--space-4))); }
+
+/* =================================
+   CURSOR UTILITIES
+================================= */
+
+.cursor-auto { cursor: auto; }
+.cursor-default { cursor: default; }
+.cursor-pointer { cursor: pointer; }
+.cursor-wait { cursor: wait; }
+.cursor-text { cursor: text; }
+.cursor-move { cursor: move; }
+.cursor-help { cursor: help; }
+.cursor-not-allowed { cursor: not-allowed; }
+.cursor-grab { cursor: grab; }
+.cursor-grabbing { cursor: grabbing; }
+
+/* =================================
+   USER SELECT UTILITIES
+================================= */
+
+.select-none { user-select: none; }
+.select-text { user-select: text; }
+.select-all { user-select: all; }
+.select-auto { user-select: auto; }
+
+/* =================================
+   POINTER EVENTS UTILITIES
+================================= */
+
+.pointer-events-none { pointer-events: none; }
+.pointer-events-auto { pointer-events: auto; }
+
+/* =================================
+   RESIZE UTILITIES
+================================= */
+
+.resize-none { resize: none; }
+.resize { resize: both; }
+.resize-y { resize: vertical; }
+.resize-x { resize: horizontal; }
+
+/* =================================
+   OBJECT FIT UTILITIES
+================================= */
+
+.object-contain { object-fit: contain; }
+.object-cover { object-fit: cover; }
+.object-fill { object-fit: fill; }
+.object-none { object-fit: none; }
+.object-scale-down { object-fit: scale-down; }
+
+.object-bottom { object-position: bottom; }
+.object-center { object-position: center; }
+.object-left { object-position: left; }
+.object-left-bottom { object-position: left bottom; }
+.object-left-top { object-position: left top; }
+.object-right { object-position: right; }
+.object-right-bottom { object-position: right bottom; }
+.object-right-top { object-position: right top; }
+.object-top { object-position: top; }
+
+/* =================================
+   ASPECT RATIO UTILITIES
+================================= */
+
+.aspect-square { aspect-ratio: 1 / 1; }
+.aspect-video { aspect-ratio: 16 / 9; }
+.aspect-photo { aspect-ratio: 4 / 3; }
+.aspect-portrait { aspect-ratio: 3 / 4; }
+.aspect-cinema { aspect-ratio: 21 / 9; }
+
+/* =================================
+   SCROLL BEHAVIOR UTILITIES
+================================= */
+
+.scroll-smooth { scroll-behavior: smooth; }
+.scroll-auto { scroll-behavior: auto; }
+
+/* Scroll snap */
+.snap-none { scroll-snap-type: none; }
+.snap-x { scroll-snap-type: x mandatory; }
+.snap-y { scroll-snap-type: y mandatory; }
+.snap-both { scroll-snap-type: both mandatory; }
+
+.snap-start { scroll-snap-align: start; }
+.snap-end { scroll-snap-align: end; }
+.snap-center { scroll-snap-align: center; }
+
+/* =================================
+   WHITESPACE UTILITIES
+================================= */
+
+.whitespace-normal { white-space: normal; }
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-pre { white-space: pre; }
+.whitespace-pre-line { white-space: pre-line; }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+
+/* =================================
+   WORD BREAK UTILITIES
+================================= */
+
+.break-normal { 
+    overflow-wrap: normal; 
+    word-break: normal; 
+}
+
+.break-words { 
+    overflow-wrap: break-word; 
+}
+
+.break-all { 
+    word-break: break-all; 
+}
+
+/* =================================
+   TEXT DECORATION UTILITIES
+================================= */
+
+.underline { text-decoration-line: underline; }
+.overline { text-decoration-line: overline; }
+.line-through { text-decoration-line: line-through; }
+.no-underline { text-decoration-line: none; }
+
+.decoration-solid { text-decoration-style: solid; }
+.decoration-double { text-decoration-style: double; }
+.decoration-dotted { text-decoration-style: dotted; }
+.decoration-dashed { text-decoration-style: dashed; }
+.decoration-wavy { text-decoration-style: wavy; }
+
+.decoration-auto { text-decoration-thickness: auto; }
+.decoration-from-font { text-decoration-thickness: from-font; }
+.decoration-0 { text-decoration-thickness: 0px; }
+.decoration-1 { text-decoration-thickness: 1px; }
+.decoration-2 { text-decoration-thickness: 2px; }
+.decoration-4 { text-decoration-thickness: 4px; }
+.decoration-8 { text-decoration-thickness: 8px; }
+
+.underline-offset-auto { text-underline-offset: auto; }
+.underline-offset-0 { text-underline-offset: 0px; }
+.underline-offset-1 { text-underline-offset: 1px; }
+.underline-offset-2 { text-underline-offset: 2px; }
+.underline-offset-4 { text-underline-offset: 4px; }
+.underline-offset-8 { text-underline-offset: 8px; }
+
+/* =================================
+   TEXT TRANSFORM UTILITIES
+================================= */
+
+.uppercase { text-transform: uppercase; }
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+.normal-case { text-transform: none; }
+
+/* =================================
+   VERTICAL ALIGN UTILITIES
+================================= */
+
+.align-baseline { vertical-align: baseline; }
+.align-top { vertical-align: top; }
+.align-middle { vertical-align: middle; }
+.align-bottom { vertical-align: bottom; }
+.align-text-top { vertical-align: text-top; }
+.align-text-bottom { vertical-align: text-bottom; }
+.align-sub { vertical-align: sub; }
+.align-super { vertical-align: super; }
+
+/* =================================
+   LIST STYLE UTILITIES
+================================= */
+
+.list-none { list-style-type: none; }
+.list-disc { list-style-type: disc; }
+.list-decimal { list-style-type: decimal; }
+
+.list-inside { list-style-position: inside; }
+.list-outside { list-style-position: outside; }
+
+/* =================================
+   APPEARANCE UTILITIES
+================================= */
+
+.appearance-none { appearance: none; }
+.appearance-auto { appearance: auto; }
+
+/* =================================
+   OUTLINE UTILITIES
+================================= */
+
+.outline-none { outline: 2px solid transparent; outline-offset: 2px; }
+.outline { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+.outline-dashed { outline: 2px dashed var(--primary-color); outline-offset: 2px; }
+
+.outline-0 { outline-width: 0px; }
+.outline-1 { outline-width: 1px; }
+.outline-2 { outline-width: 2px; }
+.outline-4 { outline-width: 4px; }
+.outline-8 { outline-width: 8px; }
+
+.outline-offset-0 { outline-offset: 0px; }
+.outline-offset-1 { outline-offset: 1px; }
+.outline-offset-2 { outline-offset: 2px; }
+.outline-offset-4 { outline-offset: 4px; }
+.outline-offset-8 { outline-offset: 8px; }
+
+/* =================================
+   RING UTILITIES (pour focus)
+================================= */
+
+.ring-0 { box-shadow: 0 0 0 0px transparent; }
+.ring-1 { box-shadow: 0 0 0 1px var(--primary-color); }
+.ring-2 { box-shadow: 0 0 0 2px var(--primary-color); }
+.ring-4 { box-shadow: 0 0 0 4px var(--primary-color); }
+.ring-8 { box-shadow: 0 0 0 8px var(--primary-color); }
+
+.ring-primary { box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1); }
+.ring-secondary { box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); }
+.ring-success { box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
+.ring-warning { box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1); }
+.ring-error { box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1); }
+
+.ring-offset-0 { box-shadow: 0 0 0 0px white, 0 0 0 3px var(--primary-color); }
+.ring-offset-1 { box-shadow: 0 0 0 1px white, 0 0 0 4px var(--primary-color); }
+.ring-offset-2 { box-shadow: 0 0 0 2px white, 0 0 0 5px var(--primary-color); }
+.ring-offset-4 { box-shadow: 0 0 0 4px white, 0 0 0 7px var(--primary-color); }
+.ring-offset-8 { box-shadow: 0 0 0 8px white, 0 0 0 11px var(--primary-color); }
+
+/* =================================
+   DIVIDE UTILITIES
+================================= */
+
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+    border-top-width: 1px;
+    border-color: var(--border-color);
+}
+
+.divide-x > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: 1px;
+    border-color: var(--border-color);
+}
+
+.divide-solid > :not([hidden]) ~ :not([hidden]) {
+    border-style: solid;
+}
+
+.divide-dashed > :not([hidden]) ~ :not([hidden]) {
+    border-style: dashed;
+}
+
+.divide-dotted > :not([hidden]) ~ :not([hidden]) {
+    border-style: dotted;
+}
+
+.divide-double > :not([hidden]) ~ :not([hidden]) {
+    border-style: double;
+}
+
+.divide-none > :not([hidden]) ~ :not([hidden]) {
+    border-style: none;
+}
+
+/* =================================
+   SPACE UTILITIES
+================================= */
+
+.space-y-0 > :not([hidden]) ~ :not([hidden]) { margin-top: 0px; }
+.space-y-1 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-1); }
+.space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-2); }
+.space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-3); }
+.space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-4); }
+.space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-5); }
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-6); }
+.space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: var(--space-8); }
+
+.space-x-0 > :not([hidden]) ~ :not([hidden]) { margin-left: 0px; }
+.space-x-1 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-1); }
+.space-x-2 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-2); }
+.space-x-3 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-3); }
+.space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-4); }
+.space-x-5 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-5); }
+.space-x-6 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-6); }
+.space-x-8 > :not([hidden]) ~ :not([hidden]) { margin-left: var(--space-8); }
+
+/* =================================
+   TYPOGRAPHY UTILITIES AVANCÉES
+================================= */
+
+.font-mono { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+.font-serif { font-family: 'Georgia', 'Times New Roman', serif; }
+.font-sans { font-family: var(--font-family); }
+
+.leading-3 { line-height: .75rem; }
+.leading-4 { line-height: 1rem; }
+.leading-5 { line-height: 1.25rem; }
+.leading-6 { line-height: 1.5rem; }
+.leading-7 { line-height: 1.75rem; }
+.leading-8 { line-height: 2rem; }
+.leading-9 { line-height: 2.25rem; }
+.leading-10 { line-height: 2.5rem; }
+
+.leading-none { line-height: 1; }
+.leading-tight { line-height: var(--line-height-tight); }
+.leading-snug { line-height: var(--line-height-snug); }
+.leading-normal { line-height: var(--line-height-normal); }
+.leading-relaxed { line-height: var(--line-height-relaxed); }
+.leading-loose { line-height: var(--line-height-loose); }
+
+.tracking-tighter { letter-spacing: -0.05em; }
+.tracking-tight { letter-spacing: -0.025em; }
+.tracking-normal { letter-spacing: 0em; }
+.tracking-wide { letter-spacing: 0.025em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.tracking-widest { letter-spacing: 0.1em; }
+
+/* =================================
+   INTERACTIVE UTILITIES
+================================= */
+
+.hover\:opacity-0:hover { opacity: 0; }
+.hover\:opacity-25:hover { opacity: 0.25; }
+.hover\:opacity-50:hover { opacity: 0.5; }
+.hover\:opacity-75:hover { opacity: 0.75; }
+.hover\:opacity-100:hover { opacity: 1; }
+
+.hover\:scale-105:hover { transform: scale(1.05); }
+.hover\:scale-110:hover { transform: scale(1.1); }
+.hover\:scale-95:hover { transform: scale(0.95); }
+
+.hover\:rotate-1:hover { transform: rotate(1deg); }
+.hover\:rotate-3:hover { transform: rotate(3deg); }
+.hover\:rotate-6:hover { transform: rotate(6deg); }
+.hover\:-rotate-1:hover { transform: rotate(-1deg); }
+.hover\:-rotate-3:hover { transform: rotate(-3deg); }
+.hover\:-rotate-6:hover { transform: rotate(-6deg); }
+
+.focus\:opacity-100:focus { opacity: 1; }
+.focus\:scale-105:focus { transform: scale(1.05); }
+
+.active\:scale-95:active { transform: scale(0.95); }
+
+.group:hover .group-hover\:opacity-100 { opacity: 1; }
+.group:hover .group-hover\

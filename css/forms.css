@@ -1,0 +1,757 @@
+/* css/forms.css - Styles des formulaires */
+
+/* =================================
+   FORM BASE STYLES
+================================= */
+
+.form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: var(--space-5);
+    position: relative;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* =================================
+   LABELS
+================================= */
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.form-label--required::after {
+    content: ' *';
+    color: var(--error-color);
+}
+
+.form-label-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* =================================
+   INPUT FIELDS
+================================= */
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    transition: var(--transition-base);
+    min-height: 48px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    background-color: var(--bg-card);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Textarea specific */
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: var(--line-height-relaxed);
+}
+
+/* Select specific */
+.form-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right var(--space-3) center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    padding-right: var(--space-8);
+    appearance: none;
+}
+
+/* =================================
+   INPUT VARIANTS
+================================= */
+
+.form-input--large {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-size-lg);
+    min-height: 56px;
+}
+
+.form-input--small {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+    min-height: 40px;
+}
+
+/* =================================
+   INPUT STATES
+================================= */
+
+.form-input--error,
+.form-textarea--error,
+.form-select--error {
+    border-color: var(--error-color);
+    background-color: rgba(244, 67, 54, 0.05);
+}
+
+.form-input--error:focus,
+.form-textarea--error:focus,
+.form-select--error:focus {
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.form-input--success,
+.form-textarea--success,
+.form-select--success {
+    border-color: var(--success-color);
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+.form-input--success:focus,
+.form-textarea--success:focus,
+.form-select--success:focus {
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.form-input:disabled,
+.form-textarea:disabled,
+.form-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--bg-medium);
+}
+
+/* =================================
+   CHECKBOXES & RADIO BUTTONS
+================================= */
+
+.form-checkbox,
+.form-radio {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-card);
+    cursor: pointer;
+    transition: var(--transition-base);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.form-checkbox {
+    border-radius: var(--radius-sm);
+}
+
+.form-radio {
+    border-radius: 50%;
+}
+
+.form-checkbox:checked,
+.form-radio:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.form-checkbox:focus,
+.form-radio:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+/* =================================
+   INPUT GROUPS
+================================= */
+
+.input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group .form-input {
+    border-radius: 0;
+    border-right: none;
+}
+
+.input-group .form-input:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+}
+
+.input-group .form-input:last-child {
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    border-right: 1px solid var(--border-color);
+}
+
+.input-group-addon {
+    background-color: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-left: none;
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.input-group-prepend {
+    border-left: 1px solid var(--border-color);
+    border-right: none;
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group-prepend + .form-input {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* =================================
+   FORM VALIDATION
+================================= */
+
+.form-error {
+    color: var(--error-color);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.form-error::before {
+    content: '⚠️';
+    font-size: var(--font-size-sm);
+}
+
+.form-success {
+    color: var(--success-color);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.form-success::before {
+    content: '✅';
+    font-size: var(--font-size-sm);
+}
+
+.form-help {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+}
+
+/* =================================
+   FORM LAYOUTS
+================================= */
+
+.form-row {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-inline {
+    display: flex;
+    align-items: end;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.form-inline .form-group {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* =================================
+   CONTACT FORM SPECIFIC
+================================= */
+
+.contact-form {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    margin: var(--space-8) 0;
+}
+
+.contact-form h3 {
+    text-align: center;
+    margin-bottom: var(--space-6);
+    color: var(--text-primary);
+}
+
+.contact-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.contact-form-grid .form-group:nth-child(3),
+.contact-form-grid .form-group:nth-child(4) {
+    grid-column: 1 / -1;
+}
+
+/* =================================
+   NEWSLETTER FORM
+================================= */
+
+.newsletter-form {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    text-align: center;
+}
+
+.newsletter-form h4 {
+    margin-bottom: var(--space-3);
+    color: var(--text-primary);
+}
+
+.newsletter-form p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.newsletter-input-group {
+    display: flex;
+    gap: var(--space-2);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.newsletter-input-group .form-input {
+    flex: 1;
+}
+
+.newsletter-input-group .btn {
+    white-space: nowrap;
+}
+
+/* =================================
+   SEARCH FORM
+================================= */
+
+.search-form {
+    position: relative;
+}
+
+.search-input {
+    padding-left: var(--space-10);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3e%3c/svg%3e");
+    background-position: left var(--space-3) center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+}
+
+.search-clear {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: var(--transition-base);
+}
+
+.search-clear:hover {
+    color: var(--text-primary);
+    background: var(--bg-medium);
+}
+
+/* =================================
+   FILE UPLOAD
+================================= */
+
+.file-upload {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-upload-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    text-align: center;
+    transition: var(--transition-base);
+    cursor: pointer;
+    background: var(--bg-card);
+}
+
+.file-upload-area:hover,
+.file-upload-area.dragover {
+    border-color: var(--primary-color);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.file-upload-icon {
+    font-size: var(--font-size-4xl);
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+}
+
+.file-upload-text {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.file-upload-hint {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* =================================
+   RANGE SLIDER
+================================= */
+
+.form-range {
+    width: 100%;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--border-color);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: var(--transition-base);
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* =================================
+   SWITCH TOGGLE
+================================= */
+
+.form-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.form-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: var(--transition-base);
+    border-radius: 28px;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition-base);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-switch input:checked + .switch-slider {
+    background-color: var(--primary-color);
+}
+
+.form-switch input:checked + .switch-slider:before {
+    transform: translateX(22px);
+}
+
+.form-switch input:focus + .switch-slider {
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+/* =================================
+   FORM BUTTONS
+================================= */
+
+.form-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-color);
+}
+
+.form-actions--center {
+    justify-content: center;
+}
+
+.form-actions--left {
+    justify-content: flex-start;
+}
+
+.form-actions--between {
+    justify-content: space-between;
+}
+
+/* =================================
+   LOADING STATES
+================================= */
+
+.form-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    border-radius: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary-color);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+/* =================================
+   RESPONSIVE FORMS
+================================= */
+
+@media (max-width: 768px) {
+    .contact-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .form-inline .form-group {
+        min-width: auto;
+    }
+    
+    .newsletter-input-group {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions--between {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    
+    .contact-form {
+        padding: var(--space-6);
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group .form-input {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+    }
+    
+    .input-group-addon {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        border-top: none;
+    }
+}
+
+/* =================================
+   DARK MODE OVERRIDES
+================================= */
+
+@media (prefers-color-scheme: light) {
+    .form-input,
+    .form-textarea,
+    .form-select {
+        background-color: white;
+        border-color: #d1d5db;
+    }
+    
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+        background-color: white;
+    }
+    
+    .contact-form {
+        background: white;
+        border-color: #e5e7eb;
+    }
+    
+    .newsletter-form {
+        background: rgba(0, 212, 255, 0.08);
+    }
+    
+    .file-upload-area {
+        background: white;
+        border-color: #d1d5db;
+    }
+    
+    .file-upload-area:hover,
+    .file-upload-area.dragover {
+        background: rgba(0, 212, 255, 0.08);
+    }
+}
+
+/* =================================
+   PRINT STYLES
+================================= */
+
+@media print {
+    .form-actions {
+        display: none;
+    }
+    
+    .form-input,
+    .form-textarea,
+    .form-select {
+        border: 1px solid #000;
+        background: white;
+        color: black;
+    }
+    
+    .contact-form {
+        border: 1px solid #000;
+        background: white;
+    }
+}

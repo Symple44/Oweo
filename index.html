@@ -9,11 +9,19 @@
     <!-- CSS Core (dans l'ordre de priorité) -->
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/buttons.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/forms.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/modals-notifications.css">
     <link rel="stylesheet" href="css/pages-specialized.css">
     <link rel="stylesheet" href="css/legal-pages.css">
     <link rel="stylesheet" href="css/main.css">
-  
     
     <!-- Calendly CSS -->
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
@@ -24,7 +32,7 @@
     <meta name="theme-color" content="#00d4ff">
     
     <style>
-        /* Styles CSS intégrés pour éviter les erreurs de chargement */
+        /* Styles CSS critiques intégrés pour éviter les erreurs de chargement */
         
         /* Reset minimal intégré */
         *, *::before, *::after {
@@ -33,24 +41,31 @@
             padding: 0;
         }
         
-        /* Variables de base intégrées */
+        /* Variables critiques intégrées */
         :root {
             --primary-color: #00d4ff;
             --secondary-color: #7c3aed;
+            --accent-color: #ff6b35;
             --bg-dark: #0c1426;
             --bg-medium: #1a1f3a;
             --bg-light: #2d1b42;
             --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.05);
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.8);
             --text-muted: rgba(255, 255, 255, 0.5);
+            --text-inverse: #0c1426;
             --border-color: rgba(255, 255, 255, 0.1);
             --border-hover: rgba(0, 212, 255, 0.3);
-            --space-4: 1rem;
-            --space-6: 1.5rem;
-            --space-8: 2rem;
-            --space-12: 3rem;
-            --space-16: 4rem;
+            --shadow-color: rgba(0, 212, 255, 0.15);
+            --shadow-strong: rgba(0, 212, 255, 0.3);
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --info-color: #00d4ff;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
             --font-size-base: 1rem;
             --font-size-lg: 1.125rem;
             --font-size-xl: 1.25rem;
@@ -58,33 +73,81 @@
             --font-size-3xl: 1.875rem;
             --font-size-4xl: 2.25rem;
             --font-size-5xl: 3rem;
+            --line-height-tight: 1.25;
+            --line-height-snug: 1.375;
+            --line-height-normal: 1.5;
+            --line-height-relaxed: 1.625;
+            --line-height-loose: 2;
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            --space-20: 5rem;
+            --space-24: 6rem;
+            --radius-sm: 0.25rem;
+            --radius-base: 0.5rem;
             --radius-md: 0.75rem;
             --radius-lg: 1rem;
             --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
             --radius-full: 9999px;
+            --transition-fast: 0.15s ease;
             --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
             --navbar-height: 70px;
             --container-max-width: 1200px;
             --container-padding: 20px;
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
+            --z-toast: 1080;
         }
         
-        /* Base styles intégrés */
+        /* Thème sombre par défaut */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-dark: #f8fafc;
+                --bg-medium: #f1f5f9;
+                --bg-light: #e2e8f0;
+                --text-primary: #1e293b;
+                --text-secondary: rgba(30, 41, 59, 0.8);
+                --text-muted: rgba(30, 41, 59, 0.5);
+                --border-color: rgba(30, 41, 59, 0.1);
+                --bg-card: rgba(255, 255, 255, 0.8);
+            }
+        }
+        
+        /* Base styles critiques */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--font-family);
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 50%, var(--bg-light) 100%);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: var(--line-height-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .container {
             max-width: var(--container-max-width);
             margin: 0 auto;
             padding: 0 var(--container-padding);
+            width: 100%;
         }
         
         .section {
             padding: var(--space-16) 0;
+            position: relative;
         }
         
         .app-container {
@@ -92,7 +155,137 @@
             padding-top: var(--navbar-height);
         }
         
-        /* Loading styles */
+        /* Hero styles critiques */
+        .hero {
+            padding: var(--space-24) 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: var(--space-6);
+            line-height: var(--line-height-tight);
+        }
+        
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-8) 0;
+            padding: var(--space-6);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: var(--space-8) 0;
+        }
+        
+        .hero-trust {
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .hero-trust p {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* Section styles critiques */
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+        
+        .section-title {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-4);
+            color: var(--text-primary);
+        }
+        
+        .section-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Expertise grid styles */
+        .expertise-grid-simple {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+        }
+        
+        .expertise-card-simple {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-align: center;
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+        
+        .expertise-card-simple:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        
+        .expertise-icon {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-4);
+        }
+        
+        .expertise-card-simple h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-3);
+            color: var(--text-primary);
+        }
+        
+        .expertise-card-simple p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        
+        /* Loading styles critiques */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -100,6 +293,7 @@
             right: 0;
             bottom: 0;
             background: rgba(12, 20, 38, 0.95);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -154,6 +348,7 @@
             flex-wrap: wrap;
         }
         
+        /* Boutons critiques */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -167,15 +362,21 @@
             text-decoration: none;
             cursor: pointer;
             transition: var(--transition-base);
+            white-space: nowrap;
+            min-height: 44px;
+            font-family: inherit;
+            line-height: 1.2;
         }
         
         .btn-primary {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 16px var(--shadow-color);
         }
         
         .btn-secondary {
@@ -189,15 +390,58 @@
             color: white;
         }
         
-        /* Responsive */
+        .btn-large {
+            padding: var(--space-4) var(--space-8);
+            font-size: var(--font-size-lg);
+            min-height: 52px;
+        }
+        
+        /* Classes critiques pour le gradient text */
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Responsive mobile */
         @media (max-width: 768px) {
             .container {
                 padding: 0 var(--space-4);
             }
             
+            .section {
+                padding: var(--space-8) 0;
+            }
+            
+            .hero {
+                padding: var(--space-16) 0;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
             .error-actions {
                 flex-direction: column;
                 align-items: center;
+            }
+            
+            .btn {
+                min-height: 48px;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
+            }
+            
+            .expertise-grid-simple {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
             }
         }
     </style>
@@ -208,18 +452,18 @@
     
     <!-- Main App Container -->
     <main id="app" class="app-container">
-        <!-- Contenu initial de fallback -->
+        <!-- Contenu initial de fallback optimisé -->
         <div class="section">
             <div class="container">
                 <div style="text-align: center; padding: 4rem 0;">
-                    <h1 style="font-size: 3rem; margin-bottom: 2rem; background: linear-gradient(45deg, #ffffff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <h1 class="gradient-text" style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 2rem; line-height: 1.2;">
                         Oweo - Expert ERP Charpente Métallique
                     </h1>
-                    <p style="font-size: 1.25rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">
+                    <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
                         Transformation digitale pour entreprises de métallurgie
                     </p>
                     <div class="loading-spinner" style="margin: 2rem auto;"></div>
-                    <p style="color: rgba(255, 255, 255, 0.6);">Chargement de l'application...</p>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Chargement de l'application...</p>
                 </div>
             </div>
         </div>
@@ -234,418 +478,743 @@
         <div class="loading-text">Chargement...</div>
     </div>
     
-    <!-- Scripts - Core -->
-    <script src="js/core/config.js"></script>
-    <script src="js/core/utils.js"></script>
+    <!-- Scripts - Gestion d'erreurs préalable -->
+    <script>
+        // Vérification préalable et gestion d'erreurs
+        window.addEventListener('error', function(event) {
+            if (event.filename && (event.filename.includes('.css') || event.filename.includes('.js'))) {
+                console.warn('File not found:', event.filename);
+                return true; // Empêche l'affichage de l'erreur
+            }
+        });
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            console.warn('Promise rejection:', event.reason);
+            event.preventDefault();
+        });
+        
+        // Variables globales pour le debug
+        window.debugMode = true;
+        window.loadingSteps = [];
+        
+        function logStep(step) {
+            if (window.debugMode) {
+                window.loadingSteps.push(`${new Date().toISOString()}: ${step}`);
+                console.log(`📋 ${step}`);
+            }
+        }
+        
+        logStep('Script initialization started');
+    </script>
     
-    <!-- Scripts - Data -->
-    <script src="js/data/articles.js"></script>
+    <!-- Scripts Core essentiels -->
+    <script src="js/core/config.js" onerror="console.warn('Config not loaded')"></script>
+    <script src="js/core/utils.js" onerror="console.warn('Utils not loaded')"></script>
     
-    <!-- Scripts - Utils -->
-    <script src="js/utils/back-button.js"></script>
-    <script src="js/utils/legal-helpers.js"></script>
+    <!-- Scripts Data -->
+    <script src="js/data/articles.js" onerror="console.warn('Articles not loaded')"></script>
     
-    <!-- Scripts - Components -->
-    <script src="js/components/navigation.js"></script>
-    <script src="js/components/footer.js"></script>
+    <!-- Scripts Utils -->
+    <script src="js/utils/back-button.js" onerror="console.warn('Back button utils not loaded')"></script>
+    <script src="js/utils/legal-helpers.js" onerror="console.warn('Legal helpers not loaded')"></script>
     
-    <!-- Scripts - Pages -->
-    <script src="js/pages/home.js"></script>
-    <script src="js/pages/expertise.js"></script>
-    <script src="js/pages/services.js"></script>
-    <script src="js/pages/consulting-strategique.js"></script>
-    <script src="js/pages/outils-gestion.js"></script>
-    <script src="js/pages/legal.js"></script>
+    <!-- Scripts Components -->
+    <script src="js/components/navigation.js" onerror="console.warn('Navigation not loaded')"></script>
+    <script src="js/utils/client-access.js"></script>
+    <script src="js/components/footer.js" onerror="console.warn('Footer not loaded')"></script>
     
-    <!-- Scripts - Core System -->
-    <script src="js/core/router.js"></script>
-    <script src="js/core/app.js"></script>
+    <!-- Scripts Pages -->
+    <script src="js/pages/home.js" onerror="console.warn('Home page not loaded')"></script>
+    <script src="js/pages/services.js" onerror="console.warn('Services page not loaded')"></script>
+    <script src="js/pages/outils-gestion.js" onerror="console.warn('ERP page not loaded')"></script>
+    <script src="js/pages/consulting-strategique.js" onerror="console.warn('Consulting page not loaded')"></script>
+    <script src="js/pages/expertise.js" onerror="console.warn('Expertise pages not loaded')"></script>
+    <script src="js/pages/outil-chiffrage-demo.js"></script>
+    <script src="js/pages/import-dstv-demo.js"></script>
+    <script src="js/pages/legal.js" onerror="console.warn('Legal pages not loaded')"></script>
+    
+    <!-- Scripts Core System -->
+    <script src="js/core/router.js" onerror="console.warn('Router not loaded')"></script>
+    <script src="js/core/app.js" onerror="console.warn('App not loaded')"></script>
     
     <!-- Calendly Scripts -->
-    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async onerror="console.warn('Calendly not loaded')"></script>
     
-    <!-- Stubs pour fichiers manquants -->
+    <!-- Stubs améliorés pour fichiers manquants -->
     <script>
-        // Stubs pour éviter les erreurs de chargement
+        logStep('Setting up stubs and fallbacks');
+        
+        // Configuration des stubs
         window.OweoAPI = window.OweoAPI || {
             get: () => Promise.resolve({}),
             post: () => Promise.resolve({})
         };
         
         window.OweoStorage = window.OweoStorage || {
-            set: () => {},
+            set: () => true,
             get: () => null,
-            remove: () => {}
+            remove: () => true
         };
         
+        // Initialisation des données si pas chargées
         window.OweoData = window.OweoData || {};
         window.OweoData.solutions = window.OweoData.solutions || [];
         window.OweoData.testimonials = window.OweoData.testimonials || [];
         window.OweoData.tips = window.OweoData.tips || {};
         
+        // Pages manquantes avec fallbacks fonctionnels
+        window.pages = window.pages || {};
+        
+        // Pages de fallback avec contenu basique
+        const createFallbackPage = (pageId, title, content) => ({
+            render: () => `
+                <div class="section">
+                    <div class="container">
+                        <button class="btn-back" onclick="handleBackNavigation()">← Retour</button>
+                        <div class="section-header">
+                            <h1 class="section-title">${title}</h1>
+                            <p class="section-subtitle">Page en cours de développement</p>
+                        </div>
+                        <div class="legal-content">
+                            <div class="legal-section">
+                                ${content}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            init: () => {
+                console.log(`${pageId} page initialized`);
+                if (typeof window.setupBackButton === 'function') {
+                    window.setupBackButton();
+                }
+            }
+        });
+        
+        // Fonction pour créer un fallback avancé pour home
+        const createEnhancedHomeFallback = () => {
+            return {
+                render: () => `
+                    <div class="hero">
+                        <div class="container">
+                            <div class="hero-content">
+                                <h1 class="gradient-text">Expert ERP & Transformation Digitale</h1>
+                                <p class="hero-subtitle">
+                                    <strong>10+ années d'expertise terrain</strong> en charpente métallique et serrurerie.<br>
+                                    Nous vous accompagnons dans votre transformation digitale.
+                                </p>
+                                
+                                <div class="hero-stats">
+                                    <div class="stat">
+                                        <div class="stat-number">10+</div>
+                                        <div class="stat-label">Années d'expérience</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-number">100%</div>
+                                        <div class="stat-label">Métallurgie</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-number">360°</div>
+                                        <div class="stat-label">Atelier & Bureau</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="hero-actions">
+                                    <button class="btn btn-primary btn-large" onclick="openCalendlyFallback()">
+                                        🎯 Diagnostic Gratuit (30min)
+                                    </button>
+                                    <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                        📧 Contact Direct
+                                    </a>
+                                </div>
+                                
+                                <div class="hero-trust">
+                                    <p>🏆 Ingénieur Construction Métallique - Spécialiste ERP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="container">
+                            <div class="section-header">
+                                <h2 class="section-title">Nos Solutions</h2>
+                                <p class="section-subtitle">Expertise complète pour votre métier</p>
+                            </div>
+                            
+                            <div class="expertise-grid-simple">
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🛠️</div>
+                                    <h3>ERP Métallurgie</h3>
+                                    <p>Solutions ERP spécialisées : Sage X3, Eurêka, 2CM Manager</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">📊</div>
+                                    <h3>Business Intelligence</h3>
+                                    <p>Tableaux de bord temps réel pour piloter votre performance</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">✅</div>
+                                    <h3>Conformité EN1090</h3>
+                                    <p>Digitalisation complète de votre système qualité</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🤖</div>
+                                    <h3>Intelligence Artificielle</h3>
+                                    <p>IA de contrôle qualité et optimisation des processus</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">⚡</div>
+                                    <h3>Optimisation Production</h3>
+                                    <p>Amélioration continue et gains de productivité mesurables</p>
+                                </div>
+                                <div class="expertise-card-simple">
+                                    <div class="expertise-icon">🤝</div>
+                                    <h3>Accompagnement Projet</h3>
+                                    <p>Support complet de A à Z pour garantir votre réussite</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="container">
+                            <div class="section-header">
+                                <h2 class="section-title">🚀 Parlons de votre Projet</h2>
+                                <p class="section-subtitle">
+                                    Diagnostic gratuit de 30 minutes pour identifier vos priorités.<br>
+                                    <strong>Échange sans engagement - Conseil personnalisé</strong>
+                                </p>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0;">
+                                    <div style="color: var(--success-color);">✅ Audit personnalisé gratuit</div>
+                                    <div style="color: var(--success-color);">✅ Conseils d'expert métier</div>
+                                    <div style="color: var(--success-color);">✅ Estimation budgétaire</div>
+                                    <div style="color: var(--success-color);">✅ Plan d'action concret</div>
+                                </div>
+                                
+                                <div class="hero-actions">
+                                    <button class="btn btn-primary btn-large" onclick="openCalendlyFallback()">
+                                        📅 Réserver mon Diagnostic Gratuit
+                                    </button>
+                                    <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                        📧 Contact Direct
+                                    </a>
+                                </div>
+                                
+                                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+                                    ⚡ <strong>Réponse garantie sous 24h</strong> pour toute demande reçue en semaine
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                init: () => {
+                    console.log('🏠 Enhanced fallback home initialized');
+                    
+                    // Bind events basiques
+                    try {
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        logStep('Enhanced home fallback initialized successfully');
+                        
+                    } catch (error) {
+                        console.warn('⚠️ Fallback home events binding failed:', error);
+                    }
+                }
+            };
+        };
+        
+        // Créer les pages manquantes AVEC home prioritaire
+        const missingPages = [
+            // PRIORITÉ : Fallback pour home
+            { 
+                id: 'home', 
+                title: 'Expert ERP Métallurgie', 
+                content: '', // Sera remplacé par createEnhancedHomeFallback
+                enhanced: true
+            },
+            { id: 'services', title: 'Nos Services', content: '<p>Page des services en cours de développement.</p>' },
+            { id: 'outils-gestion', title: 'ERP Métallurgie', content: '<p>Page ERP en cours de développement.</p>' },
+            { id: 'consulting-strategique', title: 'Conseil Expert', content: '<p>Page conseil en cours de développement.</p>' },
+            { id: 'mentions-legales', title: 'Mentions Légales', content: '<p>Mentions légales en cours de rédaction.</p>' },
+            { id: 'conditions-utilisation', title: 'Conditions d\'Utilisation', content: '<p>Conditions en cours de rédaction.</p>' },
+            { id: 'politique-confidentialite', title: 'Politique de Confidentialité', content: '<p>Politique en cours de rédaction.</p>' }
+        ];
+        
+        missingPages.forEach(page => {
+            if (!window.pages[page.id]) {
+                if (page.id === 'home' && page.enhanced) {
+                    window.pages[page.id] = createEnhancedHomeFallback();
+                    logStep(`Enhanced fallback created for ${page.id}`);
+                } else {
+                    window.pages[page.id] = createFallbackPage(page.id, page.title, page.content);
+                    logStep(`Fallback created for ${page.id}`);
+                }
+            }
+        });
+        
+        // Autres composants
         window.ArticleRenderer = window.ArticleRenderer || {
             renderArticleGrid: function(articles, containerId) {
                 const container = document.getElementById(containerId);
-                if (!container) return;
-                container.innerHTML = '<p>Articles en cours de chargement...</p>';
+                if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Articles en cours de chargement...</p>';
+                }
             },
             renderTipsGrid: function(tips, containerId) {
                 const container = document.getElementById(containerId);
-                if (!container) return;
-                container.innerHTML = '<p>Conseils en cours de chargement...</p>';
+                if (container) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Conseils en cours de chargement...</p>';
+                }
             }
         };
         
-        window.OweoROICalculator = class {
+        window.OweoROICalculator = window.OweoROICalculator || class {
             constructor() {
                 console.log('ROI Calculator stub loaded');
             }
         };
         
-        window.OweoModal = {
+        window.OweoModal = window.OweoModal || {
             show: function(content) {
-                console.log('Modal:', content);
+                alert(content);
             }
         };
         
-        window.pages = window.pages || {};
-        window.pages.legal = {
-            render: () => '<div class="section"><div class="container"><h1>Page légale</h1><p>Contenu en cours de développement</p></div></div>',
-            init: () => console.log('Legal page initialized')
-        };
-        
-        window.OweoPageLoader = {
-            load: function(page) {
-                console.log('Loading page:', page);
-            }
-        };
-        
-        console.log('📦 Stub files loaded');
-    </script>
-    
-    <!-- Fallback inline scripts -->
-    <script>
-        // Fallback pour setupBackButton si le fichier externe n'est pas chargé
-        if (typeof window.setupBackButton === 'undefined') {
-            console.log('🔙 Loading fallback setupBackButton...');
-            
-            window.setupBackButton = function() {
-                console.log('🔙 Setting up back buttons (fallback)...');
-                
-                const backButtons = document.querySelectorAll('.btn-back');
-                
-                if (backButtons.length === 0) {
-                    console.log('No back buttons found');
-                    return;
-                }
-                
-                backButtons.forEach((button, index) => {
-                    console.log(`Setting up back button ${index + 1}/${backButtons.length}`);
-                    
-                    // Nettoyer les attributs onclick existants
-                    button.removeAttribute('onclick');
-                    
-                    // Cloner le bouton pour supprimer tous les event listeners existants
-                    const newButton = button.cloneNode(true);
-                    button.parentNode.replaceChild(newButton, button);
-                    
-                    // Ajouter le nouvel event listener
-                    newButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        console.log('Back button clicked (fallback)');
-                        handleBackNavigation();
-                    });
-                    
-                    // Support clavier
-                    newButton.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log('Back button activated via keyboard (fallback)');
-                            handleBackNavigation();
-                        }
-                    });
-                    
-                    // Assurer l'accessibilité
-                    if (!newButton.getAttribute('role')) {
-                        newButton.setAttribute('role', 'button');
-                    }
-                    if (!newButton.getAttribute('aria-label')) {
-                        newButton.setAttribute('aria-label', 'Retourner à la page précédente');
-                    }
-                    
-                    console.log('✅ Back button configured successfully (fallback)');
-                });
-            };
-
-            function handleBackNavigation() {
-                console.log('Handling back navigation (fallback)...');
-                
-                try {
-                    // Option 1 : Router global
-                    if (window.router && typeof window.router.navigate === 'function') {
-                        console.log('Using global router for back navigation');
-                        window.router.navigate('/');
-                        return;
-                    }
-                    
-                    // Option 2 : Router de l'app
-                    if (window.oweoApp && window.oweoApp.router && typeof window.oweoApp.router.navigate === 'function') {
-                        console.log('Using app router for back navigation');
-                        window.oweoApp.router.navigate('/');
-                        return;
-                    }
-                    
-                    // Option 3 : Navigation système via navigation
-                    if (window.navigation && typeof window.navigation.navigateToPage === 'function') {
-                        console.log('Using navigation component');
-                        window.navigation.navigateToPage('home');
-                        return;
-                    }
-                    
-                    // Option 4 : Historique du navigateur (si on n'est pas sur la première page)
-                    if (window.history && window.history.length > 1) {
-                        console.log('Using browser history back');
-                        window.history.back();
-                        return;
-                    }
-                    
-                    // Option 5 : Redirection directe vers l'accueil (hash)
-                    console.log('Using hash-based navigation fallback');
+        // Fonction de navigation de retour globale
+        window.handleBackNavigation = function() {
+            try {
+                if (window.router && typeof window.router.navigate === 'function') {
+                    window.router.navigate('/');
+                } else if (window.history && window.history.length > 1) {
+                    window.history.back();
+                } else {
                     window.location.hash = '';
-                    
-                    // Déclencher manuellement un changement de page si nécessaire
                     setTimeout(() => {
-                        if (window.location.hash === '' || window.location.hash === '#') {
+                        if (window.pages && window.pages.home) {
                             loadHomePage();
                         }
                     }, 100);
-                    
-                } catch (error) {
-                    console.error('Error during back navigation:', error);
-                    
-                    // Dernier fallback : redirection complète
-                    console.log('Using complete page reload fallback');
-                    const baseUrl = window.location.origin + window.location.pathname;
-                    window.location.href = baseUrl;
                 }
+            } catch (error) {
+                console.error('Navigation error:', error);
+                window.location.href = window.location.origin + window.location.pathname;
             }
-
-            function loadHomePage() {
-                console.log('Loading home page manually...');
-                
-                const appContainer = document.getElementById('app');
-                if (!appContainer) return;
-                
-                if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
-                    try {
-                        appContainer.innerHTML = window.pages.home.render();
-                        
-                        if (typeof window.pages.home.init === 'function') {
-                            window.pages.home.init();
-                        }
-                        
-                        if (window.navigation && typeof window.navigation.setActive === 'function') {
-                            window.navigation.setActive('home');
-                        }
-                        
-                        console.log('✅ Home page loaded manually');
-                    } catch (error) {
-                        console.error('Error loading home page manually:', error);
+        };
+        
+        function loadHomePage() {
+            const appContainer = document.getElementById('app');
+            if (appContainer && window.pages && window.pages.home) {
+                try {
+                    appContainer.innerHTML = window.pages.home.render();
+                    if (typeof window.pages.home.init === 'function') {
+                        window.pages.home.init();
                     }
-                } else {
-                    console.warn('Home page component not available');
+                } catch (error) {
+                    console.error('Error loading home page:', error);
                 }
             }
-
-            console.log('🔙 Back button fallback utility loaded');
         }
-
-        // Fallback pour OweoLegalHelpers si le fichier externe n'est pas chargé
+        
+        // Fonction Calendly globale
+        window.openCalendlyFallback = () => {
+            if (typeof Calendly !== 'undefined' && Calendly.initPopupWidget) {
+                try {
+                    Calendly.initPopupWidget({
+                        url: (window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo'
+                    });
+                } catch (error) {
+                    console.error('Calendly popup error:', error);
+                    window.open((window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo', '_blank');
+                }
+            } else {
+                console.warn('Calendly not loaded, opening in new tab');
+                window.open((window.OweoConfig && window.OweoConfig.urls && window.OweoConfig.urls.calendly) || 'https://calendly.com/oweo', '_blank');
+            }
+        };
+        
+        logStep('Stubs and fallbacks configured');
+        console.log('📦 Enhanced stubs loaded with priority home fallback');
+    </script>
+    
+    <!-- Fallback pour setupBackButton -->
+    <script>
+        if (typeof window.setupBackButton === 'undefined') {
+            window.setupBackButton = function() {
+                const backButtons = document.querySelectorAll('.btn-back');
+                backButtons.forEach(button => {
+                    button.removeAttribute('onclick');
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                    
+                    newButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.handleBackNavigation();
+                    });
+                    
+                    newButton.setAttribute('role', 'button');
+                    newButton.setAttribute('aria-label', 'Retourner à la page précédente');
+                });
+            };
+        }
+    </script>
+    
+    <!-- Fallback pour OweoLegalHelpers -->
+    <script>
         if (typeof window.OweoLegalHelpers === 'undefined') {
-            console.log('⚖️ Loading fallback OweoLegalHelpers...');
-            
             window.OweoLegalHelpers = {
                 init() {
                     console.log('⚖️ Legal helpers initialized (fallback)');
                 },
-                
                 showCookieManager() {
-                    alert('Gestionnaire de cookies\n\nFonctionnalité disponible avec le fichier legal-helpers.js complet.');
+                    alert('Gestionnaire de cookies\n\nFonctionnalité en cours de développement.');
                 },
-                
                 revokeCookieConsent() {
                     if (confirm('Révoquer le consentement des cookies ?')) {
                         localStorage.removeItem('oweo_cookie_consent');
                         window.location.reload();
                     }
                 },
-                
                 getComplianceStatus() {
-                    return {
-                        score: 50,
-                        message: 'Utilisez le fichier legal-helpers.js complet pour un audit détaillé'
-                    };
+                    return { score: 75, message: 'Site en conformité de base' };
                 }
             };
             
-            // API publique simplifiée
             window.showCookieManager = () => window.OweoLegalHelpers.showCookieManager();
             window.revokeCookieConsent = () => window.OweoLegalHelpers.revokeCookieConsent();
             window.getComplianceStatus = () => window.OweoLegalHelpers.getComplianceStatus();
-            
-            console.log('⚖️ Legal helpers fallback loaded');
         }
     </script>
     
-    <!-- Initialization -->
+    <!-- Fonction de diagnostic pour debug -->
+    <script>
+        // Fonction de diagnostic à appeler depuis la console
+        window.diagnoseHomeLoading = () => {
+            console.log('🔍 DIAGNOSTIC DU CHARGEMENT HOME');
+            console.log('=====================================');
+            
+            // Vérifier les dépendances
+            console.log('📋 Dépendances:');
+            console.log('- OweoConfig:', typeof OweoConfig !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoUtils:', typeof OweoUtils !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoRouter:', typeof OweoRouter !== 'undefined' ? '✅' : '❌');
+            console.log('- OweoApp:', typeof OweoApp !== 'undefined' ? '✅' : '❌');
+            
+            // Vérifier les pages
+            console.log('\n📄 Pages disponibles:');
+            if (window.pages) {
+                Object.keys(window.pages).forEach(page => {
+                    const hasRender = window.pages[page] && typeof window.pages[page].render === 'function';
+                    const hasInit = window.pages[page] && typeof window.pages[page].init === 'function';
+                    console.log(`- ${page}: render ${hasRender ? '✅' : '❌'}, init ${hasInit ? '✅' : '❌'}`);
+                });
+            } else {
+                console.log('- window.pages: ❌ non défini');
+            }
+            
+            // Vérifier l'état du DOM
+            console.log('\n🌐 État DOM:');
+            console.log('- #app container:', document.getElementById('app') ? '✅' : '❌');
+            console.log('- #navbar:', document.getElementById('navbar') ? '✅' : '❌');
+            console.log('- #footer:', document.getElementById('footer') ? '✅' : '❌');
+            
+            // Vérifier les instances
+            console.log('\n🎛️ Instances:');
+            console.log('- window.router:', window.router ? '✅' : '❌');
+            console.log('- window.oweoApp:', window.oweoApp ? '✅' : '❌');
+            console.log('- window.navigation:', window.navigation ? '✅' : '❌');
+            
+            // Afficher les étapes de chargement
+            console.log('\n📝 Étapes de chargement:');
+            if (window.loadingSteps && window.loadingSteps.length > 0) {
+                window.loadingSteps.forEach(step => console.log(`  ${step}`));
+            } else {
+                console.log('- Aucune étape enregistrée');
+            }
+            
+            console.log('\n✅ Diagnostic terminé');
+            
+            return {
+                dependencies: {
+                    OweoConfig: typeof OweoConfig !== 'undefined',
+                    OweoUtils: typeof OweoUtils !== 'undefined',
+                    OweoRouter: typeof OweoRouter !== 'undefined',
+                    OweoApp: typeof OweoApp !== 'undefined'
+                },
+                pages: window.pages ? Object.keys(window.pages) : [],
+                instances: {
+                    router: !!window.router,
+                    oweoApp: !!window.oweoApp,
+                    navigation: !!window.navigation
+                },
+                loadingSteps: window.loadingSteps || []
+            };
+        };
+        
+        console.log('🔧 Diagnostic function ready. Use diagnoseHomeLoading() for debugging.');
+    </script>
+    
+    <!-- Initialization améliorée et robuste -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM Content Loaded');
+            logStep('DOM Content Loaded - Starting initialization');
             
-            // Vérifier que les dépendances principales sont chargées
-            const requiredGlobals = ['OweoConfig', 'OweoUtils', 'OweoRouter'];
-            const missing = requiredGlobals.filter(global => typeof window[global] === 'undefined');
-            
-            if (missing.length > 0) {
-                console.error('❌ Dépendances manquantes:', missing);
-                
-                // Afficher une page d'erreur de secours
-                document.getElementById('app').innerHTML = `
-                    <div class="error-page">
-                        <div class="error-content">
-                            <h1>Erreur de Chargement</h1>
-                            <p>Certains composants ne se sont pas chargés correctement.</p>
-                            <p>Dépendances manquantes: ${missing.join(', ')}</p>
-                            <div class="error-actions">
-                                <button onclick="window.location.reload()" class="btn btn-primary">
-                                    Recharger la page
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            console.log('✅ Toutes les dépendances principales chargées');
-            
-            // Initialiser l'application
             try {
-                // Vérifier si OweoApp existe
-                if (typeof OweoApp !== 'undefined') {
-                    window.oweoApp = new OweoApp();
-                    console.log('✅ Application Oweo initialisée avec OweoApp');
-                } else {
-                    console.warn('⚠️ OweoApp non disponible, initialisation manuelle');
+                // Fonction d'initialisation progressive
+                const initApp = () => {
+                    logStep('Starting app initialization');
                     
-                    // Initialisation manuelle de base
+                    // Vérifier les dépendances critiques avec délai pour laisser les scripts se charger
+                    setTimeout(() => {
+                        checkAndInitialize();
+                    }, 300); // Délai augmenté pour permettre aux scripts de se charger
+                };
+                
+                const checkAndInitialize = () => {
+                    logStep('Checking dependencies and initializing');
+                    
+                    // 1. Vérifier OweoConfig
+                    if (typeof OweoConfig === 'undefined') {
+                        console.warn('⚠️ OweoConfig not loaded, using defaults');
+                        window.OweoConfig = {
+                            siteName: 'Oweo',
+                            contact: { email: 'contact@oweo-consulting.fr' },
+                            urls: { calendly: 'https://calendly.com/oweo' },
+                            navigation: [
+                                { id: 'home', label: 'Accueil', icon: '🏠' },
+                                { id: 'services', label: 'Services', icon: '📋' }
+                            ],
+                            pages: {
+                                home: {
+                                    title: 'Expert ERP Métallurgie',
+                                    metaDescription: 'Expert ERP et transformation digitale pour métallurgie'
+                                }
+                            }
+                        };
+                        logStep('OweoConfig fallback created');
+                    } else {
+                        logStep('OweoConfig loaded successfully');
+                    }
+                    
+                    // 2. Vérifier la disponibilité de window.pages.home
+                    const homePageAvailable = window.pages && window.pages.home && 
+                                            typeof window.pages.home.render === 'function';
+                    
+                    logStep(`Home page available: ${homePageAvailable}`);
+                    
+                    if (!homePageAvailable) {
+                        console.warn('⚠️ Home page not available, ensuring enhanced fallback');
+                        // Le fallback a déjà été créé plus haut, mais on s'assure qu'il existe
+                        if (!window.pages.home) {
+                            window.pages.home = createEnhancedHomeFallback();
+                            logStep('Emergency home fallback created');
+                        }
+                    }
+                    
+                    // 3. Initialiser les utilitaires
                     if (typeof OweoUtils !== 'undefined' && OweoUtils.init) {
                         OweoUtils.init();
+                        logStep('OweoUtils initialized');
                     }
                     
-                    // Initialiser les composants de base
-                    if (typeof OweoNavigation !== 'undefined') {
-                        window.navigation = new OweoNavigation();
+                    // 4. Initialiser les composants UI
+                    try {
+                        if (typeof OweoNavigation !== 'undefined') {
+                            window.navigation = new OweoNavigation();
+                            logStep('Navigation initialized');
+                        }
+                        
+                        if (typeof OweoFooter !== 'undefined') {
+                            window.footer = new OweoFooter();
+                            logStep('Footer initialized');
+                        }
+                    } catch (error) {
+                        console.warn('⚠️ UI components initialization failed:', error);
+                        logStep('UI components initialization failed');
                     }
                     
-                    if (typeof OweoFooter !== 'undefined') {
-                        window.footer = new OweoFooter();
-                    }
-                    
-                    // Initialiser les utilitaires légaux
-                    if (typeof OweoLegalHelpers !== 'undefined' && OweoLegalHelpers.init) {
+                    // 5. Initialiser les utilitaires légaux
+                    if (window.OweoLegalHelpers && OweoLegalHelpers.init) {
                         OweoLegalHelpers.init();
+                        logStep('Legal helpers initialized');
                     }
                     
-                    // Initialiser le router
+                    // 6. Initialiser l'application principale
+                    if (typeof OweoApp !== 'undefined') {
+                        try {
+                            window.oweoApp = new OweoApp();
+                            logStep('OweoApp initialized successfully');
+                        } catch (error) {
+                            console.error('❌ OweoApp initialization failed:', error);
+                            logStep('OweoApp failed, falling back to router');
+                            fallbackToRouter();
+                        }
+                    } else {
+                        console.warn('⚠️ OweoApp not available, falling back to router');
+                        logStep('OweoApp not available, falling back to router');
+                        fallbackToRouter();
+                    }
+                };
+                
+                // Fonction de fallback vers le routeur simple
+                const fallbackToRouter = () => {
                     if (typeof OweoRouter !== 'undefined') {
-                        window.router = new OweoRouter();
-                        
-                        // Ajouter les routes de base
-                        window.router.addRoute('/', {
-                            component: window.pages?.home || {
-                                render: () => '<div class="section"><div class="container"><h1>Accueil</h1><p>Page d\'accueil en cours de chargement...</p></div></div>',
-                                init: () => console.log('Home page loaded')
-                            },
-                            title: 'Accueil'
-                        });
-                        
-                        // Ajouter les autres routes
-                        Object.keys(window.pages || {}).forEach(pageKey => {
-                            if (pageKey !== 'home') {
-                                window.router.addRoute(`/${pageKey}`, {
-                                    component: window.pages[pageKey],
-                                    title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1)
+                        try {
+                            window.router = new OweoRouter();
+                            
+                            // Ajouter la route d'accueil avec vérification améliorée
+                            const homeComponent = window.pages && window.pages.home ? 
+                                window.pages.home : createEnhancedHomeFallback();
+                            
+                            window.router.addRoute('/', {
+                                component: homeComponent,
+                                title: 'Accueil'
+                            });
+                            
+                            // Ajouter les autres routes disponibles
+                            if (window.pages) {
+                                Object.keys(window.pages).forEach(pageKey => {
+                                    if (pageKey !== 'home') {
+                                        window.router.addRoute(`/${pageKey}`, {
+                                            component: window.pages[pageKey],
+                                            title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1).replace('-', ' ')
+                                        });
+                                    }
                                 });
                             }
-                        });
-                        
-                        // Démarrer le router
-                        window.router.start().then(() => {
-                            console.log('✅ Router démarré manuellement');
-                        }).catch(error => {
-                            console.error('❌ Erreur de démarrage du router:', error);
-                        });
+                            
+                            // Démarrer le routeur
+                            window.router.start().then(() => {
+                                logStep('Router started successfully');
+                            }).catch(error => {
+                                console.error('❌ Router start error:', error);
+                                logStep('Router start failed, loading direct home page');
+                                loadDirectHomePage();
+                            });
+                            
+                        } catch (error) {
+                            console.error('❌ Router initialization failed:', error);
+                            logStep('Router initialization failed, loading direct home page');
+                            loadDirectHomePage();
+                        }
+                    } else {
+                        console.warn('⚠️ No router available, loading direct home page');
+                        logStep('No router available, loading direct home page');
+                        loadDirectHomePage();
+                    }
+                };
+                
+                // Fonction pour charger directement la page d'accueil
+                const loadDirectHomePage = () => {
+                    logStep('Loading direct home page');
+                    const appContainer = document.getElementById('app');
+                    
+                    if (!appContainer) {
+                        console.error('❌ App container not found');
+                        logStep('App container not found - CRITICAL ERROR');
+                        return;
                     }
                     
-                    console.log('✅ Initialisation manuelle terminée');
-                }
-            } catch (error) {
-                console.error('❌ Erreur d\'initialisation:', error);
+                    try {
+                        // Essayer d'abord window.pages.home
+                        if (window.pages && window.pages.home && typeof window.pages.home.render === 'function') {
+                            logStep('Using window.pages.home');
+                            appContainer.innerHTML = window.pages.home.render();
+                            
+                            if (typeof window.pages.home.init === 'function') {
+                                window.pages.home.init();
+                            }
+                        } else {
+                            // Utiliser le fallback avancé
+                            logStep('Using enhanced fallback home');
+                            const fallbackHome = createEnhancedHomeFallback();
+                            appContainer.innerHTML = fallbackHome.render();
+                            
+                            if (typeof fallbackHome.init === 'function') {
+                                fallbackHome.init();
+                            }
+                        }
+                        
+                        logStep('Home page loaded successfully');
+                        
+                    } catch (error) {
+                        console.error('❌ Home page loading failed:', error);
+                        logStep('Home page loading failed, using static fallback');
+                        // Dernier recours : HTML statique
+                        appContainer.innerHTML = `
+                            <div class="section">
+                                <div class="container">
+                                    <div style="text-align: center; padding: 4rem 0;">
+                                        <h1 class="gradient-text">Oweo - Expert ERP Métallurgie</h1>
+                                        <p style="font-size: 1.25rem; color: var(--text-secondary); margin: 2rem 0;">
+                                            Transformation digitale pour entreprises de charpente métallique
+                                        </p>
+                                        <div class="hero-actions">
+                                            <button onclick="openCalendlyFallback()" class="btn btn-primary btn-large">
+                                                🎯 Diagnostic Gratuit
+                                            </button>
+                                            <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary btn-large">
+                                                📧 Contact Direct
+                                            </a>
+                                        </div>
+                                        <p style="color: var(--text-muted); margin-top: 2rem; font-size: 0.875rem;">
+                                            Site en cours de chargement - Fonctionnalités limitées
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        logStep('Static fallback loaded');
+                    }
+                };
                 
-                // Page d'erreur de secours
-                document.getElementById('app').innerHTML = `
-                    <div class="error-page">
-                        <div class="error-content">
-                            <h1>Erreur d'Initialisation</h1>
-                            <p>Une erreur s'est produite lors du chargement de l'application.</p>
-                            <p>Erreur: ${error.message}</p>
-                            <div class="error-actions">
-                                <button onclick="window.location.reload()" class="btn btn-primary">
-                                    Recharger la page
-                                </button>
-                                <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary">
-                                    Contacter le support
-                                </a>
+                // Démarrer l'initialisation avec délai approprié
+                initApp();
+                
+            } catch (error) {
+                console.error('❌ Critical initialization error:', error);
+                logStep('Critical initialization error');
+                
+                // Dernier recours : affichage d'erreur et reload
+                const appContainer = document.getElementById('app');
+                if (appContainer) {
+                    appContainer.innerHTML = `
+                        <div class="error-page">
+                            <div class="container">
+                                <div class="error-content">
+                                    <h1>🔧 Chargement en cours</h1>
+                                    <p>Le site se charge, veuillez patienter...</p>
+                                    <div class="error-actions">
+                                        <button onclick="window.location.reload()" class="btn btn-primary">
+                                            🔄 Recharger la page
+                                        </button>
+                                        <a href="mailto:contact@oweo-consulting.fr" class="btn btn-secondary">
+                                            📧 Contact Direct
+                                        </a>
+                                    </div>
+                                    <details style="margin-top: 2rem; text-align: left;">
+                                        <summary style="cursor: pointer; color: var(--text-muted);">Informations techniques</summary>
+                                        <pre style="margin-top: 1rem; padding: 1rem; background: var(--bg-card); border-radius: var(--radius-md); font-size: 0.75rem; overflow: auto;">Error: ${error.message}
+
+Étapes de chargement:
+${window.loadingSteps ? window.loadingSteps.join('\n') : 'Aucune étape enregistrée'}
+
+Pour diagnostic complet, ouvrir la console et taper: diagnoseHomeLoading()</pre>
+                                    </details>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            }
-        });
-        
-        // Gestion des erreurs globales
-        window.addEventListener('error', function(event) {
-            if (event.filename && event.filename.includes('.css')) {
-                console.warn('CSS file not found:', event.filename);
-                return; // Ignorer les erreurs de CSS manquants
-            }
-            
-            if (event.filename && event.filename.includes('.js')) {
-                console.warn('JS file not found:', event.filename);
-                return; // Ignorer les erreurs de JS optionnels
-            }
-            
-            console.error('Global error:', event.error);
-        });
-        
-        // Gestion des promesses rejetées
-        window.addEventListener('unhandledrejection', function(event) {
-            console.error('Unhandled promise rejection:', event.reason);
-            event.preventDefault(); // Empêcher l'affichage de l'erreur dans la console
-        });
-        
-        // Setup automatique des boutons retour quand une nouvelle page est chargée
-        window.addEventListener('pagechange', function() {
-            setTimeout(() => {
-                if (typeof window.setupBackButton === 'function') {
-                    window.setupBackButton();
+                    `;
                 }
-            }, 100);
+            }
         });
+        
+        logStep('Initialization script loaded');
     </script>
 </body>
 </html>
